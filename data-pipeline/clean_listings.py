@@ -1,0 +1,243 @@
+"""Bersihkan iklan tanah mentah (Pinhome + Lamudi) → data/listings_clean.csv & data/listings_all.csv.
+
+Langkah:
+ 1. Normalisasi skema (sumber, id, url, harga total, luas, harga/m², koordinat, kelurahan teks, tanggal).
+ 2. Harga per m²: deteksi iklan yang mencantumkan harga per m² sebagai "harga".
+ 3. Lokasi: titik-dalam-poligon kelurahan OSM; cocokkan dengan kelurahan teks iklan. Bila koordinat
+    jelas tidak cocok (> 1,5 km dari kelurahan teks) atau hanya titik pusat wilayah → pakai titik
+    representatif kelurahan teks dan tandai exact=0.
+ 4. Saring: di luar Kota Semarang, bukan tanah kosong (ada bangunan dihitung), luas/harga tidak wajar.
+ 5. Akses jalan dari teks iklan (access_text.py).
+ 6. Deduplikasi (iklan sama di beberapa agen/situs).
+ 7. Outlier: batas mutlak + MAD per kelurahan (setelah koreksi luas).
+Setiap baris menyimpan sumber, URL, tanggal iklan (dibuat/diperbarui) dan tanggal diambil.
+"""
+import json, re, os, csv, math, glob, statistics, datetime
+from collections import Counter, defaultdict
+from common import RAW, OUT, Admin, norm, fix_mojibake, strip_html, scrub_contacts
+from access_text import classify_access
+
+os.makedirs(OUT, exist_ok=True)
+A = Admin()
+recs = []
+
+# ---------- Pinhome ----------
+plist = {}
+for f in sorted(glob.glob(os.path.join(RAW, 'pinhome', 'list*.jsonl'))):
+    for l in open(f):
+        d = json.loads(l)
+        plist.setdefault(d['href'], d)
+pdet = {}
+for l in open(os.path.join(RAW, 'pinhome', 'detail.jsonl')):
+    d = json.loads(l)
+    if d.get('id'):
+        pdet[d['href']] = d  # versi terakhir menang
+for href, li in plist.items():
+    d = pdet.get(href)
+    if not d:
+        continue
+    title = fix_mojibake(d.get('title') or li.get('name'))
+    desc = strip_html(fix_mojibake(d.get('description') or ''))
+    price = d.get('minPrice') or li.get('minPriceValue')
+    area = d.get('surfaceArea') or (li.get('specs') or {}).get('surfaceArea')
+    coord = d.get('coordinate')
+    recs.append({
+        'source': 'pinhome', 'source_id': str(d['id']), 'url': 'https://www.pinhome.id' + href,
+        'title': title, 'description': desc, 'price': float(price) if price else None, 'area_m2': float(area) if area else None,
+        'price_is_ppm': False, 'lat': coord[0] if coord else None, 'lng': coord[1] if coord else None, 'coord_hint': 'pin',
+        'kel_text': (d.get('kelurahan') or '').split('(')[0].strip(), 'kec_text': d.get('kecamatan') or li.get('districtTitle'),
+        'subtype': 'komersial' if 'commercial' in (d.get('buildingType') or '') else 'residensial',
+        'date_listed': (d.get('createdAt') or '')[:10], 'date_updated': (li.get('lastModifiedAt') or '')[:10],
+        'scraped_at': (d.get('fetchedAt') or '')[:10],
+    })
+
+# ---------- Lamudi ----------
+for l in open(os.path.join(RAW, 'lamudi', 'listings.jsonl')):
+    d = json.loads(l)
+    title = d.get('title') or ''
+    desc = d.get('description') or ''
+    geo = d.get('map_geo') or d.get('ld_geo')
+    exact = bool(d.get('map_exact')) or (d.get('ld_geo') is not None and d.get('map_exact') is None)
+    addr = d.get('address') or ''
+    # kelurahan dari alamat: cari token yang cocok dengan nama kelurahan OSM
+    kel_text = None
+    for tok in [t.strip() for t in re.split(r',', addr)]:
+        tok2 = re.sub(r'\s*(kel\.|kelurahan)$', '', tok, flags=re.I).strip()
+        tok2 = re.sub(r'^(kel\.|kelurahan)\s*', '', tok2, flags=re.I).strip()
+        if A.kel_by_name(tok2):
+            kel_text = tok2
+            break
+    if not kel_text:
+        m = re.search(r'Dijual di (.+)$', title)
+        if m and A.kel_by_name(m.group(1)):
+            kel_text = m.group(1)
+    recs.append({
+        'source': 'lamudi', 'source_id': d['id'], 'url': d['url'], 'title': title, 'description': desc,
+        'price': d.get('price'), 'area_m2': d.get('area_m2'), 'price_is_ppm': False,
+        'lat': geo[0] if geo else None, 'lng': geo[1] if geo else None, 'coord_hint': 'exact' if exact else 'approx',
+        'kel_text': kel_text or '', 'kec_text': '', 'subtype': 'komersial' if re.search(r'komersial|usaha|gudang|industri|ruko', title + ' ' + desc[:300], re.I) else 'residensial',
+        'date_listed': (d.get('createdAt') or '')[:10], 'date_updated': '', 'scraped_at': (d.get('scrapedAt') or '')[:10],
+        'address': addr,
+    })
+
+print('raw records', len(recs), Counter(r['source'] for r in recs))
+
+# ---------- normalisasi & filter ----------
+BUILDING = re.compile(r'(tanah\s*(?:dan|&|\+)\s*bangunan|(?:ada|berdiri|bonus|termasuk|beserta|plus)\s+(?:rumah|bangunan|gudang|ruko|kos|kost)\b|rumah\s+(?:tua|lama|hitung\s+tanah)|bangunan\s+(?:lama|tua|existing|eksisting)|kondisi\s+bangunan|luas\s+bangunan\s*:?\s*[1-9])', re.I)
+LAND_ONLY_OK = re.compile(r'hitung\s+tanah|harga\s+tanah\s+saja|dihitung\s+tanah', re.I)
+PPM_TEXT = re.compile(r'(?:per\s*(?:meter|m2|m²|mtr|m\b)|/\s*(?:m2|m²|meter|mtr)|permeter|per\s*meter\s*persegi)', re.I)
+NOT_SALE = re.compile(r'\b(disewakan|sewa|dikontrakkan|kontrak)\b', re.I)
+
+def money_from_text(t):
+    """Cari 'Rp 2,5 jt/m' dsb dalam teks → harga per m²."""
+    m = re.search(r'(?:rp\.?|harga)\s*([\d.,]+)\s*(jt|juta|rb|ribu|k)?\s*(?:/|per)\s*(?:m2|m²|meter|mtr|m\b)', t, re.I)
+    if not m:
+        return None
+    num = m.group(1).replace('.', '').replace(',', '.')
+    try:
+        v = float(num)
+    except ValueError:
+        return None
+    unit = (m.group(2) or '').lower()
+    if unit in ('jt', 'juta'):
+        v *= 1e6
+    elif unit in ('rb', 'ribu', 'k'):
+        v *= 1e3
+    return v if 50_000 <= v <= 80_000_000 else None
+
+out_all = []
+for r in recs:
+    r['title'] = scrub_contacts(r['title']); r['description'] = scrub_contacts(r['description'])
+    flags = []
+    t = f"{r['title']}\n{r['description']}"
+    if not r['price'] or not r['area_m2'] or r['area_m2'] <= 0:
+        flags.append('harga/luas kosong')
+        ppm = None
+    else:
+        ppm = r['price'] / r['area_m2']
+        # harga yang dicantumkan sebenarnya harga per m²
+        if ppm < 40_000 and 50_000 <= r['price'] <= 80_000_000:
+            r['price_is_ppm'] = True
+            ppm = r['price']
+        elif ppm < 40_000:
+            tp = money_from_text(t)
+            if tp:
+                r['price_is_ppm'] = True
+                ppm = tp
+    r['ppm'] = ppm
+    if NOT_SALE.search(r['title'] or ''):
+        flags.append('bukan jual')
+    if BUILDING.search(t) and not LAND_ONLY_OK.search(t):
+        flags.append('ada bangunan')
+    if r['area_m2'] and (r['area_m2'] < 30 or r['area_m2'] > 200_000):
+        flags.append('luas tidak wajar')
+    if ppm is not None and (ppm < 75_000 or ppm > 75_000_000):
+        flags.append('harga/m² di luar batas')
+
+    # ---- lokasi ----
+    exact = 0
+    loc_note = ''
+    lat, lng = r['lat'], r['lng']
+    kel_poly, kec_poly = (A.kel_at(lat, lng) if lat is not None else (None, None))
+    kt = r['kel_text']
+    if lat is not None and kel_poly:
+        if kt and norm(kt) != norm(kel_poly):
+            dkm = A.dist_to_kel_m(lat, lng, kt, r['kec_text'] or None)
+            if dkm is not None and dkm > 1500:
+                c = A.kel_center(kt, r['kec_text'] or None)
+                if c:
+                    lat, lng, kel_poly, kec_poly = c
+                    loc_note = f'koordinat iklan {round(dkm)} m dari kelurahan teks → titik kelurahan'
+                    exact = 0
+            else:
+                exact = 1 if r['coord_hint'] in ('pin', 'exact') else 0
+                loc_note = 'koordinat dekat batas kelurahan teks'
+        else:
+            exact = 1 if r['coord_hint'] in ('pin', 'exact') else 0
+    elif kt:
+        c = A.kel_center(kt, r['kec_text'] or None)
+        if c:
+            lat, lng, kel_poly, kec_poly = c
+            loc_note = 'tanpa koordinat valid → titik kelurahan teks'
+            exact = 0
+    if lat is None or kel_poly is None or not A.inside_city(lat, lng):
+        flags.append('di luar Kota Semarang / lokasi tak dikenal')
+    r.update({'lat': lat, 'lng': lng, 'kelurahan': kel_poly, 'kecamatan': kec_poly, 'exact': exact, 'loc_note': loc_note})
+
+    tier, why, width = classify_access(r['title'], r['description'])
+    r.update({'access_tier': tier or '', 'access_evidence': (why or '')[:120], 'road_width_m': width if width else ''})
+    r['date'] = r['date_updated'] or r['date_listed'] or r['scraped_at']
+    r['date_source'] = 'diperbarui' if r['date_updated'] else ('dibuat' if r['date_listed'] else 'aktif saat diambil')
+    r['flags'] = ';'.join(flags)
+    out_all.append(r)
+
+# ---------- dedup ----------
+def dkey(r):
+    return (norm(r['kelurahan'] or ''), round(r['area_m2'] or 0), round((r['price'] or 0) / 1e6))
+groups = defaultdict(list)
+for r in out_all:
+    if not r['flags']:
+        groups[dkey(r)].append(r)
+dups = 0
+for k, g in groups.items():
+    if len(g) > 1:
+        g.sort(key=lambda x: (-x['exact'], -len(x['description'] or ''), x['date']))
+        for x in g[1:]:
+            x['flags'] = 'duplikat dari ' + g[0]['source'] + ':' + g[0]['source_id']
+            dups += 1
+print('duplicates', dups)
+
+# ---------- outlier per kelurahan (log harga/m² setelah koreksi luas kasar) ----------
+ok = [r for r in out_all if not r['flags']]
+def logadj(r):
+    return math.log(r['ppm']) + 0.12 * math.log(max(30, r['area_m2']) / 150)
+byk = defaultdict(list)
+for r in ok:
+    byk[r['kelurahan']].append(r)
+byc = defaultdict(list)
+for r in ok:
+    byc[r['kecamatan']].append(r)
+outl = 0
+for r in ok:
+    pool = byk[r['kelurahan']] if len(byk[r['kelurahan']]) >= 6 else byc[r['kecamatan']]
+    vals = [logadj(x) for x in pool]
+    if len(vals) < 5:
+        continue
+    med = statistics.median(vals)
+    mad = statistics.median([abs(v - med) for v in vals]) * 1.4826
+    mad = max(mad, 0.25)
+    z = (logadj(r) - med) / mad
+    if abs(z) > 3.0:
+        r['flags'] = f'outlier (z={z:.1f} vs median {"kelurahan" if pool is byk[r["kelurahan"]] else "kecamatan"})'
+        outl += 1
+print('outliers', outl)
+
+cols = ['source', 'source_id', 'url', 'title', 'price', 'area_m2', 'price_is_ppm', 'ppm', 'lat', 'lng', 'exact', 'loc_note', 'kelurahan', 'kecamatan',
+        'kel_text', 'subtype', 'access_tier', 'access_evidence', 'road_width_m', 'date', 'date_source', 'date_listed', 'date_updated', 'scraped_at', 'flags']
+with open(os.path.join(OUT, 'listings_all.csv'), 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=cols + ['description'], extrasaction='ignore')
+    w.writeheader()
+    for r in out_all:
+        r2 = dict(r)
+        r2['description'] = (r['description'] or '')[:1500]
+        if r2['lat'] is not None:
+            r2['lat'] = round(r2['lat'], 6); r2['lng'] = round(r2['lng'], 6)
+        if r2.get('ppm'):
+            r2['ppm'] = round(r2['ppm'])
+        w.writerow(r2)
+clean = [r for r in out_all if not r['flags']]
+with open(os.path.join(OUT, 'listings_clean.csv'), 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=cols, extrasaction='ignore')
+    w.writeheader()
+    for r in clean:
+        r2 = dict(r); r2['lat'] = round(r2['lat'], 6); r2['lng'] = round(r2['lng'], 6); r2['ppm'] = round(r2['ppm'])
+        w.writerow(r2)
+fc = Counter()
+for r in out_all:
+    for fl in (r['flags'] or 'BERSIH').split(';'):
+        fc[re.sub(r'\(.*', '', fl).split(' dari ')[0].strip()] += 1
+print('flags', fc.most_common())
+print('clean', len(clean), Counter(r['source'] for r in clean))
+print('access tiers', Counter(r['access_tier'] or '(tidak disebut)' for r in clean))
+print('exact', Counter(r['exact'] for r in clean))
+print('per kecamatan', Counter(r['kecamatan'] for r in clean).most_common())

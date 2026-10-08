@@ -1,0 +1,6 @@
+[out:json][timeout:300];
+rel(8409116);
+out geom;
+rel(8409116);map_to_area->.a;
+rel(area.a)["boundary"="administrative"]["admin_level"~"^(6|7)$"];
+out geom;

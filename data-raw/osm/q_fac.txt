@@ -1,0 +1,14 @@
+[out:json][timeout:600][bbox:-7.135,110.247,-6.908,110.529];
+(
+  nwr["amenity"~"^(school|kindergarten|university|college|hospital|clinic|doctors|pharmacy|police|fire_station|townhall|marketplace|bus_station|place_of_worship|bank|fuel)$"];
+  nwr["office"="government"];
+  nwr["healthcare"];
+  nwr["shop"~"^(supermarket|convenience|mall|department_store)$"];
+  nwr["highway"="bus_stop"];
+  nwr["public_transport"~"^(platform|station)$"];
+  nwr["railway"~"^(station|halt)$"];
+  nwr["aeroway"="aerodrome"];
+  nwr["barrier"="toll_booth"];
+  node["highway"="motorway_junction"];
+);
+out tags center qt;

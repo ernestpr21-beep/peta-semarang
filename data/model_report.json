@@ -1,0 +1,166 @@
+{
+ "version": "2026-10-1",
+ "asOf": "2026-10",
+ "refArea": 150,
+ "sizeElasticity": -0.0215,
+ "sizeElasticitySE": 0.008,
+ "commercialFactor": 1.003,
+ "recencyHalfLifeYears": 2,
+ "trendPerYear": 0.0185,
+ "trendRaw": 0.0185,
+ "trendSE": 0.0107,
+ "sourceEffect": 1.202,
+ "sourceAdj": {
+  "lamudi": 0.872,
+  "pinhome": 1.048
+ },
+ "unknownTierFactor": 1.083,
+ "tiers": {
+  "utama": {
+   "label": "Pinggir jalan utama",
+   "short": "Jalan utama",
+   "desc": "Bidang berbatasan langsung dengan jalan raya/arteri/kolektor (mobil & truk, nilai komersial).",
+   "factor": 1.318,
+   "lo": 1.198,
+   "hi": 1.449,
+   "n": 749,
+   "nOsm": 333,
+   "basis": "data",
+   "dataFactor": 1.319,
+   "prior": 1.3,
+   "priorNote": "Muka jalan utama/kolektor umumnya dihargai lebih tinggi (nilai komersial)."
+  },
+  "lingkungan": {
+   "label": "Jalan lingkungan (mobil masuk)",
+   "short": "Jalan lingkungan",
+   "desc": "Ada jalan umum yang bisa dilalui mobil, mis. jalan perumahan/kampung lebar ≥ 3 m.",
+   "factor": 1.0,
+   "lo": 1.0,
+   "hi": 1.0,
+   "n": 1106,
+   "nOsm": 1717,
+   "basis": "data",
+   "dataFactor": null,
+   "prior": 1.0,
+   "priorNote": "Acuan: jalan lingkungan yang bisa dilalui mobil."
+  },
+  "gang": {
+   "label": "Gang sempit / akses motor",
+   "short": "Gang sempit",
+   "desc": "Hanya gang/jalan setapak (lebar < 3 m) atau bidang dalam yang perlu jalan masuk.",
+   "factor": 0.856,
+   "lo": 0.729,
+   "hi": 1.006,
+   "n": 30,
+   "nOsm": 920,
+   "basis": "campuran",
+   "dataFactor": 0.91,
+   "prior": 0.8,
+   "priorNote": "Gang sempit/akses motor: pembangunan & logistik terbatas."
+  },
+  "tanpa": {
+   "label": "Tanpa akses jalan (terkurung)",
+   "short": "Tanpa akses",
+   "desc": "Tidak ada jalan/gang umum ke bidang; harus lewat tanah orang lain.",
+   "factor": 0.55,
+   "lo": 0.41,
+   "hi": 0.738,
+   "n": 0,
+   "nOsm": 373,
+   "basis": "prior",
+   "dataFactor": null,
+   "prior": 0.55,
+   "priorNote": "Tanah terkurung: perlu membeli/menyewa jalan keluar (KUH Perdata ps. 667 memberi hak menuntut jalan keluar dengan ganti rugi)."
+  }
+ },
+ "cityMedianPn": 3121443,
+ "citySpreadLog": 0.49,
+ "regression": {
+  "n": 4281,
+  "r2Within": 0.043,
+  "sigma": 0.593,
+  "nOsm": 3343,
+  "r2WithinOsm": 0.026,
+  "coefText": {
+   "log_area": [
+    -0.0215,
+    0.008
+   ],
+   "tier:utama": [
+    0.2767,
+    0.0292
+   ],
+   "tier:gang": [
+    -0.0943,
+    0.1134
+   ],
+   "tier:unknown": [
+    0.0802,
+    0.0226
+   ],
+   "komersial": [
+    0.0031,
+    0.0205
+   ],
+   "src_lamudi": [
+    0.1837,
+    0.03
+   ],
+   "trend_per_year": [
+    0.0185,
+    0.0107
+   ]
+  },
+  "coefOsm": {
+   "log_area": [
+    -0.0016,
+    0.0093
+   ],
+   "tier:utama": [
+    -0.0314,
+    0.0399
+   ],
+   "tier:gang": [
+    0.0006,
+    0.0309
+   ],
+   "tier:tanpa": [
+    -0.0393,
+    0.04
+   ],
+   "komersial": [
+    -0.0256,
+    0.0229
+   ],
+   "src_lamudi": [
+    0.1662,
+    0.0354
+   ],
+   "trend_per_year": [
+    0.0449,
+    0.0117
+   ]
+  },
+  "countsText": {
+   "unknown": 2396,
+   "utama": 749,
+   "lingkungan": 1106,
+   "gang": 30
+  },
+  "countsOsm": {
+   "lingkungan": 1717,
+   "utama": 333,
+   "tanpa": 373,
+   "gang": 920
+  },
+  "note": "OLS log(harga/m²) dengan efek tetap kelurahan; akses dibanding jalan lingkungan; kolom \"unknown\" = iklan tanpa keterangan akses."
+ },
+ "validation": {
+  "n": 4281,
+  "medianAbsErrPct_model": 38.3,
+  "medianAbsErrPct_kelurahanMedian": 42.0,
+  "medianAbsErrPct_kecamatanMedian_raw": 51.2,
+  "within25pct_model": 36.0,
+  "coverage50pct": 47.4
+ }
+}

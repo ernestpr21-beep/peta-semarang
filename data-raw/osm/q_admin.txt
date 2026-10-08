@@ -1,0 +1,6 @@
+[out:json][timeout:180];
+rel["boundary"="administrative"]["admin_level"="5"]["name"~"^Kota Semarang$|^Semarang$"]->.kota;
+.kota out tags;
+.kota map_to_area->.a;
+(rel(area.a)["boundary"="administrative"]["admin_level"~"^(6|7)$"];);
+out tags;

@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-good: var(--good);
+  --color-map-ink: var(--map-ink);
+  --color-tier-utama: var(--tier-utama);
+  --color-tier-lingkungan: var(--tier-lingkungan);
+  --color-tier-gang: var(--tier-gang);
+  --color-tier-tanpa: var(--tier-tanpa);
+  --font-display: "Fraunces", Georgia, serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius: 12px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-quick: 150ms;
+  --motion-fast: 250ms;
+  --motion-slow: 400ms;
+}
+
+:root {
+  --bg: #f3f0e8;
+  --surface: #fffcf7;
+  --surface-2: #ebe6db;
+  --fg: #1c1f24;
+  --fg-muted: #5c6158;
+  --fg-subtle: #8a8d84;
+  --primary: #0f6e6a;
+  --primary-foreground: #f4f1ea;
+  --border: color-mix(in oklab, #1c1f24 12%, transparent);
+  --border-strong: color-mix(in oklab, #1c1f24 22%, transparent);
+  --ring: #0f6e6a;
+  --warn: #a16207;
+  --danger: #9b3a2f;
+  --good: #2f6f4e;
+  --map-ink: #1b4d3e;
+  --tier-utama: #0f6e6a;
+  --tier-lingkungan: #2f6f4e;
+  --tier-gang: #a16207;
+  --tier-tanpa: #9b3a2f;
+}
+
+.dark {
+  --bg: #0e1210;
+  --surface: #171c19;
+  --surface-2: #222924;
+  --fg: #eceae4;
+  --fg-muted: #a8ada6;
+  --fg-subtle: #7a8078;
+  --primary: #4db6b0;
+  --primary-foreground: #0e1210;
+  --border: color-mix(in oklab, #eceae4 14%, transparent);
+  --border-strong: color-mix(in oklab, #eceae4 24%, transparent);
+  --ring: #4db6b0;
+  --warn: #d4a017;
+  --danger: #e07a70;
+  --good: #7dba96;
+  --map-ink: #9fd0c8;
+  --tier-utama: #4db6b0;
+  --tier-lingkungan: #7dba96;
+  --tier-gang: #d4a017;
+  --tier-tanpa: #e07a70;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  z-index: 0;
+}
+.leaflet-control-attribution {
+  background: color-mix(in oklab, var(--surface) 88%, transparent) !important;
+  color: var(--fg-muted);
+  font-size: 10px;
+  max-width: min(70vw, 420px);
+}
+.leaflet-control-attribution a {
+  color: var(--primary);
+}
+.leaflet-bar a {
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  border-bottom-color: var(--border) !important;
+}
+.semarang-pin {
+  background: none;
+  border: none;
+}
+.semarang-pin-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--primary);
+  border: 2px solid var(--surface);
+  box-shadow: 0 4px 10px color-mix(in oklab, #000 28%, transparent);
+}
+.facility-dot[data-g="pendidikan"] { background: var(--primary); }
+.facility-dot[data-g="kesehatan"] { background: var(--danger); }
+.facility-dot[data-g="publik"] { background: var(--map-ink); }
+.facility-dot[data-g="transportasi"] { background: var(--warn); }
+.facility-dot[data-g="komersial"] { background: var(--good); }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.facility-dot { width: 10px; height: 10px; border-radius: 9999px; border: 2px solid var(--surface); box-shadow: 0 1px 4px rgb(0 0 0 / 0.3); }
+.facility-dot[data-g="ibadah"] { background: var(--fg-subtle); }
+.comp-dot { border-radius: 9999px; border: 1.5px solid var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / 0.35); }
+/* Mode gelap untuk peta jalan OSM bila CARTO gagal dimuat */
+.leaflet-tile-pane .tiles-invert, .tiles-invert { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9); }
+.leaflet-tooltip { font-family: var(--font-sans); border-radius: 8px; border-color: var(--border); background: var(--surface); color: var(--fg); }
+.leaflet-tooltip-top:before { border-top-color: var(--surface); }
+.prose-id h2 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; }
+.prose-id h3 { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.4rem; }
+.prose-id p, .prose-id li { font-size: 0.925rem; line-height: 1.65; color: var(--fg); }
+.prose-id p { margin: 0.5rem 0; }
+.prose-id ul { list-style: disc; padding-left: 1.25rem; margin: 0.5rem 0; }
+.prose-id ol { list-style: decimal; padding-left: 1.25rem; margin: 0.5rem 0; }
+.prose-id a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.prose-id code { font-family: var(--font-mono); font-size: 0.85em; background: var(--surface-2); padding: 0.05rem 0.3rem; border-radius: 4px; }
+.prose-id table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0; }
+.prose-id th, .prose-id td { border-bottom: 1px solid var(--border); padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+.prose-id th { color: var(--fg-muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+@keyframes shimmer { 0% { opacity: .55 } 50% { opacity: 1 } 100% { opacity: .55 } }
+.skeleton { background: var(--surface-2); border-radius: 8px; animation: shimmer 1.4s ease-in-out infinite; }

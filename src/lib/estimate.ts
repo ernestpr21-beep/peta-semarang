@@ -1,0 +1,233 @@
+import { haversineMeters } from "./geo";
+import type { AccessTier, AreaStat, Comparable, PriceModel } from "./model";
+import { TIER_ORDER } from "./model";
+import { normalizeName, roundSig } from "./utils";
+
+export interface UsedComparable {
+  c: Comparable;
+  distanceM: number;
+  weight: number;
+}
+
+export interface TierPrice {
+  tier: AccessTier;
+  point: number;
+  low: number;
+  high: number;
+}
+
+export interface PriceEstimateResult {
+  available: true;
+  /** harga titik bidang acuan (akses jalan lingkungan, luas acuan) */
+  basePoint: number;
+  tiers: Record<AccessTier, TierPrice>;
+  /** sebaran log lokal (≈ σ) dari pembanding */
+  spreadLog: number;
+  nUsed: number;
+  nEff: number;
+  nExact: number;
+  radiusM: number;
+  nearestM: number;
+  medianDistanceM: number;
+  /** bobot prior kelurahan/kecamatan dalam % */
+  priorShare: number;
+  priorLevel: "kelurahan" | "kecamatan" | "kota";
+  priorName: string;
+  priorMedian: number;
+  localMedian: number | null;
+  halfWidthPct: { low: number; high: number };
+  confidence: "tinggi" | "sedang" | "rendah";
+  confidenceReason: string;
+  used: UsedComparable[];
+  area: number;
+  sizeFactor: number;
+  dateMin: string;
+  dateMax: string;
+}
+
+export interface PriceUnavailable {
+  available: false;
+  reason: string;
+}
+
+export type PriceResult = PriceEstimateResult | PriceUnavailable;
+
+const RADII = [400, 600, 800, 1000, 1500, 2000, 3000];
+const MIN_EFF = 8;
+const MAX_USED = 30;
+const PRIOR_STRENGTH = 3; // setara 3 pembanding
+const Z50 = 0.674; // rentang 50% tengah
+/** sebaran log minimum — dikalibrasi leave-one-out agar rentang 50% memuat ±50% iklan uji (lihat build_app_data.py) */
+export const SPREAD_FLOOR = 0.25;
+
+function weightedQuantile(values: number[], weights: number[], q: number) {
+  const idx = values.map((_, i) => i).sort((a, b) => values[a] - values[b]);
+  const total = weights.reduce((s, w) => s + w, 0);
+  let acc = 0;
+  for (const i of idx) {
+    acc += weights[i];
+    if (acc >= q * total) return values[i];
+  }
+  return values[idx[idx.length - 1]];
+}
+
+function monthsBetween(a: string, b: string) {
+  const [ya, ma] = a.split("-").map(Number);
+  const [yb, mb] = b.split("-").map(Number);
+  return (yb - ya) * 12 + (mb - ma);
+}
+
+export function sizeFactor(model: PriceModel, area: number) {
+  const a = Math.max(30, Math.min(50000, area));
+  return Math.pow(a / model.refArea, model.sizeElasticity);
+}
+
+export function findAreaStat(list: AreaStat[], name: string | null, kec?: string | null) {
+  if (!name) return null;
+  const n = normalizeName(name);
+  const k = kec ? normalizeName(kec) : null;
+  return list.find((s) => normalizeName(s.name) === n && (!k || normalizeName(s.kec) === k)) ?? list.find((s) => normalizeName(s.name) === n) ?? null;
+}
+
+export function estimatePrice(opts: {
+  lat: number;
+  lng: number;
+  insideCity: boolean;
+  comps: Comparable[];
+  model: PriceModel;
+  kelStat: AreaStat | null;
+  kecStat: AreaStat | null;
+  area?: number;
+}): PriceResult {
+  const { lat, lng, comps, model } = opts;
+  if (!opts.insideCity) return { available: false, reason: "Titik di luar Kota Semarang — estimasi tidak dihitung." };
+  if (!comps.length) return { available: false, reason: "Data estimasi tidak tersedia." };
+
+  // 1. Jarak ke semua pembanding
+  const all = comps.map((c) => ({ c, d: haversineMeters(lat, lng, c.lat, c.lng) }));
+  all.sort((a, b) => a.d - b.d);
+
+  // 2. Radius adaptif: perbesar sampai jumlah pembanding efektif cukup
+  const recency = (c: Comparable) => Math.pow(0.5, Math.max(0, monthsBetween(c.date, model.asOf)) / 12 / model.recencyHalfLifeYears);
+  let radius = RADII[RADII.length - 1];
+  let chosen: { c: Comparable; d: number }[] = [];
+  for (const r of RADII) {
+    const inR = all.filter((x) => x.d <= r);
+    const eff = inR.reduce((s, x) => s + (x.c.exact ? 1 : 0.5), 0);
+    radius = r;
+    chosen = inR;
+    if (eff >= MIN_EFF) break;
+  }
+  chosen = chosen.slice(0, MAX_USED);
+
+  // 3. Bobot: jarak (kernel Cauchy), ketepatan lokasi, umur iklan
+  const h = Math.max(250, radius / 2.5);
+  const used: UsedComparable[] = chosen.map(({ c, d }) => {
+    const w = (1 / (1 + (d / h) ** 2)) * (c.exact ? 1 : 0.5) * recency(c);
+    return { c, distanceM: d, weight: w };
+  });
+
+  // 4. Prior wilayah: kelurahan (jika cukup data) → kecamatan → kota
+  let priorLevel: PriceEstimateResult["priorLevel"] = "kota";
+  let priorName = "Kota Semarang";
+  let priorMedian = model.cityMedianPn;
+  if (opts.kelStat && opts.kelStat.n >= 3) {
+    priorLevel = "kelurahan";
+    priorName = opts.kelStat.name;
+    priorMedian = opts.kelStat.median;
+  } else if (opts.kecStat && opts.kecStat.n >= 3) {
+    priorLevel = "kecamatan";
+    priorName = opts.kecStat.name;
+    priorMedian = opts.kecStat.median;
+  }
+  const muPrior = Math.log(priorMedian);
+
+  let muLocal: number | null = null;
+  let sLocal = model.citySpreadLog;
+  let nEff = 0;
+  const wsum = used.reduce((s, u) => s + u.weight, 0);
+  if (used.length) {
+    const vals = used.map((u) => Math.log(u.c.pn));
+    const ws = used.map((u) => u.weight);
+    muLocal = weightedQuantile(vals, ws, 0.5);
+    const dev = vals.map((v) => Math.abs(v - (muLocal as number)));
+    const mad = weightedQuantile(dev, ws, 0.5);
+    nEff = wsum ** 2 / ws.reduce((s, w) => s + w * w, 0);
+    // sebaran lokal: MAD terboboti (×1.4826 ≈ σ), dicampur sebaran kota jika data sedikit
+    const sRaw = Math.max(SPREAD_FLOOR, 1.4826 * mad);
+    const k = Math.min(1, nEff / 6);
+    sLocal = k * sRaw + (1 - k) * model.citySpreadLog;
+  }
+
+  // 5. Penyusutan (shrinkage) ke prior wilayah
+  const mu = muLocal == null ? muPrior : (nEff * muLocal + PRIOR_STRENGTH * muPrior) / (nEff + PRIOR_STRENGTH);
+  const priorShare = muLocal == null ? 1 : PRIOR_STRENGTH / (nEff + PRIOR_STRENGTH);
+  const se = sLocal / Math.sqrt(Math.max(1, nEff + PRIOR_STRENGTH * 0.5));
+  const sigma = Math.sqrt(sLocal * sLocal + se * se);
+
+  const area = opts.area ?? model.refArea;
+  const sf = sizeFactor(model, area);
+  const basePoint = Math.exp(mu);
+
+  const tiers = {} as Record<AccessTier, TierPrice>;
+  for (const t of TIER_ORDER) {
+    const ti = model.tiers[t];
+    // ketidakpastian faktor akses ikut melebarkan rentang
+    const sigT = Math.log(ti.hi / ti.lo) / (2 * 1.96);
+    const sig = Math.sqrt(sigma * sigma + sigT * sigT);
+    const point = basePoint * ti.factor * sf;
+    tiers[t] = {
+      tier: t,
+      point: roundSig(point, 2),
+      low: roundSig(point * Math.exp(-Z50 * sig), 2),
+      high: roundSig(point * Math.exp(Z50 * sig), 2),
+    };
+  }
+
+  const nExact = used.filter((u) => u.c.exact).length;
+  const nearestM = all[0]?.d ?? Infinity;
+  const dists = used.map((u) => u.distanceM).sort((a, b) => a - b);
+  const medianDistanceM = dists.length ? dists[Math.floor(dists.length / 2)] : nearestM;
+
+  let confidence: PriceEstimateResult["confidence"] = "rendah";
+  let confidenceReason = "";
+  if (nEff >= 8 && medianDistanceM <= 1000 && sLocal <= 0.55) {
+    confidence = "tinggi";
+    confidenceReason = `${used.length} pembanding, median jarak ${Math.round(medianDistanceM)} m`;
+  } else if (nEff >= 4 && medianDistanceM <= 2000) {
+    confidence = "sedang";
+    confidenceReason = `${used.length} pembanding dalam ${radius >= 1000 ? radius / 1000 + " km" : radius + " m"}`;
+  } else {
+    confidenceReason = used.length
+      ? `hanya ${used.length} pembanding (radius ${radius / 1000} km); bertumpu pada median ${priorLevel}`
+      : `tidak ada pembanding dekat; memakai median ${priorLevel}`;
+  }
+
+  const dates = used.map((u) => u.c.date).sort();
+  const sig = sigma;
+  return {
+    available: true,
+    basePoint,
+    tiers,
+    spreadLog: sLocal,
+    nUsed: used.length,
+    nEff,
+    nExact,
+    radiusM: radius,
+    nearestM,
+    medianDistanceM,
+    priorShare,
+    priorLevel,
+    priorName,
+    priorMedian,
+    localMedian: muLocal == null ? null : Math.exp(muLocal),
+    halfWidthPct: { low: 1 - Math.exp(-Z50 * sig), high: Math.exp(Z50 * sig) - 1 },
+    confidence,
+    confidenceReason,
+    used: used.sort((a, b) => a.distanceM - b.distanceM),
+    area,
+    sizeFactor: sf,
+    dateMin: dates[0] ?? "",
+    dateMax: dates[dates.length - 1] ?? "",
+  };
+}
