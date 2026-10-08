@@ -1,0 +1,109 @@
+{
+ "dem": "Copernicus GLO-30 (DSM 30 m), lereng dirata-rata 3×3 sel (~90 m)",
+ "nTitik": 2032,
+ "slopeQuantiles": {
+  "0.25": 2.4,
+  "0.5": 4.3,
+  "0.75": 7.4,
+  "0.9": 11.2,
+  "0.97": 16.1
+ },
+ "refBand": "0–3°",
+ "withinKelurahan": [
+  {
+   "band": "3–6°",
+   "coef": -0.003,
+   "se": 0.034,
+   "n": 627
+  },
+  {
+   "band": "6–10°",
+   "coef": -0.039,
+   "se": 0.04,
+   "n": 444
+  },
+  {
+   "band": "10–15°",
+   "coef": 0.002,
+   "se": 0.051,
+   "n": 184
+  },
+  {
+   "band": "15–90°",
+   "coef": -0.078,
+   "se": 0.066,
+   "n": 84
+  }
+ ],
+ "withinKecamatan": [
+  {
+   "band": "3–6°",
+   "coef": -0.006,
+   "se": 0.036,
+   "n": 627
+  },
+  {
+   "band": "6–10°",
+   "coef": -0.084,
+   "se": 0.041,
+   "n": 444
+  },
+  {
+   "band": "10–15°",
+   "coef": -0.083,
+   "se": 0.053,
+   "n": 184
+  },
+  {
+   "band": "15–90°",
+   "coef": -0.064,
+   "se": 0.072,
+   "n": 84
+  }
+ ],
+ "looResidualByBand": [
+  {
+   "band": "0–3°",
+   "n": 693,
+   "q25": -0.3,
+   "median": -0.001,
+   "q75": 0.287
+  },
+  {
+   "band": "3–6°",
+   "n": 627,
+   "q25": -0.271,
+   "median": 0.023,
+   "q75": 0.282
+  },
+  {
+   "band": "6–10°",
+   "n": 444,
+   "q25": -0.294,
+   "median": 0.023,
+   "q75": 0.283
+  },
+  {
+   "band": "10–15°",
+   "n": 184,
+   "q25": -0.28,
+   "median": 0.04,
+   "q75": 0.305
+  },
+  {
+   "band": "15–90°",
+   "n": 84,
+   "q25": -0.519,
+   "median": -0.098,
+   "q75": 0.257
+  }
+ ],
+ "testPoint": {
+  "name": "Candisari Gg. V (titik uji pengguna)",
+  "lat": -7.010649,
+  "lng": 110.421304,
+  "slopeDeg": 14.6,
+  "elevM": 65.2
+ },
+ "decision": "tidak dipakai: dalam kelurahan yang sama tidak ada selisih harga bermakna menurut kelas lereng"
+}

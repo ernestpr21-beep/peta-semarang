@@ -183,6 +183,180 @@ function EvidenceSection({ ev, model }: { ev: Evidence; model: import("@/lib/mod
   );
 }
 
+const VARIANT_LABEL: Record<string, string> = {
+  kelas_tanpa_moderasi: "kelas luas, sama untuk semua wilayah",
+  kelas_moderasi_penuh: "kelas luas × tingkat harga wilayah (penuh)",
+  kelas_moderasi_bawah_median: "kelas luas × tingkat harga, hanya di bawah median (dipakai)",
+};
+const TIERS4 = ["utama", "lingkungan", "gang", "tanpa"] as const;
+
+function SizeGangSection({ ev, model }: { ev: NonNullable<Evidence["v3"]>; model: import("@/lib/model").PriceModel }) {
+  const sc = model.sizeCurve;
+  const sb = model.spreadBySize;
+  const gc = model.tierCaps?.gangCheck;
+  const tp = ev.terrain.testPoint;
+  const ba = Object.entries(ev.beforeAfter).filter(([k]) => k !== "perKecamatan") as [string, { n: number; old: VStat; new: VStat }][];
+  const kec = Object.entries(ev.beforeAfter.perKecamatan ?? {});
+  const vs = Object.entries(ev.sizeVariants);
+  const zLo = sc?.zMin ?? 0;
+  return (
+    <>
+      <h3 id="luas">5e. Luas bidang, lereng &amp; rentang gang sempit (model {model.version})</h3>
+      <p>
+        Uji lapangan pengguna: titik {tp.lat}, {tp.lng} (Candisari, Gg. V), bidang 44 m² per sertifikat, gang sempit hanya motor di lereng curam dengan rumah padat. Titik tengah peta (≈ Rp5 jt/m²) dinilai
+        wajar, tetapi batas atas rentang terlalu tinggi untuk tanah gang. Yang diperiksa dari data:
+      </p>
+      <ol>
+        <li>
+          <b>Luas bidang tidak log-linear.</b> Model lama memakai satu elastisitas ({model.sizeElasticity.toFixed(3)}: bidang kecil sedikit <i>lebih mahal</i> per m²). Dengan kelas luas dalam regresi efek tetap
+          kelurahan, bidang &lt; 75 m² justru ≈ 20% lebih murah per m² daripada 125–175 m² di kelurahan yang sama (di kelurahan bertingkat harga median ke atas), dan polanya berbeda menurut tingkat harga wilayah: di kelurahan murah bidang luas adalah lahan
+          mentah (diskon besar), di kelurahan mahal bidang luas bernilai pengembangan. Tiga spesifikasi diuji leave-one-out:
+        </li>
+      </ol>
+      <table>
+        <thead>
+          <tr>
+            <th>Kurva luas</th>
+            <th>Jumlah kuadrat sisa regresi</th>
+            <th>Galat LOO (pin tepat)</th>
+            <th>Galat LOO (semua berlokasi)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>elastisitas log-linear (lama)</td>
+            <td className="num">{vs[0]?.[1].rss.linear}</td>
+            <td className="num" colSpan={2}>
+              lihat tabel sebelum/sesudah di bawah
+            </td>
+          </tr>
+          {vs.map(([k, v]) => (
+            <tr key={k}>
+              <td>{VARIANT_LABEL[k] ?? k}</td>
+              <td className="num">{v.rss.bins}</td>
+              <td className="num">{v.looTitik}%</td>
+              <td className="num">{v.looAllLocated}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>
+        Dipakai: kelas luas dengan moderasi tingkat harga <i>hanya di bawah median</i> (median harga mentah kelurahan Rp{jt(sc?.levelCenter ?? 0)} jt/m²). Di atas median, premi bidang luas kemungkinan tercampur nilai
+        komersial/muka jalan yang tidak tercatat di iklan, jadi tidak diekstrapolasi; varian ini juga galat LOO-nya terkecil. Faktor luas (×, relatif 150 m²):
+      </p>
+      {sc ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Luas (median kelas)</th>
+              <th>Kelurahan tingkat median ke atas</th>
+              <th>Kelurahan termurah (z = {zLo.toFixed(2)})</th>
+              <th>n iklan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sc.knots.map((k) => (
+              <tr key={k.area}>
+                <td className="num">
+                  {k.area} m² <span className="text-fg-subtle">({k.minM2}–{k.maxM2 ?? "…"})</span>
+                </td>
+                <td className="num">×{Math.exp(k.coef).toFixed(2)}</td>
+                <td className="num">×{Math.exp(k.coef + (k.slope ?? 0) * zLo).toFixed(2)}</td>
+                <td className="num">{k.n}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : null}
+      <ol start={2}>
+        <li>
+          <b>Lebar rentang menurut luas.</b> Residu leave-one-out terstandar menunjukkan bidang kecil lebih seragam (rentang 50% lama memuat{" "}
+          {sb?.calibration.coverageByClassWithout[0]}% iklan &lt; 100 m²) dan bidang sangat luas jauh lebih beragam (hanya {sb?.calibration.coverageByClassWithout[4]}% untuk ≥ 1.500 m²). Pengali σ per kelas luas:{" "}
+          {sb?.classes.map((c) => `${c.minM2}–${c.maxM2 ?? "…"} m² ×${c.scale.toFixed(2)}`).join(", ")}; cakupan per kelas menjadi {sb?.calibration.coverageByClassWith.join("/")}%. Uji silang 2 lipat (skala
+          dihitung di separuh data, diuji di separuh lain): cakupan {sb?.calibration.crossFitCoverage50.map((c) => `${c.without}% → ${c.withScale}%`).join(" dan ")}.
+        </li>
+        <li>
+          <b>Batas atas gang &amp; tanpa akses.</b> Rentang tier gang tidak lagi sekadar rentang jalan lingkungan × faktor: batas atasnya dibatasi pada <i>titik estimasi jalan lingkungan</i> di lokasi &amp; luas yang
+          sama (tanah yang hanya bisa dicapai motor tidak dihargai di atas tanah yang bisa dimasuki mobil di titik yang sama); batas atas tanpa akses dibatasi pada titik estimasi gang. Ini aturan struktural, bukan
+          hasil estimasi — datanya terlalu sedikit untuk membuktikan atau membantahnya: dari {gc?.n} iklan yang menyebut gang/akses motor, median harganya{" "}
+          {gc?.medianLogVsLingPoint != null ? `×${Math.exp(gc.medianLogVsLingPoint).toFixed(2)}` : "—"} dan kuartil atasnya{" "}
+          {gc?.q75LogVsLingPoint != null ? `×${Math.exp(gc.q75LogVsLingPoint).toFixed(2)}` : "—"} dari titik jalan lingkungan di lokasinya ({gc?.shareAboveLingPoint}% di atasnya). Cakupan rentang 50% pada iklan gang
+          itu {gc?.withoutCap?.coverage50}% tanpa batas → {gc?.withCap?.coverage50}% dengan batas (n kecil; label teks iklan juga tidak selalu tepat).
+        </li>
+        <li>
+          <b>Lereng: diuji, tidak dipakai.</b> {ev.terrain.dem}. Titik uji pengguna lerengnya ≈ {tp.slopeDeg}° (lebih curam dari 97% iklan berpin; median {ev.terrain.slopeQuantiles["0.5"]}°). Dalam kelurahan yang
+          sama, selisih harga menurut kelas lereng (acuan {ev.terrain.refBand}):{" "}
+          {ev.terrain.withinKelurahan.map((b) => `${b.band} ${b.coef >= 0 ? "+" : "−"}${Math.abs(b.coef).toFixed(2)} ± ${b.se.toFixed(2)} (n=${b.n})`).join(", ")} — tidak bermakna. Hanya kelas ≥ 15° (n=
+          {ev.terrain.looResidualByBand[4]?.n}) yang residunya sedikit negatif (median {ev.terrain.looResidualByBand[4]?.median}), belum cukup untuk faktor. Skrip: <code>data-pipeline/analysis/terrain_eval.py</code>.
+        </li>
+      </ol>
+      <p>Validasi model {model.version} vs model sebelumnya (estimator sama, leave-one-out, target sama):</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Kelompok</th>
+            <th>n</th>
+            <th>Galat sebelum</th>
+            <th>Galat sesudah</th>
+            <th>Cakupan sebelum → sesudah</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ba.map(([k, x]) => (
+            <tr key={k}>
+              <td>{k}</td>
+              <td className="num">{x.n}</td>
+              <td className="num">{x.old.mdae}%</td>
+              <td className="num">{x.new.mdae}%</td>
+              <td className="num">
+                {x.old.cov50}% → {x.new.cov50}%
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-fg-muted">
+        Per kecamatan: {kec.map(([k, x]) => `${k} ${x.old.mdae}→${x.new.mdae}%`).join(" · ")}. Yang memburuk: kecamatan pinggiran (Gunungpati, Mijen, Genuk), Tembalang (sedikit), serta Semarang Selatan &amp;
+        Timur (n kecil). Kurva luas adalah rata-rata kota per tingkat harga; di wilayah-wilayah ini pola luas–harga tampaknya berbeda. Catatan: estimasi bidang 150 m² di wilayah mahal turun karena bidang luas di
+        sana (yang per m² lebih mahal) kini dinormalisasi ke bawah sebelum dipakai sebagai pembanding.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Titik (luas)</th>
+            {TIERS4.map((t) => (
+              <th key={t}>{model.tiers[t].short} (sebelum → sesudah)</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {ev.points.after.map((p, i) => {
+            const b = ev.points.before[i];
+            return (
+              <tr key={p.name}>
+                <td>
+                  {p.name} <span className="text-fg-subtle">({p.area ?? 150} m²)</span>
+                </td>
+                {TIERS4.map((t) => (
+                  <td key={t} className="num">
+                    {b?.[t] && p[t] ? (
+                      <>
+                        {rng(b[t]!)} → <b>{rng(p[t]!)}</b>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
 const pct = (f: number) => `${f >= 1 ? "+" : "−"}${Math.abs(Math.round((f - 1) * 100))}%`;
 
 export function MetodologiPage() {
@@ -217,7 +391,7 @@ export function MetodologiPage() {
         dibersihkan tersisa <b>{meta.counts.clean.toLocaleString("id-ID")} iklan</b> di {meta.kelurahanCovered} dari {meta.kelurahanTotal} kelurahan, tanggal iklan {formatMonth(meta.dateMin)}–{formatMonth(meta.dateMax)}. Rincian per
         kelurahan ada di <Link to="/data-zona">Data zona</Link>.
       </p>
-      <p>Pembersihan (skrip <code>data-pipeline/clean_listings.py</code>, data mentah ikut disimpan di repositori):</p>
+      <p>Pembersihan (skrip <code>data-pipeline/clean_listings.py</code>; data mentah iklan tidak dipublikasikan karena memuat kontak agen — nomor telepon, tautan WhatsApp &amp; email dihapus dari data yang dipakai):</p>
       <ul>
         <li>Hanya iklan jual tanah; iklan yang jelas berisi bangunan (rumah, gudang, ruko) dibuang kecuali disebut "hitung tanah".</li>
         <li>Harga/m² = harga ÷ luas tanah; iklan yang mencantumkan harga per m² dikenali dan tidak dibagi dua kali. Luas &lt; 30 m² atau &gt; 20 ha, dan harga/m² di luar Rp75 rb–Rp75 jt dibuang.</li>
@@ -246,13 +420,23 @@ export function MetodologiPage() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>log(luas/{model.refArea})</td>
-            <td className="num">
-              {model.sizeElasticity.toFixed(3)} ± {model.sizeElasticitySE.toFixed(3)}
-            </td>
-            <td>luas 2× → harga/m² {pct(Math.pow(2, model.sizeElasticity))}</td>
-          </tr>
+          {model.sizeCurve ? (
+            <tr>
+              <td>kelas luas (acuan {model.sizeCurve.refBin[0]}–{model.sizeCurve.refBin[1]} m²)</td>
+              <td className="num">{model.sizeCurve.knots.map((k) => `${k.area} m² ${k.coefRaw >= 0 ? "+" : "−"}${Math.abs(k.coefRaw).toFixed(2)}`).join(" · ")}</td>
+              <td>
+                kurva luas, berbeda menurut tingkat harga wilayah — lihat <a href="#luas">bagian 5e</a> (dulu satu elastisitas {model.sizeElasticity.toFixed(3)} ± {model.sizeElasticitySE.toFixed(3)})
+              </td>
+            </tr>
+          ) : (
+            <tr>
+              <td>log(luas/{model.refArea})</td>
+              <td className="num">
+                {model.sizeElasticity.toFixed(3)} ± {model.sizeElasticitySE.toFixed(3)}
+              </td>
+              <td>luas 2× → harga/m² {pct(Math.pow(2, model.sizeElasticity))}</td>
+            </tr>
+          )}
           {ct["tier:utama"] ? (
             <tr>
               <td>akses jalan utama (disebut di iklan)</td>
@@ -305,8 +489,8 @@ export function MetodologiPage() {
         <li>Bobot tiap pembanding: kernel jarak (makin dekat makin berat), ketepatan lokasi, dan umur iklan (waktu paruh {model.recencyHalfLifeYears} tahun).</li>
         <li>Median terboboti dari harga ternormalisasi → harga lokal. Lalu "disusutkan" ke median kelurahan (atau kecamatan/kota bila data kelurahan &lt; 3) dengan bobot setara 3 pembanding — makin sedikit data lokal, makin besar peran median wilayah.</li>
         <li>
-          <b>Rentang</b> = 50% tengah distribusi (±0,674σ), dengan σ dari sebaran (MAD, bobot diratakan dengan akar bobot agar 1–2 iklan terdekat tidak mendominasi) pembanding terdekat — dicampur sebaran kota bila pembanding sedikit — ditambah ketidakpastian faktor akses. Jadi lebar rentang
-          mengikuti kepadatan &amp; keragaman data, bukan ±20% tetap.
+          <b>Rentang</b> = 50% tengah distribusi (±0,674σ), dengan σ dari sebaran (MAD, bobot diratakan dengan akar bobot agar 1–2 iklan terdekat tidak mendominasi) pembanding terdekat — dicampur sebaran kota bila pembanding sedikit — ditambah ketidakpastian faktor akses, lalu dikali pengali menurut luas bidang (bidang kecil lebih seragam, bidang sangat luas lebih beragam). Untuk gang sempit, batas atas tidak melebihi titik
+          estimasi jalan lingkungan; untuk tanpa akses, tidak melebihi titik estimasi gang (<a href="#luas">bagian 5e</a>). Jadi lebar rentang mengikuti kepadatan &amp; keragaman data, bukan ±20% tetap.
         </li>
         <li>Harga untuk kondisi akses &amp; luas yang dipilih = harga dasar × faktor kedekatan kampus × faktor akses (jalan utama: × premi pusat kota) × faktor luas. Angka dibulatkan 2 angka penting.</li>
         <li>Tingkat keyakinan: tinggi (≥ 8 pembanding efektif, median jarak ≤ 1 km, sebaran wajar), sedang (≥ 4 dalam 2 km), selain itu rendah.</li>
@@ -387,6 +571,7 @@ export function MetodologiPage() {
       </p>
 
       {ev.data ? <EvidenceSection ev={ev.data} model={model} /> : null}
+      {ev.data?.v3 ? <SizeGangSection ev={ev.data.v3} model={model} /> : null}
 
       <h2>6. Validasi (leave-one-out)</h2>
       <p>
@@ -416,7 +601,7 @@ export function MetodologiPage() {
         </tbody>
       </table>
       <p>
-        {v.within25pct_model}% iklan tertebak dalam ±25%. Rentang 50% yang ditampilkan memuat {v.coverage50pct}% iklan uji (target 50%) — sebaran minimum log 0,25 dipilih dari kalibrasi ini. Galat ini juga mencerminkan keragaman harga penawaran itu sendiri (iklan sejenis di lokasi sama bisa berbeda 2×).
+        {v.within25pct_model}% iklan tertebak dalam ±25%. Rentang 50% yang ditampilkan memuat {v.coverage50pct}% iklan uji (target 50%) — sebaran minimum log 0,25 dan pengali per kelas luas dipilih dari kalibrasi ini. Galat ini juga mencerminkan keragaman harga penawaran itu sendiri (iklan sejenis di lokasi sama bisa berbeda 2×).
       </p>
 
       <h2>7. Skor lokasi 0–100</h2>
@@ -430,7 +615,7 @@ export function MetodologiPage() {
         <li>Harga penawaran ≠ harga transaksi. Contoh di Juknis Penilaian Tanah BPN 2023 menunjukkan selisih penawaran–transaksi 17–24%; angka di sini tidak dikoreksi untuk itu.</li>
         <li>Data menumpuk di Tembalang, Gunungpati, Banyumanik; kecamatan pusat &amp; utara (Semarang Tengah/Selatan/Utara, Tugu, Genuk, Gayamsari) jauh lebih sedikit iklannya — rentang di pusat kota lebar.</li>
         <li>Lokasi iklan bergantung pada pin/teks dari pengiklan; perbaikan di bagian 5 menangkap pola yang jelas (titik bersama, nama kecamatan, teks bertentangan), tidak semua salah letak.</li>
-        <li>Ciri bidang (bentuk, hook, banjir/rob, kontur, zonasi RDTR, status sertifikat) tidak dimodelkan.</li>
+        <li>Ciri bidang (bentuk, hook, banjir/rob, zonasi RDTR, status sertifikat) tidak dimodelkan. Kemiringan lereng sudah diuji dengan DEM Copernicus 30 m tetapi tidak berpengaruh bermakna di dalam kelurahan, jadi tidak dipakai (bagian 5e).</li>
         <li>Tidak memakai data NIB/sertifikat. Nilai ZNT BPN tidak diambil otomatis — cek manual di BHUMI.</li>
       </ul>
       <p className="text-fg-muted">

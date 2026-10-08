@@ -1,0 +1,1142 @@
+[
+ {
+  "name": "Jl. Prof. Soedarto (depan Undip)",
+  "lat": -7.05561,
+  "lng": 110.43728,
+  "area": 150,
+  "kelurahan": "Tembalang",
+  "nUsed": 17,
+  "nExact": 17,
+  "radiusM": 400,
+  "utama": {
+   "low": 6200000,
+   "point": 8900000,
+   "high": 13000000
+  },
+  "lingkungan": {
+   "low": 5200000,
+   "point": 7400000,
+   "high": 10000000
+  },
+  "gang": {
+   "low": 4300000,
+   "point": 6100000,
+   "high": 8700000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 4100000,
+   "high": 5800000
+  }
+ },
+ {
+  "name": "Jl. Banjarsari Raya",
+  "lat": -7.05877,
+  "lng": 110.43529,
+  "area": 150,
+  "kelurahan": "Tembalang",
+  "nUsed": 11,
+  "nExact": 11,
+  "radiusM": 400,
+  "utama": {
+   "low": 8200000,
+   "point": 10000000,
+   "high": 12000000
+  },
+  "lingkungan": {
+   "low": 6900000,
+   "point": 8500000,
+   "high": 10000000
+  },
+  "gang": {
+   "low": 5700000,
+   "point": 7000000,
+   "high": 8700000
+  },
+  "tanpa": {
+   "low": 3700000,
+   "point": 4600000,
+   "high": 5800000
+  }
+ },
+ {
+  "name": "Jl. Tirto Agung (Pedalangan)",
+  "lat": -7.05412,
+  "lng": 110.43067,
+  "area": 150,
+  "kelurahan": "Pedalangan",
+  "nUsed": 10,
+  "nExact": 10,
+  "radiusM": 600,
+  "utama": {
+   "low": 5700000,
+   "point": 6900000,
+   "high": 8400000
+  },
+  "lingkungan": {
+   "low": 4700000,
+   "point": 5800000,
+   "high": 7000000
+  },
+  "gang": {
+   "low": 3900000,
+   "point": 4800000,
+   "high": 5800000
+  },
+  "tanpa": {
+   "low": 2500000,
+   "point": 3200000,
+   "high": 3900000
+  }
+ },
+ {
+  "name": "Jl. Ngesrep Timur V",
+  "lat": -7.04851,
+  "lng": 110.4244,
+  "area": 150,
+  "kelurahan": "Sumurboto",
+  "nUsed": 16,
+  "nExact": 16,
+  "radiusM": 400,
+  "utama": {
+   "low": 6300000,
+   "point": 8600000,
+   "high": 12000000
+  },
+  "lingkungan": {
+   "low": 5200000,
+   "point": 7100000,
+   "high": 9800000
+  },
+  "gang": {
+   "low": 4300000,
+   "point": 5900000,
+   "high": 8100000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 3900000,
+   "high": 5500000
+  }
+ },
+ {
+  "name": "Jl. Mulawarman Raya",
+  "lat": -7.06382,
+  "lng": 110.43814,
+  "area": 150,
+  "kelurahan": "Pedalangan",
+  "nUsed": 16,
+  "nExact": 16,
+  "radiusM": 400,
+  "utama": {
+   "low": 5400000,
+   "point": 6700000,
+   "high": 8300000
+  },
+  "lingkungan": {
+   "low": 4500000,
+   "point": 5600000,
+   "high": 6900000
+  },
+  "gang": {
+   "low": 3700000,
+   "point": 4600000,
+   "high": 5700000
+  },
+  "tanpa": {
+   "low": 2400000,
+   "point": 3100000,
+   "high": 3900000
+  }
+ },
+ {
+  "name": "Jl. Sumurboto Utara",
+  "lat": -7.05092,
+  "lng": 110.42745,
+  "area": 150,
+  "kelurahan": "Sumurboto",
+  "nUsed": 10,
+  "nExact": 10,
+  "radiusM": 400,
+  "utama": {
+   "low": 8200000,
+   "point": 10000000,
+   "high": 13000000
+  },
+  "lingkungan": {
+   "low": 6800000,
+   "point": 8500000,
+   "high": 11000000
+  },
+  "gang": {
+   "low": 5600000,
+   "point": 7100000,
+   "high": 8900000
+  },
+  "tanpa": {
+   "low": 3700000,
+   "point": 4700000,
+   "high": 6000000
+  }
+ },
+ {
+  "name": "Jl. Baskoro Raya",
+  "lat": -7.05479,
+  "lng": 110.43673,
+  "area": 150,
+  "kelurahan": "Tembalang",
+  "nUsed": 16,
+  "nExact": 16,
+  "radiusM": 400,
+  "utama": {
+   "low": 6100000,
+   "point": 8300000,
+   "high": 11000000
+  },
+  "lingkungan": {
+   "low": 5100000,
+   "point": 6900000,
+   "high": 9300000
+  },
+  "gang": {
+   "low": 4200000,
+   "point": 5700000,
+   "high": 7800000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 3800000,
+   "high": 5200000
+  }
+ },
+ {
+  "name": "Jl. Timoho Raya",
+  "lat": -7.06016,
+  "lng": 110.44208,
+  "area": 150,
+  "kelurahan": "Bulusan",
+  "nUsed": 19,
+  "nExact": 19,
+  "radiusM": 400,
+  "utama": {
+   "low": 6200000,
+   "point": 8100000,
+   "high": 10000000
+  },
+  "lingkungan": {
+   "low": 5200000,
+   "point": 6700000,
+   "high": 8700000
+  },
+  "gang": {
+   "low": 4300000,
+   "point": 5600000,
+   "high": 7200000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 3700000,
+   "high": 4900000
+  }
+ },
+ {
+  "name": "Tembalang (titik uji lama)",
+  "lat": -7.0535,
+  "lng": 110.4386,
+  "area": 150,
+  "kelurahan": "Tembalang",
+  "nUsed": 19,
+  "nExact": 16,
+  "radiusM": 400,
+  "utama": {
+   "low": 5800000,
+   "point": 7400000,
+   "high": 9500000
+  },
+  "lingkungan": {
+   "low": 4800000,
+   "point": 6200000,
+   "high": 7800000
+  },
+  "gang": {
+   "low": 4000000,
+   "point": 5100000,
+   "high": 6500000
+  },
+  "tanpa": {
+   "low": 2600000,
+   "point": 3400000,
+   "high": 4400000
+  }
+ },
+ {
+  "name": "Sekaran (dekat Unnes)",
+  "lat": -7.0505,
+  "lng": 110.3925,
+  "area": 150,
+  "kelurahan": "Sekaran",
+  "nUsed": 30,
+  "nExact": 14,
+  "radiusM": 400,
+  "utama": {
+   "low": 2300000,
+   "point": 2800000,
+   "high": 3400000
+  },
+  "lingkungan": {
+   "low": 1900000,
+   "point": 2300000,
+   "high": 2900000
+  },
+  "gang": {
+   "low": 1600000,
+   "point": 1900000,
+   "high": 2400000
+  },
+  "tanpa": {
+   "low": 1000000,
+   "point": 1300000,
+   "high": 1600000
+  }
+ },
+ {
+  "name": "CBD: Simpang Lima (tengah)",
+  "lat": -6.990464,
+  "lng": 110.422918,
+  "area": 150,
+  "kelurahan": "Pleburan",
+  "nUsed": 18,
+  "nExact": 8,
+  "radiusM": 600,
+  "utama": {
+   "low": 17000000,
+   "point": 30000000,
+   "high": 53000000
+  },
+  "lingkungan": {
+   "low": 6800000,
+   "point": 12000000,
+   "high": 20000000
+  },
+  "gang": {
+   "low": 5700000,
+   "point": 9600000,
+   "high": 16000000
+  },
+  "tanpa": {
+   "low": 3700000,
+   "point": 6400000,
+   "high": 11000000
+  }
+ },
+ {
+  "name": "CBD: Simpang Lima (tepi Pandanaran)",
+  "lat": -6.98995,
+  "lng": 110.42226,
+  "area": 150,
+  "kelurahan": "Mugassari",
+  "nUsed": 16,
+  "nExact": 7,
+  "radiusM": 600,
+  "utama": {
+   "low": 18000000,
+   "point": 29000000,
+   "high": 47000000
+  },
+  "lingkungan": {
+   "low": 7200000,
+   "point": 12000000,
+   "high": 18000000
+  },
+  "gang": {
+   "low": 6000000,
+   "point": 9600000,
+   "high": 15000000
+  },
+  "tanpa": {
+   "low": 3900000,
+   "point": 6400000,
+   "high": 10000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Pandanaran (barat)",
+  "lat": -6.98701,
+  "lng": 110.41552,
+  "area": 150,
+  "kelurahan": "Mugassari",
+  "nUsed": 19,
+  "nExact": 9,
+  "radiusM": 800,
+  "utama": {
+   "low": 15000000,
+   "point": 24000000,
+   "high": 39000000
+  },
+  "lingkungan": {
+   "low": 8300000,
+   "point": 13000000,
+   "high": 21000000
+  },
+  "gang": {
+   "low": 6900000,
+   "point": 11000000,
+   "high": 17000000
+  },
+  "tanpa": {
+   "low": 4500000,
+   "point": 7200000,
+   "high": 12000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Pandanaran (timur)",
+  "lat": -6.98882,
+  "lng": 110.42008,
+  "area": 150,
+  "kelurahan": "Mugassari",
+  "nUsed": 16,
+  "nExact": 9,
+  "radiusM": 600,
+  "utama": {
+   "low": 19000000,
+   "point": 34000000,
+   "high": 62000000
+  },
+  "lingkungan": {
+   "low": 8700000,
+   "point": 16000000,
+   "high": 28000000
+  },
+  "gang": {
+   "low": 7200000,
+   "point": 13000000,
+   "high": 23000000
+  },
+  "tanpa": {
+   "low": 4700000,
+   "point": 8500000,
+   "high": 15000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Pemuda",
+  "lat": -6.97566,
+  "lng": 110.41821,
+  "area": 150,
+  "kelurahan": "Pandansari",
+  "nUsed": 15,
+  "nExact": 8,
+  "radiusM": 800,
+  "utama": {
+   "low": 7000000,
+   "point": 14000000,
+   "high": 30000000
+  },
+  "lingkungan": {
+   "low": 4600000,
+   "point": 9400000,
+   "high": 19000000
+  },
+  "gang": {
+   "low": 3800000,
+   "point": 7800000,
+   "high": 16000000
+  },
+  "tanpa": {
+   "low": 2500000,
+   "point": 5200000,
+   "high": 11000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Gajah Mada",
+  "lat": -6.97945,
+  "lng": 110.42111,
+  "area": 150,
+  "kelurahan": "Kembangsari",
+  "nUsed": 21,
+  "nExact": 13,
+  "radiusM": 800,
+  "utama": {
+   "low": 16000000,
+   "point": 27000000,
+   "high": 47000000
+  },
+  "lingkungan": {
+   "low": 9500000,
+   "point": 16000000,
+   "high": 28000000
+  },
+  "gang": {
+   "low": 7900000,
+   "point": 13000000,
+   "high": 23000000
+  },
+  "tanpa": {
+   "low": 5200000,
+   "point": 8900000,
+   "high": 15000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Ahmad Yani",
+  "lat": -6.99204,
+  "lng": 110.42694,
+  "area": 150,
+  "kelurahan": "Karangkidul",
+  "nUsed": 16,
+  "nExact": 8,
+  "radiusM": 600,
+  "utama": {
+   "low": 11000000,
+   "point": 22000000,
+   "high": 43000000
+  },
+  "lingkungan": {
+   "low": 5100000,
+   "point": 10000000,
+   "high": 20000000
+  },
+  "gang": {
+   "low": 4200000,
+   "point": 8500000,
+   "high": 17000000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 5600000,
+   "high": 11000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Pahlawan",
+  "lat": -6.99435,
+  "lng": 110.42062,
+  "area": 150,
+  "kelurahan": "Mugassari",
+  "nUsed": 19,
+  "nExact": 10,
+  "radiusM": 800,
+  "utama": {
+   "low": 20000000,
+   "point": 27000000,
+   "high": 38000000
+  },
+  "lingkungan": {
+   "low": 9700000,
+   "point": 13000000,
+   "high": 18000000
+  },
+  "gang": {
+   "low": 8000000,
+   "point": 11000000,
+   "high": 15000000
+  },
+  "tanpa": {
+   "low": 5200000,
+   "point": 7200000,
+   "high": 9900000
+  }
+ },
+ {
+  "name": "CBD: Jl. MT Haryono (Peterongan)",
+  "lat": -6.97997,
+  "lng": 110.4314,
+  "area": 150,
+  "kelurahan": "Jagalan",
+  "nUsed": 24,
+  "nExact": 12,
+  "radiusM": 1000,
+  "utama": {
+   "low": 9700000,
+   "point": 20000000,
+   "high": 41000000
+  },
+  "lingkungan": {
+   "low": 6100000,
+   "point": 13000000,
+   "high": 26000000
+  },
+  "gang": {
+   "low": 5100000,
+   "point": 10000000,
+   "high": 22000000
+  },
+  "tanpa": {
+   "low": 3300000,
+   "point": 6900000,
+   "high": 14000000
+  }
+ },
+ {
+  "name": "CBD: Jl. MH Thamrin",
+  "lat": -6.9857,
+  "lng": 110.41762,
+  "area": 150,
+  "kelurahan": "Pekunden",
+  "nUsed": 13,
+  "nExact": 8,
+  "radiusM": 600,
+  "utama": {
+   "low": 15000000,
+   "point": 29000000,
+   "high": 55000000
+  },
+  "lingkungan": {
+   "low": 8000000,
+   "point": 15000000,
+   "high": 29000000
+  },
+  "gang": {
+   "low": 6600000,
+   "point": 13000000,
+   "high": 24000000
+  },
+  "tanpa": {
+   "low": 4300000,
+   "point": 8300000,
+   "high": 16000000
+  }
+ },
+ {
+  "name": "CBD: Jl. Imam Bonjol",
+  "lat": -6.97294,
+  "lng": 110.41613,
+  "area": 150,
+  "kelurahan": "Purwosari",
+  "nUsed": 17,
+  "nExact": 7,
+  "radiusM": 1000,
+  "utama": {
+   "low": 4800000,
+   "point": 8300000,
+   "high": 15000000
+  },
+  "lingkungan": {
+   "low": 3300000,
+   "point": 5700000,
+   "high": 10000000
+  },
+  "gang": {
+   "low": 2700000,
+   "point": 4800000,
+   "high": 8400000
+  },
+  "tanpa": {
+   "low": 1800000,
+   "point": 3200000,
+   "high": 5600000
+  }
+ },
+ {
+  "name": "Koridor: Jl. Sultan Agung",
+  "lat": -7.01304,
+  "lng": 110.41751,
+  "area": 150,
+  "kelurahan": "Wonotingal",
+  "nUsed": 12,
+  "nExact": 12,
+  "radiusM": 800,
+  "utama": {
+   "low": 7100000,
+   "point": 9900000,
+   "high": 14000000
+  },
+  "lingkungan": {
+   "low": 5200000,
+   "point": 7200000,
+   "high": 10000000
+  },
+  "gang": {
+   "low": 4300000,
+   "point": 6000000,
+   "high": 8400000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 4000000,
+   "high": 5600000
+  }
+ },
+ {
+  "name": "Koridor: Jl. Setiabudi",
+  "lat": -7.04368,
+  "lng": 110.42154,
+  "area": 150,
+  "kelurahan": "Tinjomoyo",
+  "nUsed": 10,
+  "nExact": 10,
+  "radiusM": 400,
+  "utama": {
+   "low": 3200000,
+   "point": 5200000,
+   "high": 8300000
+  },
+  "lingkungan": {
+   "low": 2700000,
+   "point": 4300000,
+   "high": 6900000
+  },
+  "gang": {
+   "low": 2200000,
+   "point": 3600000,
+   "high": 5700000
+  },
+  "tanpa": {
+   "low": 1500000,
+   "point": 2400000,
+   "high": 3800000
+  }
+ },
+ {
+  "name": "Koridor: Jl. Majapahit",
+  "lat": -7.003,
+  "lng": 110.44993,
+  "area": 150,
+  "kelurahan": "Gayamsari",
+  "nUsed": 19,
+  "nExact": 14,
+  "radiusM": 1000,
+  "utama": {
+   "low": 3300000,
+   "point": 4500000,
+   "high": 6000000
+  },
+  "lingkungan": {
+   "low": 2600000,
+   "point": 3400000,
+   "high": 4600000
+  },
+  "gang": {
+   "low": 2100000,
+   "point": 2900000,
+   "high": 3900000
+  },
+  "tanpa": {
+   "low": 1400000,
+   "point": 1900000,
+   "high": 2600000
+  }
+ },
+ {
+  "name": "Koridor: Jl. Siliwangi",
+  "lat": -6.9873,
+  "lng": 110.371,
+  "area": 150,
+  "kelurahan": "Krapyak",
+  "nUsed": 19,
+  "nExact": 1,
+  "radiusM": 600,
+  "utama": {
+   "low": 5500000,
+   "point": 8000000,
+   "high": 12000000
+  },
+  "lingkungan": {
+   "low": 4600000,
+   "point": 6600000,
+   "high": 9500000
+  },
+  "gang": {
+   "low": 3800000,
+   "point": 5500000,
+   "high": 7900000
+  },
+  "tanpa": {
+   "low": 2500000,
+   "point": 3600000,
+   "high": 5300000
+  }
+ },
+ {
+  "name": "Kontrol: Pedurungan",
+  "lat": -7.0019,
+  "lng": 110.4661,
+  "area": 150,
+  "kelurahan": "Palebon",
+  "nUsed": 26,
+  "nExact": 8,
+  "radiusM": 400,
+  "utama": {
+   "low": 4100000,
+   "point": 5200000,
+   "high": 6600000
+  },
+  "lingkungan": {
+   "low": 3400000,
+   "point": 4200000,
+   "high": 5300000
+  },
+  "gang": {
+   "low": 2800000,
+   "point": 3500000,
+   "high": 4400000
+  },
+  "tanpa": {
+   "low": 1800000,
+   "point": 2300000,
+   "high": 3000000
+  }
+ },
+ {
+  "name": "Kontrol: Gunungpati",
+  "lat": -7.0886,
+  "lng": 110.3734,
+  "area": 150,
+  "kelurahan": "Mangunsari",
+  "nUsed": 11,
+  "nExact": 11,
+  "radiusM": 600,
+  "utama": {
+   "low": 1400000,
+   "point": 1800000,
+   "high": 2100000
+  },
+  "lingkungan": {
+   "low": 1200000,
+   "point": 1500000,
+   "high": 1800000
+  },
+  "gang": {
+   "low": 1000000,
+   "point": 1200000,
+   "high": 1500000
+  },
+  "tanpa": {
+   "low": 650000,
+   "point": 810000,
+   "high": 1000000
+  }
+ },
+ {
+  "name": "Kontrol: Mijen",
+  "lat": -7.0596,
+  "lng": 110.307,
+  "area": 150,
+  "kelurahan": "Wonolopo",
+  "nUsed": 30,
+  "nExact": 21,
+  "radiusM": 1500,
+  "utama": {
+   "low": 1800000,
+   "point": 2300000,
+   "high": 2900000
+  },
+  "lingkungan": {
+   "low": 1500000,
+   "point": 1900000,
+   "high": 2500000
+  },
+  "gang": {
+   "low": 1200000,
+   "point": 1600000,
+   "high": 2000000
+  },
+  "tanpa": {
+   "low": 800000,
+   "point": 1000000,
+   "high": 1400000
+  }
+ },
+ {
+  "name": "Kontrol: Genuk",
+  "lat": -6.9594,
+  "lng": 110.472,
+  "area": 150,
+  "kelurahan": "Genuksari",
+  "nUsed": 18,
+  "nExact": 16,
+  "radiusM": 1500,
+  "utama": {
+   "low": 1800000,
+   "point": 2300000,
+   "high": 3000000
+  },
+  "lingkungan": {
+   "low": 1500000,
+   "point": 1900000,
+   "high": 2400000
+  },
+  "gang": {
+   "low": 1200000,
+   "point": 1600000,
+   "high": 2000000
+  },
+  "tanpa": {
+   "low": 800000,
+   "point": 1000000,
+   "high": 1400000
+  }
+ },
+ {
+  "name": "Kontrol: Banyumanik",
+  "lat": -7.0647,
+  "lng": 110.4178,
+  "area": 150,
+  "kelurahan": "Srondol Wetan",
+  "nUsed": 24,
+  "nExact": 15,
+  "radiusM": 600,
+  "utama": {
+   "low": 4700000,
+   "point": 6200000,
+   "high": 8300000
+  },
+  "lingkungan": {
+   "low": 3900000,
+   "point": 5200000,
+   "high": 6900000
+  },
+  "gang": {
+   "low": 3300000,
+   "point": 4300000,
+   "high": 5700000
+  },
+  "tanpa": {
+   "low": 2100000,
+   "point": 2900000,
+   "high": 3900000
+  }
+ },
+ {
+  "name": "Gang: Candisari Gg. V (titik uji pengguna, 44 m²)",
+  "lat": -7.010649,
+  "lng": 110.421304,
+  "area": 44,
+  "kelurahan": "Wonotingal",
+  "nUsed": 23,
+  "nExact": 10,
+  "radiusM": 1000,
+  "utama": {
+   "low": 7300000,
+   "point": 11000000,
+   "high": 17000000
+  },
+  "lingkungan": {
+   "low": 5200000,
+   "point": 7900000,
+   "high": 12000000
+  },
+  "gang": {
+   "low": 4300000,
+   "point": 6600000,
+   "high": 10000000
+  },
+  "tanpa": {
+   "low": 2800000,
+   "point": 4400000,
+   "high": 6800000
+  }
+ },
+ {
+  "name": "Gang: Candisari Gg. V (luas acuan 150 m²)",
+  "lat": -7.010649,
+  "lng": 110.421304,
+  "area": 150,
+  "kelurahan": "Wonotingal",
+  "nUsed": 23,
+  "nExact": 10,
+  "radiusM": 1000,
+  "utama": {
+   "low": 7000000,
+   "point": 11000000,
+   "high": 17000000
+  },
+  "lingkungan": {
+   "low": 4900000,
+   "point": 7600000,
+   "high": 12000000
+  },
+  "gang": {
+   "low": 4100000,
+   "point": 6300000,
+   "high": 9700000
+  },
+  "tanpa": {
+   "low": 2700000,
+   "point": 4200000,
+   "high": 6500000
+  }
+ },
+ {
+  "name": "Gang: Jomblang (Candisari)",
+  "lat": -7.0102,
+  "lng": 110.4268,
+  "area": 150,
+  "kelurahan": "Candi",
+  "nUsed": 15,
+  "nExact": 7,
+  "radiusM": 600,
+  "utama": {
+   "low": 7900000,
+   "point": 12000000,
+   "high": 18000000
+  },
+  "lingkungan": {
+   "low": 5600000,
+   "point": 8500000,
+   "high": 13000000
+  },
+  "gang": {
+   "low": 4600000,
+   "point": 7000000,
+   "high": 11000000
+  },
+  "tanpa": {
+   "low": 3000000,
+   "point": 4700000,
+   "high": 7100000
+  }
+ },
+ {
+  "name": "Gang: Bendan Duwur (Gajahmungkur)",
+  "lat": -7.0182,
+  "lng": 110.4038,
+  "area": 150,
+  "kelurahan": "Gajah Mungkur",
+  "nUsed": 20,
+  "nExact": 16,
+  "radiusM": 1000,
+  "utama": {
+   "low": 5800000,
+   "point": 7500000,
+   "high": 9700000
+  },
+  "lingkungan": {
+   "low": 4600000,
+   "point": 5900000,
+   "high": 7600000
+  },
+  "gang": {
+   "low": 3800000,
+   "point": 4900000,
+   "high": 6300000
+  },
+  "tanpa": {
+   "low": 2500000,
+   "point": 3200000,
+   "high": 4200000
+  }
+ },
+ {
+  "name": "Gang: Lempongsari",
+  "lat": -7.0005,
+  "lng": 110.4105,
+  "area": 150,
+  "kelurahan": "Lempongsari",
+  "nUsed": 20,
+  "nExact": 13,
+  "radiusM": 1000,
+  "utama": {
+   "low": 5800000,
+   "point": 13000000,
+   "high": 28000000
+  },
+  "lingkungan": {
+   "low": 3800000,
+   "point": 8400000,
+   "high": 19000000
+  },
+  "gang": {
+   "low": 3200000,
+   "point": 7000000,
+   "high": 15000000
+  },
+  "tanpa": {
+   "low": 2100000,
+   "point": 4600000,
+   "high": 10000000
+  }
+ },
+ {
+  "name": "Gang: Bustaman (Purwodinatan)",
+  "lat": -6.9737,
+  "lng": 110.4289,
+  "area": 150,
+  "kelurahan": "Purwodinatan",
+  "nUsed": 15,
+  "nExact": 9,
+  "radiusM": 800,
+  "utama": {
+   "low": 6900000,
+   "point": 17000000,
+   "high": 40000000
+  },
+  "lingkungan": {
+   "low": 4700000,
+   "point": 11000000,
+   "high": 27000000
+  },
+  "gang": {
+   "low": 3900000,
+   "point": 9300000,
+   "high": 23000000
+  },
+  "tanpa": {
+   "low": 2600000,
+   "point": 6200000,
+   "high": 15000000
+  }
+ },
+ {
+  "name": "Gang: Peterongan",
+  "lat": -6.9918,
+  "lng": 110.4335,
+  "area": 150,
+  "kelurahan": "Karangturi",
+  "nUsed": 19,
+  "nExact": 6,
+  "radiusM": 800,
+  "utama": {
+   "low": 8300000,
+   "point": 15000000,
+   "high": 26000000
+  },
+  "lingkungan": {
+   "low": 4900000,
+   "point": 8600000,
+   "high": 15000000
+  },
+  "gang": {
+   "low": 4000000,
+   "point": 7100000,
+   "high": 12000000
+  },
+  "tanpa": {
+   "low": 2700000,
+   "point": 4700000,
+   "high": 8300000
+  }
+ },
+ {
+  "name": "Gang: Tembalang kampung",
+  "lat": -7.0572,
+  "lng": 110.4405,
+  "area": 150,
+  "kelurahan": "Tembalang",
+  "nUsed": 24,
+  "nExact": 24,
+  "radiusM": 400,
+  "utama": {
+   "low": 6900000,
+   "point": 8700000,
+   "high": 11000000
+  },
+  "lingkungan": {
+   "low": 5800000,
+   "point": 7200000,
+   "high": 9000000
+  },
+  "gang": {
+   "low": 4800000,
+   "point": 6000000,
+   "high": 7500000
+  },
+  "tanpa": {
+   "low": 3100000,
+   "point": 4000000,
+   "high": 5100000
+  }
+ }
+]

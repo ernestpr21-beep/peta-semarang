@@ -28,8 +28,30 @@ export interface PointEst {
   nUsed: number;
   nExact: number;
   radiusM: number;
+  area?: number;
   lingkungan: { low: number; point: number; high: number };
   utama: { low: number; point: number; high: number };
+  gang?: { low: number; point: number; high: number };
+  tanpa?: { low: number; point: number; high: number };
+}
+export interface SizeVariant {
+  env: Record<string, string>;
+  rss: { bins: number | null; linear: number };
+  looTitik: number;
+  looAllLocated: number;
+  groups: Record<string, { n: number; old: number; new: number }>;
+  perKecamatan: Record<string, { n: number; old: number; new: number }>;
+}
+export interface TerrainEval {
+  dem: string;
+  nTitik: number;
+  slopeQuantiles: Record<string, number>;
+  refBand: string;
+  withinKelurahan: { band: string; coef: number; se: number; n: number }[];
+  withinKecamatan: { band: string; coef: number; se: number; n: number }[];
+  looResidualByBand: { band: string; n: number; q25: number; median: number; q75: number }[];
+  testPoint: { name: string; lat: number; lng: number; slopeDeg: number; elevM: number };
+  decision: string;
 }
 export interface VStat {
   mdae: number;
@@ -50,6 +72,12 @@ export interface Evidence {
   frontage: Record<string, Record<string, [number, number]>>;
   beforeAfter: Record<string, { n: number; old: VStat; new: VStat }> & { perKecamatan?: Record<string, { n: number; old: VStat; new: VStat }> };
   points: { before: PointEst[]; after: PointEst[] };
+  v3?: {
+    sizeVariants: Record<string, SizeVariant>;
+    terrain: TerrainEval;
+    beforeAfter: Record<string, { n: number; old: VStat; new: VStat }> & { perKecamatan?: Record<string, { n: number; old: VStat; new: VStat }> };
+    points: { before: PointEst[]; after: PointEst[] };
+  };
 }
 export const useEvidence = () => useQuery({ queryKey: ["evidence"], queryFn: () => getJson<Evidence>(dataUrl("evidence.json")), staleTime: Infinity });
 export const useKota = () => useQuery({ queryKey: ["kota"], queryFn: () => getJson<GeoCollection<KotaProps>>(dataUrl("kota.geojson")), staleTime: Infinity });

@@ -3,6 +3,8 @@
 Target utama: iklan yang menurut data baru punya pin tepat (loc_level=titik) dan juga ada di data lama.
 Galat = |log harga asli − log prediksi| (normalisasi tiap versi dibalik, jadi setara galat di harga penawaran asli).
 Pemakaian: python3 compare_versions.py <listings_model_lama.csv> <dataset_lama.json>
+  OLD_EST=new  → versi lama juga memakai estimator baru (mis. 2026-10-2 vs 2026-10-3: hanya data/normalisasi yang beda)
+  OUT=<nama>   → nama berkas keluaran di data/ (bawaan validation_before_after.json)
 """
 import csv, json, math, os, statistics, sys
 from collections import defaultdict
@@ -40,6 +42,7 @@ class Est:
         self.rec = np.array([0.5 ** (r['age_y'] / 2) for r in self.pool])
         self.min_eff = (int(os.environ.get('MIN_EFF', 0)) or model.get('minEffComparables', 8)) if new else 8
         self.city_spread = model['citySpreadLog']; self.city_med = math.log(model['cityMedianPn'])
+        self.spread_cls = (model.get('spreadBySize') or {}).get('classes') or []
         self.kel = defaultdict(list); self.kec = defaultdict(list)
         for r in self.pool: self.kel[r['kelurahan']].append(r)
         for r in rows: self.kec[r['kecamatan']].append(r)
@@ -79,12 +82,13 @@ class Est:
         se = sl / math.sqrt(max(1, neff + 1.5))
         ps = float(os.environ.get('PRIOR', 3)) if self.new else 3
         add = self.band(r0) if (self.new and os.environ.get('CAMPUS')) else 0.0
-        return (neff * mu + ps * (prior - add)) / (neff + ps) + add, math.sqrt(sl * sl + se * se)
+        sc = next((c['scale'] for c in self.spread_cls if r0['area_m2'] >= c['minM2'] and (c['maxM2'] is None or r0['area_m2'] < c['maxM2'])), 1.0)
+        return (neff * mu + ps * (prior - add)) / (neff + ps) + add, math.sqrt(sl * sl + se * se) * sc
 
 old_model = json.load(open(OLD_DS))['model']
 new_model = json.load(open(os.path.join(ROOT, 'public/data/dataset.json')))['model']
 old_rows = load(OLD_CSV, old_model); new_rows = load(os.path.join(ROOT, 'data/listings_model.csv'), new_model)
-E_old = Est(old_rows, old_model, False); E_new = Est(new_rows, new_model, True)
+E_old = Est(old_rows, old_model, os.environ.get('OLD_EST') == 'new'); E_new = Est(new_rows, new_model, True)
 old_by = {r['id']: r for r in old_rows}
 
 camp = json.load(open(os.path.join(ROOT, 'data/campus.json')))['campuses']
@@ -129,7 +133,7 @@ for name, f in SUBSETS.items():
     o = stats(sub, 'eo', 'so'); n = stats(sub, 'en', 'sn')
     out[name] = {'n': len(sub), 'old': o, 'new': n}
     print(f"{name:42s} {len(sub):5d} | {o['mdae']:10.1f}% {o['cov50']:5.1f}% {o['bias']:+7.3f} | {n['mdae']:10.1f}% {n['cov50']:5.1f}% {n['bias']:+7.3f}  σ med/p90 {o['sigMed']}/{o['sigP90']} → {n['sigMed']}/{n['sigP90']}")
-json.dump(out, open(os.path.join(ROOT, 'data/validation_before_after.json'), 'w'), indent=1, ensure_ascii=False)
+json.dump(out, open(os.path.join(ROOT, 'data', os.environ.get('OUT', 'validation_before_after.json')), 'w'), indent=1, ensure_ascii=False)
 if os.environ.get('DIAG'):
     sub = [x for x in res if 2000 < x['dCBD'] <= 4000]
     from collections import Counter
@@ -151,4 +155,12 @@ for k in sorted({x['r']['kecamatan'] for x in res}):
     o = stats(sub, 'eo', 'so'); n = stats(sub, 'en', 'sn'); kt[k] = {'n': len(sub), 'old': o, 'new': n}
     print(f"{k:20s} {len(sub):4d} {o['mdae']:5.1f}% {n['mdae']:5.1f}%  {o['bias']:+.3f}/{n['bias']:+.3f}")
 out['perKecamatan'] = kt
-json.dump(out, open(os.path.join(ROOT, 'data/validation_before_after.json'), 'w'), indent=1, ensure_ascii=False)
+json.dump(out, open(os.path.join(ROOT, 'data', os.environ.get('OUT', 'validation_before_after.json')), 'w'), indent=1, ensure_ascii=False)
+if os.environ.get('DIAG_SIZE'):
+    print('\nper kelas luas (semua | pinggiran):')
+    for lo, hi in [(0, 100), (100, 175), (175, 500), (500, 1500), (1500, 1e9)]:
+        for nm, f in (('semua', lambda x: True), ('pinggiran', SUBSETS['pinggiran (Gunungpati/Mijen/Tugu/Genuk)'])):
+            sub = [x for x in res if lo <= x['r']['area_m2'] < hi and f(x)]
+            if len(sub) < 10: continue
+            o = stats(sub, 'eo', 'so'); n = stats(sub, 'en', 'sn')
+            print(f"  {lo}-{hi} {nm:9s} n={len(sub):4d} galat {o['mdae']}% → {n['mdae']}%  bias {o['bias']:+.3f} → {n['bias']:+.3f}  cak50 {o['cov50']} → {n['cov50']}")

@@ -24,6 +24,15 @@ CBD_PRIOR_SD = 0.5
 CAMPUS_BANDS = [500, 1000, 2000]
 CAMPUS_MIN_HA = 2.0
 CAMPUS_PRIOR_SD = 0.3
+# Kurva luas bidang: kelas luas (m²) sebagai dummy dalam regresi efek tetap kelurahan (bukan elastisitas log-linear tunggal);
+# kelas acuan 125–175 m² (memuat luas acuan 150 m²). Koefisien disusutkan ke 0 (prior N(0, 0,3²)).
+SIZE_EDGES = [0, 75, 100, 125, 175, 250, 400, 700, 1500, float('inf')]
+SIZE_REF_BIN = 3
+SIZE_PRIOR_SD = 0.3
+def size_bin(a):
+    for i in range(len(SIZE_EDGES) - 1):
+        if SIZE_EDGES[i] <= a < SIZE_EDGES[i + 1]: return i
+    return len(SIZE_EDGES) - 2
 from shapely.geometry import Polygon as _Poly, Point as _Pt
 from shapely.ops import unary_union as _union
 _camp_all = json.load(open(os.path.join(OUT, 'campus.json')))['campuses']
@@ -74,8 +83,28 @@ print('rows', len(rows), Counter(r['loc_level'] for r in rows))
 # Iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai untuk efek tetap kelurahan,
 # statistik kelurahan, maupun pembanding terdekat — hanya untuk statistik kecamatan & kota.
 loc_rows = [r for r in rows if not r['kec_only']]
+# Tingkat harga wilayah (median harga/m² mentah kelurahan; kecamatan bila kelurahan < 3 iklan) — moderator kurva luas:
+# di wilayah murah bidang luas = lahan mentah (diskon), di wilayah mahal bidang luas bernilai pengembangan (premi).
+_kraw = defaultdict(list); _craw = defaultdict(list)
+for r in loc_rows: _kraw[r['kelurahan']].append(r['ppm'])
+for r in rows: _craw[r['kecamatan']].append(r['ppm'])
+def area_level(kel, kec):
+    if kel and len(_kraw.get(kel, [])) >= 3: return statistics.median(_kraw[kel])
+    return statistics.median(_craw[kec]) if _craw.get(kec) else None
+for r in rows: r['area_level'] = area_level(r['kelurahan'] if not r['kec_only'] else '', r['kecamatan'])
+_lv = sorted(math.log(r['area_level']) for r in loc_rows)
+SIZE_Z0 = _lv[len(_lv) // 2]; SIZE_ZLO = _lv[int(0.05 * len(_lv))] - SIZE_Z0; # Moderasi hanya di bawah tingkat median (z ≤ 0): di wilayah mahal, premi bidang luas kemungkinan tercampur nilai komersial/muka
+# jalan yang tidak teramati, jadi tidak diekstrapolasi. Varian dipilih lewat leave-one-out (analysis/size_variants.py):
+# SIZE_INTERACT=0 → tanpa moderasi; SIZE_ZHI=p95 → moderasi penuh.
+SIZE_INTERACT = os.environ.get('SIZE_INTERACT', '1') == '1'
+_zhi = os.environ.get('SIZE_ZHI', '0')
+SIZE_ZHI = (_lv[int(0.95 * len(_lv))] - SIZE_Z0) if _zhi == 'p95' else float(_zhi)
+def size_z(level):
+    if not SIZE_INTERACT: return 0.0
+    return 0.0 if not level else max(SIZE_ZLO, min(SIZE_ZHI, math.log(level) - SIZE_Z0))
+for r in rows: r['size_z'] = size_z(r['area_level'])
 
-def regress(rows, tier_key, label, cbd_L=None):
+def regress(rows, tier_key, label, cbd_L=None, size_mode='bins'):
     kels = sorted(set(r['kelurahan'] for r in rows))
     kidx = {k: i for i, k in enumerate(kels)}
     tiers_nb = ['utama', 'gang', 'tanpa', 'unknown']
@@ -83,14 +112,20 @@ def regress(rows, tier_key, label, cbd_L=None):
     for r in rows:
         t = r[tier_key] or 'unknown'
         fe = [0.0] * len(kels); fe[kidx[r['kelurahan']]] = 1.0
-        x = fe + [math.log(r['area_m2'] / REF_AREA)] + [1.0 if t == tt else 0.0 for tt in tiers_nb] + [1.0 if r['subtype'] == 'komersial' else 0.0, 1.0 if r['source'] == 'lamudi' else 0.0, -r['age_y']]
+        if size_mode == 'bins':
+            sb = size_bin(r['area_m2']); xs = [1.0 if sb == i else 0.0 for i in range(len(SIZE_EDGES) - 1) if i != SIZE_REF_BIN]
+            xs = xs + [v * r['size_z'] for v in xs]
+        else:
+            xs = [math.log(r['area_m2'] / REF_AREA)]
+        x = fe + xs + [1.0 if t == tt else 0.0 for tt in tiers_nb] + [1.0 if r['subtype'] == 'komersial' else 0.0, 1.0 if r['source'] == 'lamudi' else 0.0, -r['age_y']]
         x.append(math.exp(-r['d_cbd'] / cbd_L) if (cbd_L and t == 'utama') else 0.0)
         x += [1.0 if r['campus_band'] == i else 0.0 for i in range(len(CAMPUS_BANDS))]
         X.append(x); y.append(math.log(r['ppm']))
     X = np.array(X); y = np.array(y)
     # buang kolom tier yang tidak ada datanya
     keep = [j for j in range(X.shape[1]) if X[:, j].any()]
-    names = [f'kel:{k}' for k in kels] + ['log_area'] + [f'tier:{t}' for t in tiers_nb] + ['komersial', 'src_lamudi', 'trend_per_year', 'utama_cbd'] + [f'campus_{lim}' for lim in CAMPUS_BANDS]
+    size_names = ([f'size:{i}' for i in range(len(SIZE_EDGES) - 1) if i != SIZE_REF_BIN] + [f'sizez:{i}' for i in range(len(SIZE_EDGES) - 1) if i != SIZE_REF_BIN]) if size_mode == 'bins' else ['log_area']
+    names = [f'kel:{k}' for k in kels] + size_names + [f'tier:{t}' for t in tiers_nb] + ['komersial', 'src_lamudi', 'trend_per_year', 'utama_cbd'] + [f'campus_{lim}' for lim in CAMPUS_BANDS]
     Xk = X[:, keep]; nk = [names[j] for j in keep]
     beta, *_ = np.linalg.lstsq(Xk, y, rcond=None)
     res = y - Xk @ beta
@@ -169,7 +204,38 @@ for t in TIERS:
                 'n': n, 'nOsm': cnt_osm.get(t, 0), 'basis': basis, 'dataFactor': dfac, 'prior': PRIORS[t][0], 'priorNote': PRIORS[t][2]}
     print('tier', t, tiers[t])
 
-beta_size, se_size = coef_txt['log_area']
+# kurva luas: titik simpul = median luas tiap kelas; koefisien kelas a + c·z (z = log tingkat harga wilayah, terpusat), disusutkan; acuan 0
+size_curve = []
+for i in range(len(SIZE_EDGES) - 1):
+    areas = [r['area_m2'] for r in loc_rows if size_bin(r['area_m2']) == i]
+    if not areas: continue
+    if i == SIZE_REF_BIN:
+        b, se, c, sec = 0.0, 0.0, 0.0, 0.0
+    else:
+        b, se = coef_txt.get(f'size:{i}', (0.0, 1.0)); c, sec = coef_txt.get(f'sizez:{i}', (0.0, 1.0))
+    shr = SIZE_PRIOR_SD ** 2 / (SIZE_PRIOR_SD ** 2 + se ** 2) if se else 1.0
+    shz = SIZE_PRIOR_SD ** 2 / (SIZE_PRIOR_SD ** 2 + sec ** 2) if sec else 1.0
+    size_curve.append({'minM2': SIZE_EDGES[i], 'maxM2': None if SIZE_EDGES[i + 1] == float('inf') else SIZE_EDGES[i + 1],
+                       'area': round(statistics.median(areas)), 'coefRaw': round(b, 4), 'se': round(se, 4), 'coef': b * shr,
+                       'slopeRaw': round(c, 4), 'slopeSE': round(sec, 4), 'slope': c * shz, 'n': len(areas)})
+def _interp(a, key):
+    a = max(30, min(50000, a)); la = math.log(a)
+    ks = [(math.log(k['area']), k[key]) for k in size_curve]
+    if la <= ks[0][0]: return ks[0][1]
+    if la >= ks[-1][0]: return ks[-1][1]
+    for (x0, y0), (x1, y1) in zip(ks, ks[1:]):
+        if x0 <= la <= x1: return y0 + (y1 - y0) * (la - x0) / (x1 - x0)
+_off_a = _interp(REF_AREA, 'coef'); _off_c = _interp(REF_AREA, 'slope')
+for k in size_curve:
+    k['coef'] = round(k['coef'] - _off_a, 4); k['slope'] = round(k['slope'] - _off_c, 4)  # faktor(150 m²) = 1 untuk semua z
+def size_factor(a, z=0.0):
+    return math.exp(_interp(a, 'coef') + _interp(a, 'slope') * z)
+print('kurva luas', [(k['area'], k['coef'], k['slope'], k['n']) for k in size_curve], 'z0', round(math.exp(SIZE_Z0)), 'z range', round(SIZE_ZLO, 2), round(SIZE_ZHI, 2))
+# pembanding: elastisitas log-linear tunggal (model sebelumnya), hanya dilaporkan
+_lin = regress(loc_rows, 'access_tier', 'luas log-linear (pembanding)', cbd_L=CBD_L, size_mode='linear')
+beta_size, se_size = _lin[0]['log_area']
+size_rss = {'bins': round(coef_fit_rss, 2) if (coef_fit_rss := cbd_fits[CBD_L][7]) else None, 'linear': round(_lin[7], 2)}
+print('rss kurva vs linear', size_rss)
 trend, se_trend = coef_txt.get('trend_per_year', (0.0, 0.0))
 trend_used = max(0.0, min(0.12, trend))  # batasi: 0–12%/tahun
 unknown_b = coef_txt.get('tier:unknown', (0.0, 0.0))[0]
@@ -187,7 +253,7 @@ def normalize(r):
     tf = tiers[t]['factor'] if t else math.exp(unknown_b)
     if t == 'utama':
         tf *= cbd_factor(r['d_cbd'])
-    sf = (max(30, r['area_m2']) / REF_AREA) ** beta_size
+    sf = size_factor(r['area_m2'], r['size_z'])
     tr = math.exp(trend_used * r['age_y'])
     return r['ppm'] / (tf * sf * campus_factor(r['d_campus'])) * tr * SRC_ADJ[r['source']]
 
@@ -268,6 +334,69 @@ for r in rows:
     kl = [x['pn'] for x in kel_by[r['kelurahan']] if x is not r]
     ekel = abs(math.log(r['pn']) - math.log(statistics.median(kl))) if kl else None
     loo.append((r, e, sig, ekel, ekec))
+# ---------- kalibrasi lebar rentang menurut luas bidang ----------
+# Residu terstandar z = e/σ dari leave-one-out: bidang kecil lebih seragam (rentang terlalu lebar), bidang sangat luas lebih
+# beragam (rentang terlalu sempit). Pengali σ per kelas luas = (z75 − z25)/(2·0,674), disusutkan ke 1 (bobot n/(n+100)).
+SPREAD_SIZE_EDGES = [0, 100, 175, 500, 1500, float('inf')]
+def spread_class(a):
+    for i in range(len(SPREAD_SIZE_EDGES) - 1):
+        if SPREAD_SIZE_EDGES[i] <= a < SPREAD_SIZE_EDGES[i + 1]: return i
+    return len(SPREAD_SIZE_EDGES) - 2
+def spread_scales(sub):
+    out = []
+    for i in range(len(SPREAD_SIZE_EDGES) - 1):
+        z = sorted(e / s for r, e, s, _, _ in sub if spread_class(r['area_m2']) == i)
+        if len(z) < 30: out.append((1.0, len(z), None)); continue
+        q = lambda p: z[int(p * (len(z) - 1))]
+        raw = (q(0.75) - q(0.25)) / (2 * 0.674); w = len(z) / (len(z) + 100)
+        out.append((w * raw + (1 - w) * 1.0, len(z), raw))
+    return out
+_sc = spread_scales(loo)
+spread_by_size = [{'minM2': SPREAD_SIZE_EDGES[i], 'maxM2': None if SPREAD_SIZE_EDGES[i + 1] == float('inf') else SPREAD_SIZE_EDGES[i + 1],
+                   'scale': round(sc, 3), 'scaleRaw': round(raw, 3) if raw else None, 'n': n} for i, (sc, n, raw) in enumerate(_sc)]
+print('pengali sebaran per kelas luas', [(b['minM2'], b['scale'], b['n']) for b in spread_by_size])
+# cakupan jujur: skala dihitung di separuh data, diuji di separuh lain (silang 2 lipat, dibagi menurut id)
+import zlib
+_fold = lambda r: zlib.crc32(r['source_id'].encode()) % 2
+def _cov(sub, scales):
+    return round(100 * sum(1 for r, e, s, _, _ in sub if abs(e) <= 0.674 * s * scales[spread_class(r['area_m2'])][0]) / len(sub), 1)
+_cv = []
+for f in (0, 1):
+    tr = [x for x in loo if _fold(x[0]) != f]; te = [x for x in loo if _fold(x[0]) == f]
+    _cv.append((_cov(te, spread_scales(tr)), _cov(te, [(1.0, 0, None)] * 5), len(te)))
+def _cov_by_class(scales):
+    o = []
+    for i in range(len(SPREAD_SIZE_EDGES) - 1):
+        sub = [x for x in loo if spread_class(x[0]['area_m2']) == i]
+        o.append(_cov(sub, scales) if sub else None)
+    return o
+spread_cal = {'crossFitCoverage50': [{'withScale': a, 'without': b, 'n': n} for a, b, n in _cv],
+              'coverageByClassWithout': _cov_by_class([(1.0, 0, None)] * 5), 'coverageByClassWith': _cov_by_class(_sc)}
+print('kalibrasi sebaran', spread_cal)
+for i, x in enumerate(loo):
+    r, e, s, a, b = x
+    loo[i] = (r, e, s * _sc[spread_class(r['area_m2'])][0], a, b)
+# ---------- batas atas tier gang / tanpa akses ----------
+# Bidang yang hanya bisa dicapai motor/jalan kaki tidak dihargai di atas bidang yang bisa dimasuki mobil di titik yang sama:
+# batas atas rentang gang dibatasi pada titik estimasi jalan lingkungan; batas atas tanpa-akses pada titik estimasi gang.
+# Diuji pada iklan berketerangan 'gang' (teks): kuartil atas harga/(titik jalan lingkungan di lokasinya) dilaporkan di gangCheck.
+_gf = tiers['gang']['factor']; _sigTg = math.log(tiers['gang']['hi'] / tiers['gang']['lo']) / (2 * 1.96)
+_g = [(e, s) for r, e, s, _, _ in loo if r['access_tier'] == 'gang']
+_el = sorted(e + math.log(_gf) for e, _ in _g)
+# Aturan struktural (bukan estimasi): batas = titik jalan lingkungan × 1,0. Kuartil atas iklan gang (n kecil, label teks)
+# terlalu tidak stabil untuk dijadikan pengali; nilainya dilaporkan di gangCheck sebagai pemeriksaan.
+GANG_CAP_MULT = 1.0
+def _gcov(cap):
+    inside = 0; above = 0
+    for e, s in _g:
+        S = math.sqrt(s * s + _sigTg ** 2); hi = 0.674 * S
+        if cap: hi = min(hi, -math.log(_gf) + math.log(GANG_CAP_MULT))
+        inside += (-0.674 * S <= e <= hi); above += e > hi
+    return {'coverage50': round(100 * inside / len(_g), 1), 'aboveHigh': round(100 * above / len(_g), 1)} if _g else None
+gang_check = {'n': len(_g), 'q25LogVsLingPoint': round(_el[len(_el) // 4], 3) if _el else None, 'medianLogVsLingPoint': round(_el[len(_el) // 2], 3) if _el else None,
+              'q75LogVsLingPoint': round(_el[(3 * len(_el)) // 4], 3) if _el else None, 'shareAboveLingPoint': round(100 * sum(1 for v in _el if v > 0) / len(_el), 1) if _el else None,
+              'withoutCap': _gcov(False), 'withCap': _gcov(True), 'capMult': round(GANG_CAP_MULT, 3)}
+print('cek gang', gang_check)
 def mape(es): return round((math.exp(statistics.median(es)) - 1) * 100, 1)
 def vstats(sub):
     errs = [abs(e) for _, e, _, _, _ in sub]
@@ -283,6 +412,12 @@ val['target'] = 'iklan berpin tepat (loc_level=titik), leave-one-out'
 val['allLocated'] = vstats(loo)
 val['nKecamatanOnly'] = sum(1 for r in rows if r['kec_only'])
 print('validation', val)
+# residu leave-one-out per iklan (untuk analysis/access_spread.py; tidak dipublikasikan)
+os.makedirs(os.path.join(os.path.dirname(__file__), '.cache'), exist_ok=True)
+with open(os.path.join(os.path.dirname(__file__), '.cache', 'loo_residuals.csv'), 'w', newline='') as f:
+    w = csv.writer(f); w.writerow(['id', 'lat', 'lng', 'loc_level', 'kelurahan', 'kecamatan', 'area_m2', 'access_tier', 'osm_tier', 'osm_drive_m', 'access_evidence', 'e', 'sig', 'ppm', 'pn'])
+    for r, e, sig, _, _ in loo:
+        w.writerow([f"{r['source']}:{r['source_id']}", r['lat'], r['lng'], r['loc_level'], r['kelurahan'], r['kecamatan'], r['area_m2'], r['access_tier'], r.get('osm_tier', ''), r.get('osm_drive_m', ''), r.get('access_evidence', ''), round(e, 4), round(sig, 4), round(r['ppm']), round(r['pn'])])
 # ---------- keluaran ----------
 src_meta = [
     {'id': 'pinhome', 'name': 'Pinhome', 'url': 'https://www.pinhome.id/jual/tanah/jawa-tengah/semarang', 'note': 'Halaman hasil pencarian "Tanah dijual di Kota Semarang" per kecamatan + halaman detail iklan (koordinat, kelurahan, tanggal dibuat/diperbarui, deskripsi).'},
@@ -311,7 +446,10 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-2', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-3', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
+                  'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
+                  'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},
     'commercialFactor': round(math.exp(komersial_b), 3), 'recencyHalfLifeYears': 2, 'trendPerYear': round(trend_used, 4), 'trendRaw': round(trend, 4), 'trendSE': round(se_trend, 4),
     'sourceEffect': round(math.exp(src_b), 3), 'sourceAdj': {k: round(v, 3) for k, v in SRC_ADJ.items()}, 'unknownTierFactor': round(math.exp(unknown_b), 3),
     'cbdFrontage': {'center': list(CBD_CENTER), 'centerName': 'Simpang Lima', 'scaleM': CBD_L, 'coef': round(cbd_used, 4), 'coefRaw': round(cbd_b, 4), 'coefSE': round(cbd_se, 4),
@@ -319,6 +457,10 @@ model = {
                     'note': 'Faktor tambahan untuk tier jalan utama: exp(coef · exp(−jarak ke Simpang Lima / scaleM)).'},
     'campus': {'minHa': CAMPUS_MIN_HA, 'priorSD': CAMPUS_PRIOR_SD, 'bands': campus_coef, 'nCampuses': len(CAMPUSES),
                'note': 'Pengali harga dasar menurut jarak ke poligon kampus terdekat (OSM, ≥ 2 ha, tanpa Akpol); diestimasi bersama efek tetap kelurahan.'},
+    'spreadBySize': {'classes': spread_by_size, 'calibration': spread_cal,
+                     'note': 'Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1.'},
+    'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
+                 'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
     'tiers': tiers, 'cityMedianPn': round(city_med), 'citySpreadLog': round(city_spread, 4),
     'regression': {'n': n_reg, 'r2Within': round(r2w, 3), 'sigma': round(sigma, 3), 'nOsm': n_osm, 'r2WithinOsm': round(r2w_osm, 3),
                    'coefText': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_txt.items()}, 'coefOsm': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_osm.items()},

@@ -37,7 +37,9 @@ data-pipeline/
   build_app_data.py       regresi, faktor akses, normalisasi, statistik wilayah, validasi LOO
                           → public/data/dataset.json, data/model_report.json, data/listings_model.csv
   analysis/               campus_eval.py, frontage_eval.py, compare_versions.py (LOO lama vs baru),
-                          loo_variants.py (eksplorasi), build_evidence.py → public/data/evidence.json (Metodologi §5)
+                          loo_variants.py (eksplorasi), size_variants.py (pilih kurva luas lewat LOO),
+                          terrain_eval.py (uji lereng, DEM Copernicus; butuh rasterio — hanya analisis),
+                          build_evidence.py → public/data/evidence.json (Metodologi §5)
 ```
 
 Membangun ulang data:
@@ -50,9 +52,13 @@ python3 data-pipeline/build_campus.py
 python3 data-pipeline/build_app_data.py
 # bukti untuk Metodologi (versi pembanding = commit sebelumnya):
 python3 data-pipeline/analysis/campus_eval.py && python3 data-pipeline/analysis/frontage_eval.py
-git show ee6a01e:data/listings_model.csv > /tmp/old.csv && git show ee6a01e:public/data/dataset.json > /tmp/old.json
-python3 data-pipeline/analysis/compare_versions.py /tmp/old.csv /tmp/old.json
-POINTS_LABEL=after npx vitest run tests/points-report.test.ts
+git show ca8203e:data/listings_model.csv > /tmp/old.csv && git show ca8203e:public/data/dataset.json > /tmp/old.json
+python3 data-pipeline/analysis/compare_versions.py /tmp/old.csv /tmp/old.json          # model 2026-10-1 → 2026-10-2
+git show 6cd298b:data/listings_model.csv > /tmp/v2.csv && git show 6cd298b:public/data/dataset.json > /tmp/v2.json
+python3 data-pipeline/analysis/size_variants.py /tmp/v2.csv /tmp/v2.json                # menjalankan build_app_data.py per varian
+OLD_EST=new OUT=validation_v2_v3.json python3 data-pipeline/analysis/compare_versions.py /tmp/v2.csv /tmp/v2.json
+.venv/bin/python data-pipeline/analysis/terrain_eval.py                                 # opsional (rasterio)
+POINTS_LABEL=v3_after npx vitest run tests/points-report.test.ts
 python3 data-pipeline/analysis/build_evidence.py
 ```
 
@@ -60,9 +66,9 @@ Versi bersih ada di `data/` (`listings_all.csv` = semua iklan + alasan dibuang, 
 
 ## Metode singkat
 
-1. **Normalisasi**: tiap iklan → harga/m² bidang acuan 150 m², akses jalan lingkungan, per bulan data terakhir; selisih tingkat harga antarportal dinetralkan (regresi log-harga dengan efek tetap kelurahan).
+1. **Normalisasi**: tiap iklan → harga/m² bidang acuan 150 m², akses jalan lingkungan, per bulan data terakhir; selisih tingkat harga antarportal dinetralkan (regresi log-harga dengan efek tetap kelurahan). Luas bidang memakai kurva kelas luas (bukan satu elastisitas): bidang < 75 m² ≈ 20% lebih murah per m² daripada 150 m² di kelurahan yang sama (kelurahan bertingkat harga median ke atas); di kelurahan di bawah median harga, bidang luas didiskon lebih besar (lahan mentah).
 2. **Estimasi titik**: pembanding terdekat (radius adaptif 400 m–3 km sampai ≥ 10 pembanding efektif, maks. 30; iklan yang lokasinya hanya setingkat kecamatan tidak dipakai), bobot jarak × ketepatan lokasi × umur iklan, median terboboti, disusutkan ke median kelurahan/kecamatan; dikali faktor kedekatan kampus (pita 0–500/500–1000/1000–2000 m, dalam-kelurahan) dan, untuk jalan utama, premi pusat kota exp(b·e^(−d/1500 m)) dari Simpang Lima.
-3. **Rentang**: 50% tengah (±0,674σ) dengan σ dari sebaran pembanding lokal (MAD dengan akar bobot, minimum 0,25 log, dikalibrasi leave-one-out), ditambah ketidakpastian faktor akses.
+3. **Rentang**: 50% tengah (±0,674σ) dengan σ dari sebaran pembanding lokal (MAD dengan akar bobot, minimum 0,25 log, dikalibrasi leave-one-out), ditambah ketidakpastian faktor akses, dikali pengali per kelas luas (bidang kecil lebih seragam, bidang sangat luas lebih beragam). Batas atas gang ≤ titik jalan lingkungan; batas atas tanpa akses ≤ titik gang. Lereng (DEM 30 m) diuji, tidak bermakna → tidak dipakai.
 4. **Akses**: dideteksi dari jarak titik ke jalan OSM (≤ 30 m jalan utama/lingkungan, ≤ 25 m gang/setapak, 30–60 m = bidang dalam → gang, > 60 m = tanpa akses). Pengguna bisa mengganti kelas secara manual. Faktor jalan utama berasal dari data; gang & tanpa akses memakai gabungan data minim + rujukan (lihat halaman Metodologi).
 5. **Skor**: hanya fasilitas yang benar-benar ditemukan di OSM yang dihitung; tanpa fasilitas → 0.
 

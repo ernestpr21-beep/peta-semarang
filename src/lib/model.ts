@@ -52,6 +52,54 @@ export interface PriceModel {
   refArea: number;
   sizeElasticity: number;
   sizeElasticitySE: number;
+  /** kurva luas (menggantikan elastisitas tunggal): koefisien log per simpul luas, diinterpolasi terhadap log luas */
+  sizeCurve?: {
+    knots: {
+      minM2: number;
+      maxM2: number | null;
+      area: number;
+      coefRaw: number;
+      se: number;
+      coef: number;
+      slopeRaw?: number;
+      slopeSE?: number;
+      slope?: number;
+      n: number;
+    }[];
+    refBin: [number, number];
+    levelCenter?: number;
+    zMin?: number;
+    zMax?: number;
+    priorSD: number;
+    rss: { bins: number | null; linear: number };
+    note: string;
+  };
+  /** pengali σ menurut luas bidang (kalibrasi leave-one-out) */
+  spreadBySize?: {
+    classes: { minM2: number; maxM2: number | null; scale: number; scaleRaw: number | null; n: number }[];
+    calibration: {
+      crossFitCoverage50: { withScale: number; without: number; n: number }[];
+      coverageByClassWithout: (number | null)[];
+      coverageByClassWith: (number | null)[];
+    };
+    note: string;
+  };
+  /** batas atas rentang tier lebih rendah dibatasi pada titik estimasi tier di atasnya */
+  tierCaps?: {
+    gang: { ref: AccessTier; mult: number };
+    tanpa: { ref: AccessTier; mult: number };
+    gangCheck: {
+      n: number;
+      q25LogVsLingPoint: number | null;
+      medianLogVsLingPoint: number | null;
+      q75LogVsLingPoint: number | null;
+      shareAboveLingPoint: number | null;
+      withoutCap: { coverage50: number; aboveHigh: number } | null;
+      withCap: { coverage50: number; aboveHigh: number } | null;
+      capMult: number;
+    };
+    note: string;
+  };
   commercialFactor: number;
   recencyHalfLifeYears: number;
   tiers: Record<AccessTier, TierInfo>;

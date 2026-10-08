@@ -105,9 +105,36 @@ export function campusFactor(model: PriceModel, distanceM: number | null | undef
   return b ? Math.exp(b.coef) : 1;
 }
 
-export function sizeFactor(model: PriceModel, area: number) {
+/** z tingkat harga wilayah untuk kurva luas: log(median harga/m² mentah kelurahan (≥ 3 iklan) atau kecamatan / pusat) */
+export function sizeLevelZ(model: PriceModel, level: number | null | undefined) {
+  const sc = model.sizeCurve;
+  if (!sc?.levelCenter || !level) return 0;
+  return Math.max(sc.zMin ?? -Infinity, Math.min(sc.zMax ?? Infinity, Math.log(level / sc.levelCenter)));
+}
+
+export function sizeFactor(model: PriceModel, area: number, z = 0) {
   const a = Math.max(30, Math.min(50000, area));
-  return Math.pow(a / model.refArea, model.sizeElasticity);
+  const ks = model.sizeCurve?.knots;
+  if (!ks?.length) return Math.pow(a / model.refArea, model.sizeElasticity);
+  // kurva luas: coef + slope·z, diinterpolasi linear terhadap log luas; di luar simpul terujung nilainya tetap
+  const la = Math.log(a);
+  const xs = ks.map((k) => Math.log(k.area));
+  const at = (f: (k: { coef: number; slope?: number }) => number) => {
+    if (la <= xs[0]) return f(ks[0]);
+    if (la >= xs[xs.length - 1]) return f(ks[ks.length - 1]);
+    let i = 0;
+    while (la > xs[i + 1]) i++;
+    return f(ks[i]) + ((f(ks[i + 1]) - f(ks[i])) * (la - xs[i])) / (xs[i + 1] - xs[i]);
+  };
+  return Math.exp(at((k) => k.coef) + at((k) => k.slope ?? 0) * z);
+}
+
+/** pengali lebar rentang menurut luas bidang (bidang kecil lebih seragam, bidang sangat luas lebih beragam) */
+export function spreadScale(model: PriceModel, area: number) {
+  const cls = model.spreadBySize?.classes;
+  if (!cls?.length) return 1;
+  const c = cls.find((k) => area >= k.minM2 && (k.maxM2 == null || area < k.maxM2));
+  return c?.scale ?? 1;
 }
 
 export function findAreaStat(list: AreaStat[], name: string | null, kec?: string | null) {
@@ -199,25 +226,34 @@ export function estimatePrice(opts: {
   const sigma = Math.sqrt(sLocal * sLocal + se * se);
 
   const area = opts.area ?? model.refArea;
-  const sf = sizeFactor(model, area);
+  // tingkat harga wilayah (median mentah kelurahan bila ≥ 3 iklan, selain itu kecamatan) — sama dengan pipeline
+  const level = opts.kelStat && opts.kelStat.n >= 3 ? opts.kelStat.medianRaw : opts.kecStat?.medianRaw;
+  const sf = sizeFactor(model, area, sizeLevelZ(model, level));
   // pembanding sudah dinormalisasi ke "jauh dari kampus" → kalikan kembali faktor kampus di titik ini
   const campusF = campusFactor(model, opts.campus?.distanceM);
   const basePoint = Math.exp(mu) * campusF;
 
   const cbd = cbdFrontageFactor(model, lat, lng);
+  const ss = spreadScale(model, area);
   const tiers = {} as Record<AccessTier, TierPrice>;
+  const raw = {} as Record<AccessTier, number>;
   for (const t of TIER_ORDER) {
     const ti = model.tiers[t];
     // ketidakpastian faktor akses ikut melebarkan rentang
     const sigT0 = Math.log(ti.hi / ti.lo) / (2 * 1.96);
     const sigT = t === "utama" ? Math.sqrt(sigT0 * sigT0 + cbd.sdLog * cbd.sdLog) : sigT0;
-    const sig = Math.sqrt(sigma * sigma + sigT * sigT);
+    const sig = Math.sqrt(sigma * sigma + sigT * sigT) * ss;
     const point = basePoint * ti.factor * (t === "utama" ? cbd.factor : 1) * sf;
+    raw[t] = point;
+    let high = point * Math.exp(Z50 * sig);
+    // gang / tanpa akses: batas atas tidak melebihi titik estimasi tier di atasnya (lokasi & luas sama)
+    const cap = t === "gang" || t === "tanpa" ? model.tierCaps?.[t] : undefined;
+    if (cap && raw[cap.ref] != null) high = Math.max(point, Math.min(high, raw[cap.ref] * cap.mult));
     tiers[t] = {
       tier: t,
       point: roundSig(point, 2),
       low: roundSig(point * Math.exp(-Z50 * sig), 2),
-      high: roundSig(point * Math.exp(Z50 * sig), 2),
+      high: roundSig(high, 2),
     };
   }
 
@@ -241,7 +277,7 @@ export function estimatePrice(opts: {
   }
 
   const dates = used.map((u) => u.c.date).sort();
-  const sig = sigma;
+  const sig = sigma * ss;
   return {
     available: true,
     basePoint,

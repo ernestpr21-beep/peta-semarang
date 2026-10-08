@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { estimatePrice, findAreaStat, type PriceEstimateResult } from "../src/lib/estimate";
+import { estimatePrice, findAreaStat, sizeFactor, type PriceEstimateResult } from "../src/lib/estimate";
 import { detectAccess, type Road } from "../src/lib/access";
 import { findFeature, nearestCampus, type GeoCollection } from "../src/lib/geo";
 import { computeLocationScore, SCORE_SEARCH_RADIUS } from "../src/lib/score";
@@ -146,5 +146,22 @@ describe("perbaikan Okt 2026: lokasi iklan, kampus, pusat kota", () => {
     expect(r.tiers.utama.point / r.tiers.lingkungan.point).toBeGreaterThan(r.cbdFactor);
     const far = P(-7.0886, 110.3734);
     expect(far.cbdFactor).toBeLessThan(1.01);
+  });
+});
+
+describe("model 2026-10-3: kurva luas & batas atas gang", () => {
+  const m = ds.model;
+  it("faktor luas = 1 di luas acuan dan < 1 untuk bidang sangat kecil (data: bidang < 75 m² lebih murah per m²)", () => {
+    expect(sizeFactor(m, 150)).toBeCloseTo(1, 2);
+    expect(sizeFactor(m, 50)).toBeLessThan(0.95);
+  });
+  it("titik uji pengguna (Candisari Gg. V, 44 m²): titik gang ≈ Rp4–6 jt, batas atas gang ≤ titik jalan lingkungan", () => {
+    const r = estimateAt(-7.010649, 110.421304, 44).r as PriceEstimateResult;
+    const t = r.tiers;
+    expect(t.gang.point).toBeGreaterThan(4e6);
+    expect(t.gang.point).toBeLessThan(6e6);
+    expect(t.gang.high).toBeLessThanOrEqual(t.lingkungan.point * 1.01);
+    expect(t.tanpa.high).toBeLessThanOrEqual(t.gang.point * 1.01);
+    expect(t.gang.high).toBeGreaterThanOrEqual(t.gang.point);
   });
 });
