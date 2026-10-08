@@ -165,3 +165,35 @@ describe("model 2026-10-3: kurva luas & batas atas gang", () => {
     expect(t.gang.high).toBeGreaterThanOrEqual(t.gang.point);
   });
 });
+
+describe("model 2026-10-4 (prototipe audit): akses hasil deteksi OSM terkalibrasi & prior halus", () => {
+  const m = ds.model;
+  it("faktor akses otomatis monoton dan tidak memotong ~45% untuk deteksi 'tanpa' (iklan tidak mendukung)", () => {
+    const f = m.autoAccess!.factors;
+    expect(f.utama).toBeGreaterThanOrEqual(f.lingkungan);
+    expect(f.lingkungan).toBeGreaterThanOrEqual(f.gang);
+    expect(f.gang).toBeGreaterThanOrEqual(f.tanpa);
+    expect(f.tanpa).toBeGreaterThan(0.85);
+    // validasi tersimpan: tampilan sesudah lebih akurat & tidak bias dibanding sebelum
+    const v = m.autoAccess!.validation;
+    expect(v.after.medianAbsErrPct).toBeLessThan(v.before.medianAbsErrPct);
+    expect(Math.abs(v.after.biasLog)).toBeLessThan(0.05);
+  });
+  it("tier yang dipilih manual tetap memakai faktor penuh (gang di Candisari tetap ≈ Rp4–6 jt)", () => {
+    const r = estimateAt(-7.010649, 110.421304, 44).r as PriceEstimateResult;
+    expect(r.tiers.tanpa.point).toBeLessThan(r.tiers.lingkungan.point * 0.6);
+    expect(r.autoTiers.tanpa.point).toBeGreaterThan(r.tiers.tanpa.point * 1.5);
+  });
+  it("prior halus: tidak ada lompatan > 15% saat melintasi batas kelurahan (titik berjarak 60 m)", () => {
+    // Jl. Pandanaran (Pekunden ↔ Randusari) dan Tembalang ↔ Bulusan
+    for (const [lat, lng, dLat, dLng] of [
+      [-6.9877, 110.4145, 0, 0.00055],
+      [-7.0556, 110.4405, 0.00055, 0],
+    ]) {
+      const a = estimateAt(lat, lng).r as PriceEstimateResult;
+      const b = estimateAt(lat + dLat, lng + dLng).r as PriceEstimateResult;
+      expect(a.priorLevel).toBe("sekitar");
+      expect(Math.abs(Math.log(a.tiers.lingkungan.point / b.tiers.lingkungan.point))).toBeLessThan(Math.log(1.15));
+    }
+  });
+});

@@ -49,7 +49,10 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
     );
   }
   const t = tier ?? "lingkungan";
-  const main = price.tiers[t];
+  // tier hasil deteksi OSM belum pasti → harga utama memakai faktor akses terkalibrasi (lihat Metodologi)
+  const isAuto = !tierIsManual && !!model.autoAccess;
+  const main = isAuto ? price.autoTiers[t] : price.tiers[t];
+  const accessFactor = isAuto ? price.autoFactors[t] : model.tiers[t].factor * (t === "utama" ? price.cbdFactor : 1);
   const ti = model.tiers[t];
   const noAccess = price.tiers.tanpa;
   const withAccess = price.tiers[t === "tanpa" ? "lingkungan" : t];
@@ -84,7 +87,14 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
             </button>
           ))}
         </div>
-        <p className="mt-1.5 text-[10.5px] leading-snug text-fg-subtle">Deteksi otomatis dari jarak ke jalan OSM — cek di lapangan/citra satelit dan ubah bila perlu.</p>
+        {isAuto ? (
+          <p className="mt-1.5 text-[10.5px] leading-snug text-fg-subtle">
+            Deteksi otomatis dari jarak ke jalan OSM <b>belum memastikan</b> kondisi akses (banyak gang kampung belum terpetakan). Harga utama memakai faktor akses terkalibrasi untuk titik
+            dengan deteksi serupa (×{price.autoFactors[t].toFixed(2)}); pilih kondisi akses bila Anda tahu kondisinya.
+          </p>
+        ) : (
+          <p className="mt-1.5 text-[10.5px] leading-snug text-fg-subtle">Deteksi otomatis dari jarak ke jalan OSM — cek di lapangan/citra satelit dan ubah bila perlu.</p>
+        )}
       </div>
 
       {/* Harga utama */}
@@ -98,7 +108,7 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
           <span className="ml-1 text-sm text-fg-muted">/m²</span>
         </p>
         <p className="text-xs text-fg-muted">
-          titik tengah <span className="num text-fg">{formatRupiah(main.point)}</span>/m² · tanah kosong {ti.short.toLowerCase()}
+          titik tengah <span className="num text-fg">{formatRupiah(main.point)}</span>/m² · tanah kosong {isAuto ? "kondisi akses belum dipastikan" : ti.short.toLowerCase()}
         </p>
         <div className="mt-2 flex items-center justify-between gap-2 rounded-md bg-surface-2 px-2.5 py-1.5 text-xs">
           <span className="text-fg-muted">Total {area.toLocaleString("id-ID")} m²</span>
@@ -143,7 +153,7 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
           {TIER_ORDER.map((k) => {
             const tp = price.tiers[k];
             const mt = model.tiers[k];
-            const active = k === t;
+            const active = !isAuto && k === t;
             return (
               <li
                 key={k}
@@ -167,14 +177,14 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
           })}
         </ul>
         <p className="mt-1.5 text-[11px] leading-snug text-fg-muted">
-          {t === "tanpa" ? (
+          {t === "tanpa" && !isAuto ? (
             <>
               Tanpa akses ≈ <b>{Math.round((1 - noAccess.point / withAccess.point) * 100)}% lebih murah</b> daripada bidang yang punya akses jalan lingkungan di lokasi yang sama.
             </>
           ) : (
             <>
               Bila bidang ini <b>tidak punya akses jalan</b> (terkurung): {formatRupiahRange(noAccess.low, noAccess.high)}/m², sekitar{" "}
-              {Math.round((1 - noAccess.point / main.point) * 100)}% di bawah kondisi {ti.short.toLowerCase()}.
+              {Math.round((1 - noAccess.point / main.point) * 100)}% di bawah {isAuto ? "harga utama" : `kondisi ${ti.short.toLowerCase()}`}.
             </>
           )}{" "}
           <Link to="/metodologi" hash="akses" className="text-primary underline underline-offset-2">
@@ -202,7 +212,10 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
               </tr>
               <tr>
                 <td className="text-fg-muted">
-                  Median {price.priorLevel} {price.priorLevel !== "kota" ? price.priorName : ""} (bobot {Math.round(price.priorShare * 100)}%)
+                  {price.priorLevel === "sekitar"
+                    ? `Median wilayah sekitar (berbobot jarak, ${price.priorName})`
+                    : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`}{" "}
+                  (bobot {Math.round(price.priorShare * 100)}%)
                 </td>
                 <td>{formatRupiahShort(price.priorMedian)}</td>
               </tr>
@@ -219,15 +232,9 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                 <td>{formatRupiahShort(price.basePoint)}</td>
               </tr>
               <tr>
-                <td className="text-fg-muted">× faktor akses ({ti.short})</td>
-                <td>×{ti.factor.toFixed(2)}</td>
+                <td className="text-fg-muted">× faktor akses ({isAuto ? `deteksi OSM: ${ti.short.toLowerCase()}, terkalibrasi` : ti.short}{t === "utama" && price.cbdFactor > 1.01 ? ", termasuk premi pusat kota" : ""})</td>
+                <td>×{accessFactor.toFixed(2)}</td>
               </tr>
-              {ti === model.tiers.utama && price.cbdFactor > 1.01 ? (
-                <tr>
-                  <td className="text-fg-muted">× premi jalan utama pusat kota (dekat Simpang Lima)</td>
-                  <td>×{price.cbdFactor.toFixed(2)}</td>
-                </tr>
-              ) : null}
               <tr>
                 <td className="text-fg-muted">× faktor luas ({area.toLocaleString("id-ID")} m²)</td>
                 <td>×{price.sizeFactor.toFixed(2)}</td>

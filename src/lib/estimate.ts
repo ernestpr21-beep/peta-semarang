@@ -21,6 +21,10 @@ export interface PriceEstimateResult {
   /** harga titik bidang acuan (akses jalan lingkungan, luas acuan) */
   basePoint: number;
   tiers: Record<AccessTier, TierPrice>;
+  /** harga bila tier berasal dari deteksi OSM (belum dipastikan): faktor akses terkalibrasi (model.autoAccess); sama dengan tiers bila tidak ada */
+  autoTiers: Record<AccessTier, TierPrice>;
+  /** faktor akses otomatis yang dipakai per tier (termasuk premi pusat kota untuk utama) */
+  autoFactors: Record<AccessTier, number>;
   /** sebaran log lokal (≈ σ) dari pembanding */
   spreadLog: number;
   nUsed: number;
@@ -31,7 +35,7 @@ export interface PriceEstimateResult {
   medianDistanceM: number;
   /** bobot prior kelurahan/kecamatan dalam % */
   priorShare: number;
-  priorLevel: "kelurahan" | "kecamatan" | "kota";
+  priorLevel: "sekitar" | "kelurahan" | "kecamatan" | "kota";
   priorName: string;
   priorMedian: number;
   localMedian: number | null;
@@ -189,7 +193,20 @@ export function estimatePrice(opts: {
   let priorLevel: PriceEstimateResult["priorLevel"] = "kota";
   let priorName = "Kota Semarang";
   let priorMedian = model.cityMedianPn;
-  if (opts.kelStat && opts.kelStat.n >= 3) {
+  const sp = model.smoothPrior;
+  const spComps = sp ? all.filter((x) => x.d <= sp.maxM) : [];
+  if (sp && spComps.length >= sp.minN) {
+    // prior halus: median berbobot jarak (Gauss) — tidak melompat di batas kelurahan
+    priorLevel = "sekitar";
+    priorName = `pembanding ≤ ${sp.maxM / 1000} km`;
+    priorMedian = Math.exp(
+      weightedQuantile(
+        spComps.map((x) => Math.log(x.c.pn)),
+        spComps.map((x) => Math.exp(-0.5 * (x.d / sp.bwM) ** 2) * locWeight(x.c)),
+        0.5,
+      ),
+    );
+  } else if (opts.kelStat && opts.kelStat.n >= 3) {
     priorLevel = "kelurahan";
     priorName = opts.kelStat.name;
     priorMedian = opts.kelStat.median;
@@ -257,6 +274,23 @@ export function estimatePrice(opts: {
     };
   }
 
+  // tier hasil deteksi OSM: faktor terkalibrasi + σ tambahan (kondisi akses sebenarnya belum diketahui)
+  const aa = model.autoAccess;
+  const autoTiers = {} as Record<AccessTier, TierPrice>;
+  const autoFactors = {} as Record<AccessTier, number>;
+  for (const t of TIER_ORDER) {
+    if (!aa) {
+      autoTiers[t] = tiers[t];
+      autoFactors[t] = model.tiers[t].factor * (t === "utama" ? cbd.factor : 1);
+      continue;
+    }
+    const f = aa.factors[t] * (t === "utama" ? Math.pow(cbd.factor, aa.cbdScale) : 1);
+    const sig = Math.sqrt(sigma * sigma + aa.sdLog * aa.sdLog) * ss;
+    const point = basePoint * f * sf;
+    autoFactors[t] = f;
+    autoTiers[t] = { tier: t, point: roundSig(point, 2), low: roundSig(point * Math.exp(-Z50 * sig), 2), high: roundSig(point * Math.exp(Z50 * sig), 2) };
+  }
+
   const nExact = used.filter((u) => u.c.exact).length;
   const nearestM = all[0]?.d ?? Infinity;
   const dists = used.map((u) => u.distanceM).sort((a, b) => a - b);
@@ -282,6 +316,8 @@ export function estimatePrice(opts: {
     available: true,
     basePoint,
     tiers,
+    autoTiers,
+    autoFactors,
     spreadLog: sLocal,
     nUsed: used.length,
     nEff,

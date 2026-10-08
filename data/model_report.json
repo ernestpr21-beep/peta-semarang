@@ -1,5 +1,5 @@
 {
- "version": "2026-10-3",
+ "version": "2026-10-4",
  "minEffComparables": 10,
  "locLevels": {
   "titik": 2032,
@@ -206,36 +206,36 @@
    {
     "minM2": 0,
     "maxM2": 100,
-    "scale": 0.939,
-    "scaleRaw": 0.915,
+    "scale": 0.927,
+    "scaleRaw": 0.898,
     "n": 254
    },
    {
     "minM2": 100,
     "maxM2": 175,
-    "scale": 0.918,
-    "scaleRaw": 0.909,
+    "scale": 0.929,
+    "scaleRaw": 0.922,
     "n": 981
    },
    {
     "minM2": 175,
     "maxM2": 500,
-    "scale": 1.048,
-    "scaleRaw": 1.052,
+    "scale": 1.045,
+    "scaleRaw": 1.049,
     "n": 1172
    },
    {
     "minM2": 500,
     "maxM2": 1500,
-    "scale": 1.081,
-    "scaleRaw": 1.097,
+    "scale": 1.075,
+    "scaleRaw": 1.09,
     "n": 519
    },
    {
     "minM2": 1500,
     "maxM2": null,
-    "scale": 1.435,
-    "scaleRaw": 1.553,
+    "scale": 1.421,
+    "scaleRaw": 1.535,
     "n": 370
    }
   ],
@@ -243,28 +243,28 @@
    "crossFitCoverage50": [
     {
      "withScale": 47.8,
-     "without": 48.0,
+     "without": 48.2,
      "n": 1672
     },
     {
-     "withScale": 50.9,
-     "without": 48.3,
+     "withScale": 51.0,
+     "without": 49.1,
      "n": 1624
     }
    ],
    "coverageByClassWithout": [
-    54.7,
-    53.0,
-    47.9,
-    47.4,
+    53.9,
+    53.8,
+    48.5,
+    48.4,
     32.4
    ],
    "coverageByClassWith": [
-    52.0,
-    50.2,
-    50.6,
-    49.3,
-    47.0
+    50.0,
+    50.3,
+    50.9,
+    50.9,
+    48.1
    ]
   },
   "note": "Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1."
@@ -280,21 +280,79 @@
   },
   "gangCheck": {
    "n": 27,
-   "q25LogVsLingPoint": -0.463,
-   "medianLogVsLingPoint": -0.282,
-   "q75LogVsLingPoint": 0.175,
-   "shareAboveLingPoint": 37.0,
+   "q25LogVsLingPoint": -0.506,
+   "medianLogVsLingPoint": -0.26,
+   "q75LogVsLingPoint": 0.141,
+   "shareAboveLingPoint": 40.7,
    "withoutCap": {
     "coverage50": 44.4,
-    "aboveHigh": 29.6
+    "aboveHigh": 33.3
    },
    "withCap": {
     "coverage50": 37.0,
-    "aboveHigh": 37.0
+    "aboveHigh": 40.7
    },
    "capMult": 1.0
   },
   "note": "Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama)."
+ },
+ "autoAccess": {
+  "factors": {
+   "utama": 1.057,
+   "lingkungan": 1.057,
+   "gang": 1.057,
+   "tanpa": 1.009
+  },
+  "cbdScale": 1.0,
+  "sdLog": 0.1,
+  "n": {
+   "utama": 246,
+   "lingkungan": 1031,
+   "gang": 415,
+   "tanpa": 340
+  },
+  "medianRaw": {
+   "utama": 1.057,
+   "lingkungan": 1.043,
+   "gang": 1.098,
+   "tanpa": 1.007
+  },
+  "validation": {
+   "before": {
+    "n": 2032,
+    "medianAbsErrPct": 41.3,
+    "biasLog": -0.15,
+    "within25pct": 33.1,
+    "coverage50pct": 43.5,
+    "biasByDetectedTier": {
+     "utama": 0.115,
+     "lingkungan": -0.042,
+     "gang": -0.272,
+     "tanpa": -0.604
+    }
+   },
+   "after": {
+    "n": 2032,
+    "medianAbsErrPct": 34.3,
+    "biasLog": 0.005,
+    "within25pct": 39.8,
+    "coverage50pct": 50.9,
+    "biasByDetectedTier": {
+     "utama": 0.037,
+     "lingkungan": 0.013,
+     "gang": -0.038,
+     "tanpa": 0.002
+    }
+   },
+   "note": "leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan."
+  },
+  "note": "Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor."
+ },
+ "smoothPrior": {
+  "bwM": 1500,
+  "maxM": 4500,
+  "minN": 3,
+  "note": "Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota."
  },
  "tiers": {
   "utama": {
@@ -591,16 +649,16 @@
   "medianAbsErrPct_kecamatanMedian_raw": 49.2,
   "within25pct_model": 40.1,
   "coverage50pct": 49.9,
-  "biasLog": 0.012,
+  "biasLog": 0.015,
   "target": "iklan berpin tepat (loc_level=titik), leave-one-out",
   "allLocated": {
    "n": 3296,
    "medianAbsErrPct_model": 32.8,
    "medianAbsErrPct_kelurahanMedian": 33.5,
    "medianAbsErrPct_kecamatanMedian_raw": 50.0,
-   "within25pct_model": 40.5,
-   "coverage50pct": 50.0,
-   "biasLog": 0.003
+   "within25pct_model": 40.3,
+   "coverage50pct": 50.3,
+   "biasLog": -0.001
   },
   "nKecamatanOnly": 939
  }

@@ -15,27 +15,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 25000000,
-    "low": 14000000,
-    "high": 47000000
+    "point": 22000000,
+    "low": 12000000,
+    "high": 40000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 10000000,
-    "low": 5800000,
-    "high": 19000000
+    "point": 8800000,
+    "low": 4900000,
+    "high": 16000000
    },
    "gang": {
     "tier": "gang",
-    "point": 8700000,
-    "low": 4800000,
-    "high": 10000000
+    "point": 7400000,
+    "low": 4100000,
+    "high": 8800000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 5700000,
-    "low": 3200000,
-    "high": 8700000
+    "point": 4900000,
+    "low": 2700000,
+    "high": 7400000
    }
   }
  },
@@ -55,27 +55,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 24000000,
-    "low": 16000000,
-    "high": 37000000
+    "point": 21000000,
+    "low": 14000000,
+    "high": 33000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 10000000,
-    "low": 6900000,
-    "high": 15000000
+    "point": 9200000,
+    "low": 6100000,
+    "high": 14000000
    },
    "gang": {
     "tier": "gang",
-    "point": 8600000,
-    "low": 5800000,
-    "high": 10000000
+    "point": 7700000,
+    "low": 5100000,
+    "high": 9200000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 5700000,
-    "low": 3800000,
-    "high": 8600000
+    "point": 5100000,
+    "low": 3300000,
+    "high": 7700000
    }
   }
  },
@@ -95,27 +95,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 22000000,
-    "low": 15000000,
-    "high": 32000000
+    "point": 19000000,
+    "low": 13000000,
+    "high": 28000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 13000000,
-    "low": 8800000,
-    "high": 18000000
+    "point": 11000000,
+    "low": 7600000,
+    "high": 16000000
    },
    "gang": {
     "tier": "gang",
-    "point": 11000000,
-    "low": 7400000,
-    "high": 13000000
+    "point": 9200000,
+    "low": 6400000,
+    "high": 11000000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 7000000,
-    "low": 4800000,
-    "high": 10000000
+    "point": 6100000,
+    "low": 4100000,
+    "high": 8800000
    }
   }
  },
@@ -136,7 +136,7 @@
    "utama": {
     "tier": "utama",
     "point": 6200000,
-    "low": 5300000,
+    "low": 5200000,
     "high": 7300000
    },
    "lingkungan": {
@@ -153,8 +153,8 @@
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 3000000,
-    "low": 2500000,
+    "point": 2900000,
+    "low": 2400000,
     "high": 3600000
    }
   }
@@ -175,27 +175,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 5500000,
-    "low": 4500000,
-    "high": 6700000
+    "point": 5300000,
+    "low": 4300000,
+    "high": 6600000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 4800000,
-    "low": 3900000,
-    "high": 5800000
+    "point": 4700000,
+    "low": 3800000,
+    "high": 5700000
    },
    "gang": {
     "tier": "gang",
-    "point": 4000000,
+    "point": 3900000,
     "low": 3200000,
-    "high": 4800000
+    "high": 4700000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 2600000,
-    "low": 2100000,
-    "high": 3300000
+    "low": 2000000,
+    "high": 3200000
    }
   }
  },
@@ -215,27 +215,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 3200000,
-    "low": 2300000,
-    "high": 4500000
+    "point": 3500000,
+    "low": 2500000,
+    "high": 5000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 2800000,
-    "low": 2000000,
-    "high": 4000000
+    "point": 3100000,
+    "low": 2200000,
+    "high": 4300000
    },
    "gang": {
     "tier": "gang",
-    "point": 2400000,
-    "low": 1700000,
-    "high": 2800000
+    "point": 2600000,
+    "low": 1800000,
+    "high": 3100000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 1500000,
-    "low": 1100000,
-    "high": 2200000
+    "point": 1700000,
+    "low": 1200000,
+    "high": 2400000
    }
   }
  },
@@ -255,26 +255,26 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2100000,
+    "point": 2000000,
     "low": 1600000,
-    "high": 2800000
+    "high": 2700000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 1900000,
+    "point": 1800000,
     "low": 1400000,
-    "high": 2400000
+    "high": 2300000
    },
    "gang": {
     "tier": "gang",
     "point": 1500000,
-    "low": 1200000,
-    "high": 1900000
+    "low": 1100000,
+    "high": 1800000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 1000000,
-    "low": 770000,
+    "point": 980000,
+    "low": 740000,
     "high": 1300000
    }
   }
@@ -337,7 +337,7 @@
     "tier": "utama",
     "point": 2800000,
     "low": 2200000,
-    "high": 3500000
+    "high": 3400000
    },
    "lingkungan": {
     "tier": "lingkungan",
@@ -354,7 +354,7 @@
    "tanpa": {
     "tier": "tanpa",
     "point": 1300000,
-    "low": 1100000,
+    "low": 1000000,
     "high": 1700000
    }
   }
@@ -375,26 +375,26 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2300000,
-    "low": 1800000,
-    "high": 3000000
+    "point": 2400000,
+    "low": 1900000,
+    "high": 3100000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 2000000,
+    "point": 2100000,
     "low": 1600000,
-    "high": 2600000
+    "high": 2700000
    },
    "gang": {
     "tier": "gang",
     "point": 1700000,
-    "low": 1300000,
-    "high": 2000000
+    "low": 1400000,
+    "high": 2100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 1100000,
-    "low": 860000,
+    "low": 880000,
     "high": 1500000
    }
   }
@@ -415,27 +415,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 4900000,
-    "low": 3900000,
-    "high": 6200000
+    "point": 4700000,
+    "low": 3800000,
+    "high": 6000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 4200000,
-    "low": 3300000,
-    "high": 5200000
+    "point": 4000000,
+    "low": 3200000,
+    "high": 5100000
    },
    "gang": {
     "tier": "gang",
-    "point": 3500000,
-    "low": 2800000,
-    "high": 4200000
+    "point": 3400000,
+    "low": 2700000,
+    "high": 4000000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 2300000,
-    "low": 1800000,
-    "high": 2900000
+    "point": 2200000,
+    "low": 1700000,
+    "high": 2800000
    }
   }
  }

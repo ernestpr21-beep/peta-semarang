@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useDataset, useEvidence, type Evidence, type VStat } from "@/lib/data";
-import { TIER_ORDER } from "@/lib/model";
+import { TIER_ORDER, type PriceModel } from "@/lib/model";
 import { ACCESS_THRESHOLDS } from "@/lib/access";
 import { formatMonth, formatRupiahShort } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/primitives";
@@ -487,12 +487,32 @@ export function MetodologiPage() {
       <ol>
         <li>Cari iklan pembanding terdekat; radius diperbesar bertahap (400 m → 3 km) sampai setara ≥ {model.minEffComparables ?? 8} pembanding (iklan berlokasi perkiraan setingkat kelurahan dihitung setengah; iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai). Maksimal 30 pembanding.</li>
         <li>Bobot tiap pembanding: kernel jarak (makin dekat makin berat), ketepatan lokasi, dan umur iklan (waktu paruh {model.recencyHalfLifeYears} tahun).</li>
-        <li>Median terboboti dari harga ternormalisasi → harga lokal. Lalu "disusutkan" ke median kelurahan (atau kecamatan/kota bila data kelurahan &lt; 3) dengan bobot setara 3 pembanding — makin sedikit data lokal, makin besar peran median wilayah.</li>
+        <li>
+          Median terboboti dari harga ternormalisasi → harga lokal. Lalu "disusutkan" ke median wilayah dengan bobot setara 3 pembanding — makin sedikit data lokal, makin besar peran median wilayah.
+          {model.smoothPrior ? (
+            <>
+              {" "}
+              Sejak model {model.version}, median wilayah adalah <b>median berbobot jarak</b> (Gauss, lebar {model.smoothPrior.bwM.toLocaleString("id-ID")} m) dari pembanding dalam{" "}
+              {model.smoothPrior.maxM / 1000} km, bukan median kelurahan — sehingga estimasi tidak melompat di garis batas kelurahan. Akurasi setara (validasi silang blok spasial 2 km: galat 37,4% vs 37,3%;
+              leave-one-out 33,8% vs 33,9%), lompatan antar sel kisi 250 m berkurang.
+            </>
+          ) : (
+            " Median wilayah = median kelurahan (atau kecamatan/kota bila data kelurahan < 3)."
+          )}
+        </li>
         <li>
           <b>Rentang</b> = 50% tengah distribusi (±0,674σ), dengan σ dari sebaran (MAD, bobot diratakan dengan akar bobot agar 1–2 iklan terdekat tidak mendominasi) pembanding terdekat — dicampur sebaran kota bila pembanding sedikit — ditambah ketidakpastian faktor akses, lalu dikali pengali menurut luas bidang (bidang kecil lebih seragam, bidang sangat luas lebih beragam). Untuk gang sempit, batas atas tidak melebihi titik
           estimasi jalan lingkungan; untuk tanpa akses, tidak melebihi titik estimasi gang (<a href="#luas">bagian 5e</a>). Jadi lebar rentang mengikuti kepadatan &amp; keragaman data, bukan ±20% tetap.
         </li>
-        <li>Harga untuk kondisi akses &amp; luas yang dipilih = harga dasar × faktor kedekatan kampus × faktor akses (jalan utama: × premi pusat kota) × faktor luas. Angka dibulatkan 2 angka penting.</li>
+        <li>
+          Harga untuk kondisi akses &amp; luas yang dipilih = harga dasar × faktor kedekatan kampus × faktor akses (jalan utama: × premi pusat kota) × faktor luas. Angka dibulatkan 2 angka penting.
+          {model.autoAccess ? (
+            <>
+              {" "}
+              Selama kondisi akses <b>belum dipilih</b> pengguna (hanya hasil deteksi OSM), faktor akses yang dipakai adalah faktor terkalibrasi untuk deteksi itu — lihat <a href="#akses-otomatis">bagian 4b</a>.
+            </>
+          ) : null}
+        </li>
         <li>Tingkat keyakinan: tinggi (≥ 8 pembanding efektif, median jarak ≤ 1 km, sebaran wajar), sedang (≥ 4 dalam 2 km), selain itu rendah.</li>
       </ol>
 
@@ -570,6 +590,8 @@ export function MetodologiPage() {
         dipakai untuk faktor.
       </p>
 
+      {model.autoAccess ? <AutoAccessSection model={model} /> : null}
+
       {ev.data ? <EvidenceSection ev={ev.data} model={model} /> : null}
       {ev.data?.v3 ? <SizeGangSection ev={ev.data.v3} model={model} /> : null}
 
@@ -622,5 +644,56 @@ export function MetodologiPage() {
         Median kota (bidang acuan): {formatRupiahShort(model.cityMedianPn)}/m². Model versi {model.version}.
       </p>
     </PageShell>
+  );
+}
+
+function AutoAccessSection({ model }: { model: PriceModel }) {
+  const aa = model.autoAccess!;
+  const b = aa.validation.before, a = aa.validation.after;
+  const pctLog = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(Math.round((Math.exp(x) - 1) * 100))}%`;
+  return (
+    <>
+      <h3 id="akses-otomatis">4b. Akses hasil deteksi otomatis: faktor terkalibrasi (audit Okt 2026, model {model.version})</h3>
+      <p>
+        Audit menyeluruh (Okt 2026) menemukan penyebab terbesar estimasi "terlalu rendah": di titik yang diklik, kelas akses diambil dari deteksi OSM lalu dikalikan faktor penuhnya (gang ×{model.tiers.gang.factor.toFixed(2)}, tanpa akses ×
+        {model.tiers.tanpa.factor.toFixed(2)}). Padahal iklan berpin tepat yang titiknya dideteksi "gang" atau "tanpa akses" <b>tidak lebih murah</b> daripada tetangganya: banyak gang kampung belum dipetakan di OSM, dan
+        titik di tengah blok belum tentu terkurung. Pada kisi 250 m, ±45% sel permukiman terdeteksi gang/tanpa akses; di sana harga tampil ±20–45% terlalu rendah (terutama Gunungpati, Mijen, Ngaliyan, Tugu, Tembalang timur), dan harga melompat-lompat
+        antar titik bertetangga (2.201 pasang sel tetangga berselisih &gt; ×1,5, kini 231).
+      </p>
+      <p>
+        Sekarang, selama kondisi akses belum dipilih pengguna, harga utama memakai <b>faktor akses terkalibrasi</b>: median log(harga iklan / estimasi tanpa faktor akses) per kelas deteksi (leave-one-out), disusutkan ke faktor
+        "akses tidak disebut" (bobot n/(n+30)) dan dibuat monoton (utama ≥ lingkungan ≥ gang ≥ tanpa):{" "}
+        {TIER_ORDER.map((t) => `${model.tiers[t].short} ×${aa.factors[t].toFixed(2)} (n=${aa.n[t]})`).join(", ")}
+        {aa.cbdScale > 0 ? "; jalan utama di pusat kota tetap mendapat premi pusat kota" : ""}. Rentang ditambah σ {aa.sdLog.toFixed(2)} (kondisi akses sebenarnya belum diketahui). Bila pengguna memilih kelas akses,
+        faktor penuh di tabel atas yang dipakai (mis. gang sempit yang memang hanya bisa dilalui motor).
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Harga yang tampil di titik iklan (leave-one-out, n={a.n})</th>
+            <th>Sebelum</th>
+            <th>Sesudah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Galat median</td><td className="num">{b.medianAbsErrPct}%</td><td className="num">{a.medianAbsErrPct}%</td></tr>
+          <tr><td>Bias median (estimasi vs iklan)</td><td className="num">{pctLog(b.biasLog)}</td><td className="num">{pctLog(a.biasLog)}</td></tr>
+          <tr><td>Dalam ±25%</td><td className="num">{b.within25pct}%</td><td className="num">{a.within25pct}%</td></tr>
+          <tr><td>Cakupan rentang 50%</td><td className="num">{b.coverage50pct}%</td><td className="num">{a.coverage50pct}%</td></tr>
+          {TIER_ORDER.map((t) => (
+            <tr key={t}>
+              <td>Bias bila terdeteksi "{model.tiers[t].short}"</td>
+              <td className="num">{b.biasByDetectedTier[t] != null ? pctLog(b.biasByDetectedTier[t]!) : "—"}</td>
+              <td className="num">{a.biasByDetectedTier[t] != null ? pctLog(a.biasByDetectedTier[t]!) : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-fg-muted">
+        Validasi silang blok spasial (blok 2 km keluar bersama, faktor dikalibrasi hanya dari lipatan latih): galat harga tampil 45,6% → 38,8%, bias −16% → 0%. Aturan lain yang diuji dan <b>tidak</b> memperbaiki
+        validasi: koreksi kata kunci iklan (BU/cicilan/sawah/hook), buang pencilan lebih ketat, dedup lintas portal, tren waktu lebih curam, ukuran radius/kernel/jumlah pembanding, dan gradient boosting
+        (LightGBM: galat 35,8–36,8% tetapi bias kuat ke rata-rata — wilayah murah terlalu tinggi, mahal terlalu rendah). Skrip: <code>data-pipeline/analysis/audit/</code>.
+      </p>
+    </>
   );
 }

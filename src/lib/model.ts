@@ -46,6 +46,15 @@ export interface TierInfo {
   priorNote: string;
 }
 
+export interface AutoAccessStats {
+  n: number;
+  medianAbsErrPct: number;
+  biasLog: number;
+  within25pct: number;
+  coverage50pct: number;
+  biasByDetectedTier: Partial<Record<AccessTier, number>>;
+}
+
 export interface PriceModel {
   version: string;
   asOf: string;
@@ -100,6 +109,22 @@ export interface PriceModel {
     };
     note: string;
   };
+  /** faktor akses untuk tier hasil deteksi OSM (belum dipastikan pengguna) — dikalibrasi dari iklan, lihat Metodologi */
+  autoAccess?: {
+    factors: Record<AccessTier, number>;
+    cbdScale: number;
+    sdLog: number;
+    n: Record<AccessTier, number>;
+    medianRaw: Record<AccessTier, number>;
+    validation: {
+      before: AutoAccessStats;
+      after: AutoAccessStats;
+      note: string;
+    };
+    note: string;
+  };
+  /** prior wilayah halus (median berbobot jarak) menggantikan median kelurahan */
+  smoothPrior?: { bwM: number; maxM: number; minN: number; note: string };
   commercialFactor: number;
   recencyHalfLifeYears: number;
   tiers: Record<AccessTier, TierInfo>;

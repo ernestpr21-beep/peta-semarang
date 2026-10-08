@@ -288,6 +288,7 @@ print('city median pn', round(city_med), 'local spread', round(city_spread, 3))
 
 # ---------- validasi leave-one-out (port estimator src/lib/estimate.ts) ----------
 RADII = [400, 600, 800, 1000, 1500, 2000, 3000]
+SMOOTH_PRIOR_BW = 1500  # m; diuji dengan validasi silang blok spasial (analysis/audit/cv_prior_hl.py)
 MIN_EFF = 10  # sama dengan src/lib/estimate.ts (dipilih lewat uji leave-one-out, lihat analysis/loo_variants.py)
 def hav(a, b, c, d):
     R = 6371008.8; p = math.pi / 180
@@ -311,9 +312,14 @@ def predict(r0, pool):
         if eff >= MIN_EFF: break
     chosen = chosen[:30]; h = max(250, rad / 2.5)
     ws = [(1 / (1 + (d / h) ** 2)) * (1 if c['exact'] else 0.5) * 0.5 ** (c['age_y'] / 2) for d, c in chosen]
-    kl = [x for x in kel_by[r0['kelurahan']] if x is not r0]
-    kc = [x for x in kec_by[r0['kecamatan']] if x is not r0]
-    prior = math.log(statistics.median([x['pn'] for x in kl])) if len(kl) >= 3 else (math.log(statistics.median([x['pn'] for x in kc])) if len(kc) >= 3 else math.log(city_med))
+    # prior halus: median berbobot jarak (Gauss, bw SMOOTH_PRIOR_BW) dari pembanding ≤ 3·bw — tanpa lompatan di batas kelurahan
+    sp = [(d, c) for d, c in al if d <= 3 * SMOOTH_PRIOR_BW]
+    if len(sp) >= 3:
+        prior = wq([math.log(c['pn']) for _, c in sp], [math.exp(-0.5 * (d / SMOOTH_PRIOR_BW) ** 2) * (1 if c['exact'] else 0.5) for d, c in sp], 0.5)
+    else:
+        kl = [x for x in kel_by[r0['kelurahan']] if x is not r0]
+        kc = [x for x in kec_by[r0['kecamatan']] if x is not r0]
+        prior = math.log(statistics.median([x['pn'] for x in kl])) if len(kl) >= 3 else (math.log(statistics.median([x['pn'] for x in kc])) if len(kc) >= 3 else math.log(city_med))
     if not chosen: return prior, 0, city_spread
     vals = [math.log(c['pn']) for _, c in chosen]
     mu = wq(vals, ws, 0.5); neff = sum(ws) ** 2 / sum(w * w for w in ws)
@@ -398,6 +404,60 @@ gang_check = {'n': len(_g), 'q25LogVsLingPoint': round(_el[len(_el) // 4], 3) if
               'withoutCap': _gcov(False), 'withCap': _gcov(True), 'capMult': round(GANG_CAP_MULT, 3)}
 print('cek gang', gang_check)
 def mape(es): return round((math.exp(statistics.median(es)) - 1) * 100, 1)
+# ---------- kalibrasi akses hasil deteksi otomatis (OSM) ----------
+# Di aplikasi, tier akses awal berasal dari deteksi OSM (jarak titik ke jalan). Audit 2026-10 (analysis/audit/access_calib.py,
+# proto_eval.py): iklan berpin tepat yang dideteksi "gang"/"tanpa" TIDAK lebih murah daripada tetangganya (OSM sering tidak
+# memetakan gang kampung; titik di tengah blok belum tentu terkurung). Maka harga utama untuk tier hasil deteksi memakai faktor
+# terkalibrasi: median log(harga iklan / estimasi tanpa faktor akses) per tier deteksi, disusutkan ke faktor "tidak diketahui"
+# (bobot n/(n+30)), lalu dibuat monoton (utama ≥ lingkungan ≥ gang ≥ tanpa). Faktor penuh tetap dipakai bila pengguna memilih tier.
+AUTO_ORDER = ['utama', 'lingkungan', 'gang', 'tanpa']
+def _tf_used(r):
+    t = r['access_tier']; tf = tiers[t]['factor'] if t else math.exp(unknown_b)
+    return tf * (cbd_factor(r['d_cbd']) if t == 'utama' else 1.0)
+_auto_src = [(r, e + math.log(_tf_used(r)), s) for r, e, s, _, _ in loo if r['loc_level'] == 'titik' and r.get('osm_tier') in AUTO_ORDER]
+def _pava(vals, ns):
+    bl = [[v, n, [i]] for i, (v, n) in enumerate(zip(vals, ns))]; i = 0
+    while i < len(bl) - 1:
+        if bl[i][0] < bl[i + 1][0]:
+            bl[i] = [(bl[i][0] * bl[i][1] + bl[i + 1][0] * bl[i + 1][1]) / (bl[i][1] + bl[i + 1][1]), bl[i][1] + bl[i + 1][1], bl[i][2] + bl[i + 1][2]]; del bl[i + 1]; i = max(0, i - 1)
+        else: i += 1
+    out = [0.0] * len(vals)
+    for v, n, ix in bl:
+        for j in ix: out[j] = v
+    return out
+_ag = {t: [y for r, y, _ in _auto_src if r['osm_tier'] == t] for t in AUTO_ORDER}
+_amed = {t: (statistics.median(v) if v else unknown_b) for t, v in _ag.items()}
+_ashr = [(len(_ag[t]) * _amed[t] + 30 * unknown_b) / (len(_ag[t]) + 30) for t in AUTO_ORDER]
+_amono = dict(zip(AUTO_ORDER, _pava(_ashr, [len(_ag[t]) for t in AUTO_ORDER])))
+# premi pusat kota untuk 'utama' hasil deteksi: skala s ∈ {0, ¼, ½, ¾, 1} yang meminimalkan galat absolut median (utama terdeteksi < 4 km)
+_best = (9.0, 0.0)
+for _s in (0.0, 0.25, 0.5, 0.75, 1.0):
+    _e = [abs(_amono['utama'] + _s * math.log(cbd_factor(r['d_cbd'])) - y) for r, y, _ in _auto_src if r['osm_tier'] == 'utama' and r['d_cbd'] < 4000]
+    if _e and statistics.median(_e) < _best[0]: _best = (statistics.median(_e), _s)
+AUTO_CBD_SCALE = _best[1]
+def _auto_pred(r):
+    return _amono[r['osm_tier']] + (AUTO_CBD_SCALE * math.log(cbd_factor(r['d_cbd'])) if r['osm_tier'] == 'utama' else 0.0)
+def _disp_pred_old(r):
+    t = r['osm_tier']; return math.log(tiers[t]['factor'] * (cbd_factor(r['d_cbd']) if t == 'utama' else 1.0))
+# tambahan σ (ketidakpastian kondisi akses sebenarnya) agar rentang 50% memuat ±50% iklan
+_sig_t = {t: math.log(tiers[t]['hi'] / tiers[t]['lo']) / (2 * 1.96) for t in AUTO_ORDER}
+AUTO_SD = 0.0
+for _x in (0.0, 0.05, 0.1, 0.15, 0.2, 0.25):
+    if 100 * sum(1 for r, y, s in _auto_src if abs(y - _auto_pred(r)) <= 0.674 * math.sqrt(s * s + _x * _x)) / len(_auto_src) >= 50: AUTO_SD = _x; break
+    AUTO_SD = _x
+def _dstats(pred, sigf):
+    es = [_y - pred(r) for r, _y, _ in _auto_src]
+    return {'n': len(es), 'medianAbsErrPct': mape([abs(e) for e in es]), 'biasLog': round(-statistics.median(es), 3),
+            'within25pct': round(100 * sum(1 for e in es if abs(e) <= math.log(1.25)) / len(es), 1),
+            'coverage50pct': round(100 * sum(1 for (r, y, s), e in zip(_auto_src, es) if abs(e) <= 0.674 * sigf(r, s)) / len(es), 1),
+            'biasByDetectedTier': {t: round(-statistics.median([_y - pred(r) for r, _y, _ in _auto_src if r['osm_tier'] == t]), 3) for t in AUTO_ORDER if _ag[t]}}
+auto_access = {'factors': {t: round(math.exp(_amono[t]), 3) for t in AUTO_ORDER}, 'cbdScale': AUTO_CBD_SCALE, 'sdLog': AUTO_SD,
+               'n': {t: len(_ag[t]) for t in AUTO_ORDER}, 'medianRaw': {t: round(math.exp(_amed[t]), 3) for t in AUTO_ORDER},
+               'validation': {'before': _dstats(_disp_pred_old, lambda r, s: math.sqrt(s * s + _sig_t[r['osm_tier']] ** 2)),
+                              'after': _dstats(_auto_pred, lambda r, s: math.sqrt(s * s + AUTO_SD ** 2)),
+                              'note': 'leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan.'},
+               'note': 'Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor.'}
+print('akses otomatis', json.dumps(auto_access, ensure_ascii=False))
 def vstats(sub):
     errs = [abs(e) for _, e, _, _, _ in sub]
     return {'n': len(sub), 'medianAbsErrPct_model': mape(errs),
@@ -446,7 +506,7 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-3', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-4', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
                   'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
                   'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},
@@ -461,6 +521,7 @@ model = {
                      'note': 'Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1.'},
     'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
                  'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
+    'autoAccess': auto_access, 'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
     'tiers': tiers, 'cityMedianPn': round(city_med), 'citySpreadLog': round(city_spread, 4),
     'regression': {'n': n_reg, 'r2Within': round(r2w, 3), 'sigma': round(sigma, 3), 'nOsm': n_osm, 'r2WithinOsm': round(r2w_osm, 3),
                    'coefText': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_txt.items()}, 'coefOsm': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_osm.items()},
