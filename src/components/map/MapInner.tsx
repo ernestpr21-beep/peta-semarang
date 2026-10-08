@@ -236,7 +236,7 @@ export default function MapInner() {
       ) : null}
 
       {showComps && ds.data && zoom >= 13
-        ? ds.data.comparables.map((c) => {
+        ? ds.data.comparables.filter((c) => c.loc !== "kec").map((c) => {
             const used = usedIds.has(c.id);
             return (
               <CircleMarker
@@ -252,7 +252,7 @@ export default function MapInner() {
                   fillOpacity: c.exact ? 0.9 : 0.45,
                   dashArray: c.exact ? undefined : "2 2",
                 }}
-                eventHandlers={{ click: () => window.open(c.url, "_blank", "noopener") }}
+                eventHandlers={{ click: () => (c.url ? window.open(c.url, "_blank", "noopener") : undefined) }}
               >
                 <Tooltip direction="top">
                   <div className="text-[11px] leading-snug">
@@ -262,7 +262,7 @@ export default function MapInner() {
                     <br />
                     akses: {c.tier ?? "tidak disebut"} · {c.exact ? "titik iklan" : "perkiraan (pusat kelurahan)"}
                     <br />
-                    <span style={{ opacity: 0.7 }}>klik untuk buka iklan</span>
+                    <span style={{ opacity: 0.7 }}>{c.url ? "klik untuk buka iklan" : "tautan iklan disembunyikan (memuat no. telepon)"}</span>
                   </div>
                 </Tooltip>
               </CircleMarker>

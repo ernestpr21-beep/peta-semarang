@@ -20,6 +20,38 @@ export type KecProps = { name: string; area_km2?: number };
 export type KelProps = { name: string; kecamatan: string };
 
 export const useDataset = () => useQuery({ queryKey: ["dataset"], queryFn: () => getJson<Dataset>(dataUrl("dataset.json")), staleTime: Infinity });
+export interface PointEst {
+  name: string;
+  lat: number;
+  lng: number;
+  kelurahan?: string;
+  nUsed: number;
+  nExact: number;
+  radiusM: number;
+  lingkungan: { low: number; point: number; high: number };
+  utama: { low: number; point: number; high: number };
+}
+export interface VStat {
+  mdae: number;
+  cov50: number;
+  bias: number;
+  w25: number;
+}
+/** Bukti analisis untuk halaman Metodologi (data-pipeline/analysis/build_evidence.py) */
+export interface Evidence {
+  locationQuality: { levels: Record<string, number>; sharedPin: number; textConflict: number; kecTextOnly: number; kecOnlyByKecamatan: Record<string, number> };
+  campus: {
+    text: { group: string; n: number; median: number; restKec: string[]; restN: number; restMedian: number }[];
+    perCampus: { campus: string; nNear: number; near: number; nFar: number; far: number }[];
+    bands: { from: number; to: number | null; n: number; median: number }[];
+    regression: Record<string, { from: number; to: number; coef: number; se: number; n: number }[]>;
+    tembalangText: { kecOnlyN: number; kecOnlyMedian: number; kecOnlyArea: number; kelExactN: number; kelExactMedian: number; kecExactN: number; kecExactMedian: number };
+  };
+  frontage: Record<string, Record<string, [number, number]>>;
+  beforeAfter: Record<string, { n: number; old: VStat; new: VStat }> & { perKecamatan?: Record<string, { n: number; old: VStat; new: VStat }> };
+  points: { before: PointEst[]; after: PointEst[] };
+}
+export const useEvidence = () => useQuery({ queryKey: ["evidence"], queryFn: () => getJson<Evidence>(dataUrl("evidence.json")), staleTime: Infinity });
 export const useKota = () => useQuery({ queryKey: ["kota"], queryFn: () => getJson<GeoCollection<KotaProps>>(dataUrl("kota.geojson")), staleTime: Infinity });
 export const useKecamatan = () => useQuery({ queryKey: ["kec"], queryFn: () => getJson<GeoCollection<KecProps>>(dataUrl("kecamatan.geojson")), staleTime: Infinity });
 export const useKelurahan = () => useQuery({ queryKey: ["kel"], queryFn: () => getJson<GeoCollection<KelProps>>(dataUrl("kelurahan.geojson")), staleTime: Infinity });

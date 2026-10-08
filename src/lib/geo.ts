@@ -95,3 +95,37 @@ export function parseLatLng(input: string): LatLng | null {
   if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
   return [lat, lng];
 }
+
+/** Jarak (m) dari titik ke poligon cincin [lat, lng][]; 0 bila di dalam. */
+export function distanceToRingsM(lat: number, lng: number, rings: number[][][]) {
+  const proj = localProjector(lat, lng);
+  let best = Infinity;
+  for (const ring of rings) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [yi, xi] = ring[i];
+      const [yj, xj] = ring[j];
+      if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi + 1e-15) + xi) inside = !inside;
+    }
+    if (inside) return 0;
+    for (let i = 1; i < ring.length; i++) {
+      const [ax, ay] = proj(ring[i - 1][0], ring[i - 1][1]);
+      const [bx, by] = proj(ring[i][0], ring[i][1]);
+      best = Math.min(best, distToSegment(ax, ay, bx, by));
+    }
+  }
+  return best;
+}
+
+/** Kampus terdekat (poligon OSM) dari titik. */
+export function nearestCampus(lat: number, lng: number, campuses: { name: string; rings: number[][][] }[] | undefined) {
+  let best: { name: string; distanceM: number } | null = null;
+  for (const c of campuses ?? []) {
+    // saringan kasar: lewati kampus yang titik pertamanya > 6 km
+    const f = c.rings[0]?.[0];
+    if (f && haversineMeters(lat, lng, f[0], f[1]) > 6000) continue;
+    const d = distanceToRingsM(lat, lng, c.rings);
+    if (!best || d < best.distanceM) best = { name: c.name, distanceM: d };
+  }
+  return best;
+}

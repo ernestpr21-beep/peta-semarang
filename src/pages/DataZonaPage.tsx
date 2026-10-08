@@ -78,8 +78,8 @@ export function DataZonaPage() {
     );
   const { meta, comparables } = ds.data;
   const compRows = (cs: Comparable[]) => [
-    ["id", "sumber", "url", "lat", "lng", "lokasi_tepat", "kelurahan", "kecamatan", "luas_m2", "harga_per_m2", "harga_ternormalisasi_per_m2", "akses_teks", "tanggal"],
-    ...cs.map((c) => [c.id, c.src, c.url, c.lat, c.lng, c.exact, c.kel, c.kec, c.area, c.ppm, c.pn, c.tier, c.date]),
+    ["id", "sumber", "url", "lat", "lng", "lokasi_tepat", "tingkat_lokasi", "kelurahan", "kecamatan", "luas_m2", "harga_per_m2", "harga_ternormalisasi_per_m2", "akses_teks", "tanggal"],
+    ...cs.map((c) => [c.id, c.src, c.url, c.lat, c.lng, c.exact, c.loc ?? "", c.kel ?? "", c.kec, c.area, c.ppm, c.pn, c.tier, c.date]),
   ];
 
   return (

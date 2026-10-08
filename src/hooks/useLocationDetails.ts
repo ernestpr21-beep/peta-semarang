@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAppStore } from "@/lib/store";
 import { useDataset, useFacilities, useKecamatan, useKelurahan, useKota, useReverseGeocode, useRoadsAround } from "@/lib/data";
-import { findFeature } from "@/lib/geo";
+import { findFeature, nearestCampus } from "@/lib/geo";
 import { detectAccess, type AccessDetection } from "@/lib/access";
 import { estimatePrice, findAreaStat, type PriceResult } from "@/lib/estimate";
 import { facilitiesNear, type Facility } from "@/lib/facilities";
@@ -62,6 +62,7 @@ export function useLocationDetails(): LocationDetails {
       kelStat: findAreaStat(ds.data.kelurahan, admin.kel, admin.kec),
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
       area,
+      campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
     });
   }, [clicked, ds.data, admin, area]);
 

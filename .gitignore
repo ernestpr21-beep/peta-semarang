@@ -7,3 +7,4 @@ data-pipeline/.cache
 # Data mentah iklan (deskripsi asli memuat nomor kontak agen) — tidak dipublikasikan; versi bersih ada di data/
 data-raw/pinhome/
 data-raw/lamudi/
+__pycache__/

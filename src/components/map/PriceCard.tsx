@@ -206,6 +206,14 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                 </td>
                 <td>{formatRupiahShort(price.priorMedian)}</td>
               </tr>
+              {price.campusFactor !== 1 && price.campus ? (
+                <tr>
+                  <td className="text-fg-muted">
+                    × kedekatan kampus ({price.campus.name}, {price.campus.distanceM < 1 ? "di dalam area" : formatDistance(price.campus.distanceM)})
+                  </td>
+                  <td>×{price.campusFactor.toFixed(2)}</td>
+                </tr>
+              ) : null}
               <tr>
                 <td className="text-fg-muted">Harga dasar bidang acuan</td>
                 <td>{formatRupiahShort(price.basePoint)}</td>
@@ -214,6 +222,12 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                 <td className="text-fg-muted">× faktor akses ({ti.short})</td>
                 <td>×{ti.factor.toFixed(2)}</td>
               </tr>
+              {ti === model.tiers.utama && price.cbdFactor > 1.01 ? (
+                <tr>
+                  <td className="text-fg-muted">× premi jalan utama pusat kota (dekat Simpang Lima)</td>
+                  <td>×{price.cbdFactor.toFixed(2)}</td>
+                </tr>
+              ) : null}
               <tr>
                 <td className="text-fg-muted">× faktor luas ({area.toLocaleString("id-ID")} m²)</td>
                 <td>×{price.sizeFactor.toFixed(2)}</td>
@@ -246,15 +260,21 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                   <span className="num font-medium">{formatRupiahShort(c.ppm)}/m²</span>
                   <span className="text-fg-muted">
                     {formatDistance(distanceM)}
-                    {c.exact ? "" : " (perkiraan)"}
+                    {c.exact ? "" : " (perkiraan: pusat kelurahan)"}
                   </span>
                 </div>
                 <p className="truncate text-fg-muted" title={c.title}>
-                  {c.area.toLocaleString("id-ID")} m² · {c.kel} · akses {c.tier ?? "tidak disebut"}
+                  {c.area.toLocaleString("id-ID")} m² · {c.kel ?? c.kec} · akses {c.tier ?? "tidak disebut"}
                 </p>
-                <a href={c.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary">
-                  {c.src === "pinhome" ? "Pinhome" : "Lamudi"} · {formatMonth(c.date)} <ExternalLink className="size-3" />
-                </a>
+                {c.url ? (
+                  <a href={c.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary">
+                    {c.src === "pinhome" ? "Pinhome" : "Lamudi"} · {formatMonth(c.date)} <ExternalLink className="size-3" />
+                  </a>
+                ) : (
+                  <span className="text-fg-subtle" title="URL iklan memuat nomor telepon sehingga tidak dipublikasikan">
+                    {c.src === "pinhome" ? "Pinhome" : "Lamudi"} · {formatMonth(c.date)} · tautan disembunyikan
+                  </span>
+                )}
               </li>
             ))}
           </ul>

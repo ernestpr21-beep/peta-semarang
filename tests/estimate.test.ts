@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { estimatePrice, findAreaStat, type PriceEstimateResult } from "../src/lib/estimate";
 import { detectAccess, type Road } from "../src/lib/access";
-import { findFeature, type GeoCollection } from "../src/lib/geo";
+import { findFeature, nearestCampus, type GeoCollection } from "../src/lib/geo";
 import { computeLocationScore, SCORE_SEARCH_RADIUS } from "../src/lib/score";
 import { facilitiesNear, type FacilityRaw } from "../src/lib/facilities";
 import type { Dataset } from "../src/lib/model";
@@ -37,6 +37,7 @@ export function estimateAt(lat: number, lng: number, area = 150) {
     kelStat: findAreaStat(ds.kelurahan, k?.name ?? null, k?.kecamatan),
     kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null),
     area,
+    campus: nearestCampus(lat, lng, ds.campuses),
   });
   return { r, k, access: detectAccess(lat, lng, roadsAround(lat, lng)) };
 }
@@ -120,5 +121,30 @@ describe("label & aturan", () => {
     const { PRICE_LABEL } = await import("../src/lib/constants");
     expect(PRICE_LABEL.toLowerCase()).toContain("estimasi kisaran harga pasar");
     expect(PRICE_LABEL.toLowerCase()).not.toContain("njop");
+  });
+});
+
+describe("perbaikan Okt 2026: lokasi iklan, kampus, pusat kota", () => {
+  const P = (lat: number, lng: number) => estimateAt(lat, lng).r as PriceEstimateResult;
+  it("iklan yang lokasinya hanya setingkat kecamatan tidak dipakai sebagai pembanding", () => {
+    const r = P(-7.05561, 110.43728);
+    expect(r.used.every((u) => u.c.loc !== "kec")).toBe(true);
+  });
+  it("sekitar Undip (Jl. Prof. Soedarto, Jl. Baskoro) tidak lagi ditarik iklan se-kecamatan", () => {
+    for (const [lat, lng] of [
+      [-7.05561, 110.43728],
+      [-7.05479, 110.43673],
+    ]) {
+      const r = P(lat, lng);
+      expect(r.tiers.lingkungan.point).toBeGreaterThan(4_500_000);
+      expect(r.campusFactor).toBeGreaterThan(1);
+    }
+  });
+  it("muka jalan utama di Simpang Lima mendapat premi pusat kota", () => {
+    const r = P(-6.98995, 110.42226);
+    expect(r.cbdFactor).toBeGreaterThan(1.5);
+    expect(r.tiers.utama.point / r.tiers.lingkungan.point).toBeGreaterThan(r.cbdFactor);
+    const far = P(-7.0886, 110.3734);
+    expect(far.cbdFactor).toBeLessThan(1.01);
   });
 });

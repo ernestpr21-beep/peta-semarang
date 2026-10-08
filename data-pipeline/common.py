@@ -100,7 +100,9 @@ class Admin:
 
 _PHONE = re.compile(r'(?<!\d)(?:\+?62|0)\s?8[\d\s\-\.]{7,15}\d')
 _EMAIL = re.compile(r'[\w.+-]+@[\w-]+\.[\w.]+')
-_WA = re.compile(r'(?:https?://)?(?:wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/\S*', re.I)
+_WA = re.compile(r'(?:https?://)?(?:wa\.me|wa\.link|api\.whatsapp\.com|chat\.whatsapp\.com|whatsapp\.com/send)(?:/\S*)?', re.I)
+# nomor yang sebagian sudah disamarkan portal (mis. "08xx xxxx ----") tetap dihapus
+_PHONE_MASKED = re.compile(r'(?<!\d)(?:\+?62|0)\s?8[\d\s\.\-]{2,14}(?:-{2,}|x{2,}|\*{2,})', re.I)
 
 
 def scrub_contacts(t):
@@ -109,4 +111,13 @@ def scrub_contacts(t):
         return t
     t = _WA.sub('[kontak dihapus]', t)
     t = _EMAIL.sub('[kontak dihapus]', t)
+    t = _PHONE_MASKED.sub('[kontak dihapus]', t)
     return _PHONE.sub('[kontak dihapus]', t)
+
+
+def url_has_contact(u):
+    """URL iklan yang slug-nya memuat nomor telepon/WA (mis. judul Pinhome berisi nomor) → tidak dipublikasikan."""
+    if not u:
+        return False
+    slug = u.rstrip('/').rsplit('/', 1)[-1]
+    return bool(_PHONE.search(slug) or _EMAIL.search(slug) or _WA.search(u))

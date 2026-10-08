@@ -6,6 +6,11 @@ Langkah:
  3. Lokasi: titik-dalam-poligon kelurahan OSM; cocokkan dengan kelurahan teks iklan. Bila koordinat
     jelas tidak cocok (> 1,5 km dari kelurahan teks) atau hanya titik pusat wilayah → pakai titik
     representatif kelurahan teks dan tandai exact=0.
+    Tingkat lokasi (loc_level): 'titik' (pin iklan), 'kelurahan' (hanya diketahui kelurahannya),
+    'kecamatan' (hanya diketahui kecamatannya). "Titik bersama" — koordinat yang sama persis dipakai
+    ≥ 5 iklan — adalah titik pusat wilayah bawaan portal, bukan lokasi bidang, sehingga tidak dianggap pin.
+    Teks lokasi yang hanya berupa nama kecamatan (mis. "Tembalang", yang juga nama kelurahan) dianggap
+    tingkat kecamatan bila tidak ada pin yang tepat.
  4. Saring: di luar Kota Semarang, bukan tanah kosong (ada bangunan dihitung), luas/harga tidak wajar.
  5. Akses jalan dari teks iklan (access_text.py).
  6. Deduplikasi (iklan sama di beberapa agen/situs).
@@ -14,11 +19,13 @@ Setiap baris menyimpan sumber, URL, tanggal iklan (dibuat/diperbarui) dan tangga
 """
 import json, re, os, csv, math, glob, statistics, datetime
 from collections import Counter, defaultdict
-from common import RAW, OUT, Admin, norm, fix_mojibake, strip_html, scrub_contacts
+from common import RAW, OUT, Admin, norm, fix_mojibake, strip_html, scrub_contacts, url_has_contact
 from access_text import classify_access
+from location_text import TextLocator
 
 os.makedirs(OUT, exist_ok=True)
 A = Admin()
+TL = TextLocator(A)
 recs = []
 
 # ---------- Pinhome ----------
@@ -105,9 +112,24 @@ def money_from_text(t):
         v *= 1e3
     return v if 50_000 <= v <= 80_000_000 else None
 
+# titik bersama: koordinat identik (5 desimal ≈ 1 m) yang dipakai banyak iklan
+SHARED_MIN = 5
+pin_count = Counter((round(r['lat'], 5), round(r['lng'], 5)) for r in recs if r['lat'] is not None)
+KEC_NORM = {norm(k): k for k in A.kec_names()}
+_kec_geom = {k: g for k, g in A.kec}
+
+def kec_point(name):
+    g = _kec_geom.get(name)
+    if g is None:
+        return None
+    p = g.representative_point()
+    return p.y, p.x
+
 out_all = []
 for r in recs:
     r['title'] = scrub_contacts(r['title']); r['description'] = scrub_contacts(r['description'])
+    if url_has_contact(r['url']):
+        r['url'] = ''  # slug URL memuat nomor telepon → tautan tidak dipublikasikan (sumber & id iklan tetap dicatat)
     flags = []
     t = f"{r['title']}\n{r['description']}"
     if not r['price'] or not r['area_m2'] or r['area_m2'] <= 0:
@@ -140,7 +162,19 @@ for r in recs:
     lat, lng = r['lat'], r['lng']
     kel_poly, kec_poly = (A.kel_at(lat, lng) if lat is not None else (None, None))
     kt = r['kel_text']
-    if lat is not None and kel_poly:
+    kt_is_kec = bool(kt) and norm(kt) in KEC_NORM
+    shared_n = pin_count.get((round(lat, 5), round(lng, 5)), 0) if lat is not None else 0
+    if lat is not None and kel_poly and shared_n >= SHARED_MIN:
+        # titik pusat wilayah bawaan portal → bukan pin bidang
+        c = A.kel_center(kt, r['kec_text'] or None) if kt and not kt_is_kec else None
+        if c:
+            lat, lng, kel_poly, kec_poly = c
+            loc_note = f'titik bersama {shared_n} iklan → titik kelurahan teks'
+        else:
+            kec_poly = KEC_NORM[norm(kt)] if kt_is_kec else (KEC_NORM.get(norm(r['kec_text'] or '')) or kec_poly)
+            kel_poly = ''
+            loc_note = f'titik bersama {shared_n} iklan, kelurahan tidak jelas → hanya kecamatan'
+    elif lat is not None and kel_poly:
         if kt and norm(kt) != norm(kel_poly):
             dkm = A.dist_to_kel_m(lat, lng, kt, r['kec_text'] or None)
             if dkm is not None and dkm > 1500:
@@ -160,9 +194,38 @@ for r in recs:
             lat, lng, kel_poly, kec_poly = c
             loc_note = 'tanpa koordinat valid → titik kelurahan teks'
             exact = 0
-    if lat is None or kel_poly is None or not A.inside_city(lat, lng):
+    if exact:
+        loc_level = 'titik'
+    elif kel_poly == '' or kt_is_kec:
+        # teks lokasi hanya nama kecamatan ("Tembalang", "Ngaliyan", ...) dan tidak ada pin tepat
+        loc_level = 'kecamatan'
+        if kel_poly:
+            kec_poly = KEC_NORM[norm(kt)]
+            kel_poly = ''
+            loc_note = (loc_note + '; ' if loc_note else '') + 'teks lokasi hanya nama kecamatan → hanya kecamatan'
+    else:
+        loc_level = 'kelurahan'
+    if loc_level == 'titik':
+        # pin vs nama tempat di teks iklan (alamat Pinhome "... di <alamat>" tidak dipindai: pin berasal dari situ)
+        head = re.sub(r'\s+di\s+[^,]*$', '', r['title'] or '') if r['source'] == 'pinhome' else (r['title'] or '')
+        c = TL.check(lat, lng, head + '\n' + (r['description'] or '')[:800])
+        if c:
+            exact = 0
+            x = A.kel_center(c['kel'], c['kec']) if c['kel'] else None
+            if x:
+                lat, lng, kel_poly, kec_poly = x
+                loc_level = 'kelurahan'
+            else:
+                kec_poly = c['kec']; kel_poly = ''
+                loc_level = 'kecamatan'
+            loc_note = c['why'] + (' → titik kelurahan teks' if loc_level == 'kelurahan' else ' → hanya kecamatan')
+    if loc_level == 'kecamatan' and kec_poly:
+        kp = kec_point(kec_poly)
+        if kp:
+            lat, lng = kp
+    if lat is None or kel_poly is None or kec_poly is None or not A.inside_city(lat, lng):
         flags.append('di luar Kota Semarang / lokasi tak dikenal')
-    r.update({'lat': lat, 'lng': lng, 'kelurahan': kel_poly, 'kecamatan': kec_poly, 'exact': exact, 'loc_note': loc_note})
+    r.update({'lat': lat, 'lng': lng, 'kelurahan': kel_poly, 'kecamatan': kec_poly, 'exact': exact, 'loc_level': loc_level, 'loc_note': loc_note})
 
     tier, why, width = classify_access(r['title'], r['description'])
     r.update({'access_tier': tier or '', 'access_evidence': (why or '')[:120], 'road_width_m': width if width else ''})
@@ -173,7 +236,7 @@ for r in recs:
 
 # ---------- dedup ----------
 def dkey(r):
-    return (norm(r['kelurahan'] or ''), round(r['area_m2'] or 0), round((r['price'] or 0) / 1e6))
+    return (norm(r['kelurahan'] or r['kecamatan'] or ''), round(r['area_m2'] or 0), round((r['price'] or 0) / 1e6))
 groups = defaultdict(list)
 for r in out_all:
     if not r['flags']:
@@ -199,7 +262,7 @@ for r in ok:
     byc[r['kecamatan']].append(r)
 outl = 0
 for r in ok:
-    pool = byk[r['kelurahan']] if len(byk[r['kelurahan']]) >= 6 else byc[r['kecamatan']]
+    pool = byk[r['kelurahan']] if r['kelurahan'] and len(byk[r['kelurahan']]) >= 6 else byc[r['kecamatan']]
     vals = [logadj(x) for x in pool]
     if len(vals) < 5:
         continue
@@ -212,7 +275,7 @@ for r in ok:
         outl += 1
 print('outliers', outl)
 
-cols = ['source', 'source_id', 'url', 'title', 'price', 'area_m2', 'price_is_ppm', 'ppm', 'lat', 'lng', 'exact', 'loc_note', 'kelurahan', 'kecamatan',
+cols = ['source', 'source_id', 'url', 'title', 'price', 'area_m2', 'price_is_ppm', 'ppm', 'lat', 'lng', 'exact', 'loc_level', 'loc_note', 'kelurahan', 'kecamatan',
         'kel_text', 'subtype', 'access_tier', 'access_evidence', 'road_width_m', 'date', 'date_source', 'date_listed', 'date_updated', 'scraped_at', 'flags']
 with open(os.path.join(OUT, 'listings_all.csv'), 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=cols + ['description'], extrasaction='ignore')
@@ -240,4 +303,6 @@ print('flags', fc.most_common())
 print('clean', len(clean), Counter(r['source'] for r in clean))
 print('access tiers', Counter(r['access_tier'] or '(tidak disebut)' for r in clean))
 print('exact', Counter(r['exact'] for r in clean))
+print('loc_level', Counter(r['loc_level'] for r in clean))
+print('loc_level x kecamatan (kecamatan-only)', Counter(r['kecamatan'] for r in clean if r['loc_level'] == 'kecamatan').most_common())
 print('per kecamatan', Counter(r['kecamatan'] for r in clean).most_common())

@@ -1,32 +1,93 @@
 {
- "version": "2026-10-1",
+ "version": "2026-10-2",
+ "minEffComparables": 10,
+ "locLevels": {
+  "titik": 2032,
+  "kelurahan": 1264,
+  "kecamatan": 939
+ },
  "asOf": "2026-10",
  "refArea": 150,
- "sizeElasticity": -0.0215,
- "sizeElasticitySE": 0.008,
- "commercialFactor": 1.003,
+ "sizeElasticity": -0.0374,
+ "sizeElasticitySE": 0.0083,
+ "commercialFactor": 1.056,
  "recencyHalfLifeYears": 2,
- "trendPerYear": 0.0185,
- "trendRaw": 0.0185,
- "trendSE": 0.0107,
- "sourceEffect": 1.202,
+ "trendPerYear": 0.0254,
+ "trendRaw": 0.0254,
+ "trendSE": 0.0106,
+ "sourceEffect": 1.201,
  "sourceAdj": {
-  "lamudi": 0.872,
-  "pinhome": 1.048
+  "lamudi": 0.869,
+  "pinhome": 1.044
  },
- "unknownTierFactor": 1.083,
+ "unknownTierFactor": 1.041,
+ "cbdFrontage": {
+  "center": [
+   -6.990464,
+   110.422918
+  ],
+  "centerName": "Simpang Lima",
+  "scaleM": 1500,
+  "coef": 0.7835,
+  "coefRaw": 1.0569,
+  "coefSE": 0.2953,
+  "shrink": 0.741,
+  "priorSD": 0.5,
+  "nUtamaWithin3L": 119,
+  "rssByScale": {
+   "750": 806.071,
+   "1000": 805.443,
+   "1500": 805.287,
+   "2000": 805.594,
+   "3000": 806.2
+  },
+  "rssFlat": 808.596,
+  "note": "Faktor tambahan untuk tier jalan utama: exp(coef · exp(−jarak ke Simpang Lima / scaleM))."
+ },
+ "campus": {
+  "minHa": 2.0,
+  "priorSD": 0.3,
+  "bands": [
+   {
+    "maxM": 500,
+    "minM": 0,
+    "coefRaw": 0.1727,
+    "se": 0.0579,
+    "coef": 0.1665,
+    "n": 507
+   },
+   {
+    "maxM": 1000,
+    "minM": 500,
+    "coefRaw": 0.127,
+    "se": 0.0486,
+    "coef": 0.1237,
+    "n": 481
+   },
+   {
+    "maxM": 2000,
+    "minM": 1000,
+    "coefRaw": 0.1147,
+    "se": 0.0366,
+    "coef": 0.113,
+    "n": 1186
+   }
+  ],
+  "nCampuses": 27,
+  "note": "Pengali harga dasar menurut jarak ke poligon kampus terdekat (OSM, ≥ 2 ha, tanpa Akpol); diestimasi bersama efek tetap kelurahan."
+ },
  "tiers": {
   "utama": {
    "label": "Pinggir jalan utama",
    "short": "Jalan utama",
    "desc": "Bidang berbatasan langsung dengan jalan raya/arteri/kolektor (mobil & truk, nilai komersial).",
-   "factor": 1.318,
-   "lo": 1.198,
-   "hi": 1.449,
-   "n": 749,
-   "nOsm": 333,
+   "factor": 1.195,
+   "lo": 1.087,
+   "hi": 1.314,
+   "n": 560,
+   "nOsm": 246,
    "basis": "data",
-   "dataFactor": 1.319,
+   "dataFactor": 1.189,
    "prior": 1.3,
    "priorNote": "Muka jalan utama/kolektor umumnya dihargai lebih tinggi (nilai komersial)."
   },
@@ -37,8 +98,8 @@
    "factor": 1.0,
    "lo": 1.0,
    "hi": 1.0,
-   "n": 1106,
-   "nOsm": 1717,
+   "n": 801,
+   "nOsm": 1031,
    "basis": "data",
    "dataFactor": null,
    "prior": 1.0,
@@ -48,13 +109,13 @@
    "label": "Gang sempit / akses motor",
    "short": "Gang sempit",
    "desc": "Hanya gang/jalan setapak (lebar < 3 m) atau bidang dalam yang perlu jalan masuk.",
-   "factor": 0.856,
-   "lo": 0.729,
-   "hi": 1.006,
-   "n": 30,
-   "nOsm": 920,
+   "factor": 0.829,
+   "lo": 0.711,
+   "hi": 0.966,
+   "n": 27,
+   "nOsm": 415,
    "basis": "campuran",
-   "dataFactor": 0.91,
+   "dataFactor": 0.851,
    "prior": 0.8,
    "priorNote": "Gang sempit/akses motor: pembangunan & logistik terbatas."
   },
@@ -66,101 +127,141 @@
    "lo": 0.41,
    "hi": 0.738,
    "n": 0,
-   "nOsm": 373,
+   "nOsm": 340,
    "basis": "prior",
    "dataFactor": null,
    "prior": 0.55,
    "priorNote": "Tanah terkurung: perlu membeli/menyewa jalan keluar (KUH Perdata ps. 667 memberi hak menuntut jalan keluar dengan ganti rugi)."
   }
  },
- "cityMedianPn": 3121443,
- "citySpreadLog": 0.49,
+ "cityMedianPn": 3042210,
+ "citySpreadLog": 0.4089,
  "regression": {
-  "n": 4281,
-  "r2Within": 0.043,
-  "sigma": 0.593,
-  "nOsm": 3343,
-  "r2WithinOsm": 0.026,
+  "n": 3296,
+  "r2Within": 0.059,
+  "sigma": 0.508,
+  "nOsm": 2032,
+  "r2WithinOsm": 0.037,
   "coefText": {
    "log_area": [
-    -0.0215,
-    0.008
+    -0.0374,
+    0.0083
    ],
    "tier:utama": [
-    0.2767,
-    0.0292
+    0.1731,
+    0.0317
    ],
    "tier:gang": [
-    -0.0943,
-    0.1134
+    -0.1616,
+    0.1032
    ],
    "tier:unknown": [
-    0.0802,
-    0.0226
+    0.0397,
+    0.0225
    ],
    "komersial": [
-    0.0031,
-    0.0205
+    0.054,
+    0.0202
    ],
    "src_lamudi": [
-    0.1837,
-    0.03
+    0.1833,
+    0.0294
    ],
    "trend_per_year": [
-    0.0185,
-    0.0107
+    0.0254,
+    0.0106
+   ],
+   "utama_cbd": [
+    1.0569,
+    0.2953
+   ],
+   "campus_500": [
+    0.1727,
+    0.0579
+   ],
+   "campus_1000": [
+    0.127,
+    0.0486
+   ],
+   "campus_2000": [
+    0.1147,
+    0.0366
    ]
   },
   "coefOsm": {
    "log_area": [
-    -0.0016,
-    0.0093
+    -0.0086,
+    0.0109
    ],
    "tier:utama": [
-    -0.0314,
-    0.0399
+    -0.0149,
+    0.0403
    ],
    "tier:gang": [
-    0.0006,
-    0.0309
+    0.0088,
+    0.0325
    ],
    "tier:tanpa": [
-    -0.0393,
-    0.04
+    -0.0392,
+    0.0384
    ],
    "komersial": [
-    -0.0256,
-    0.0229
+    0.0434,
+    0.0266
    ],
    "src_lamudi": [
-    0.1662,
-    0.0354
+    0.1962,
+    0.0397
    ],
    "trend_per_year": [
-    0.0449,
-    0.0117
+    0.0419,
+    0.0137
+   ],
+   "campus_500": [
+    0.1567,
+    0.0664
+   ],
+   "campus_1000": [
+    0.09,
+    0.0577
+   ],
+   "campus_2000": [
+    0.0902,
+    0.0434
    ]
   },
   "countsText": {
-   "unknown": 2396,
-   "utama": 749,
-   "lingkungan": 1106,
-   "gang": 30
+   "unknown": 1908,
+   "utama": 560,
+   "lingkungan": 801,
+   "gang": 27
   },
   "countsOsm": {
-   "lingkungan": 1717,
-   "utama": 333,
-   "tanpa": 373,
-   "gang": 920
+   "lingkungan": 1031,
+   "utama": 246,
+   "tanpa": 340,
+   "gang": 415
   },
   "note": "OLS log(harga/m²) dengan efek tetap kelurahan; akses dibanding jalan lingkungan; kolom \"unknown\" = iklan tanpa keterangan akses."
  },
  "validation": {
-  "n": 4281,
-  "medianAbsErrPct_model": 38.3,
-  "medianAbsErrPct_kelurahanMedian": 42.0,
-  "medianAbsErrPct_kecamatanMedian_raw": 51.2,
-  "within25pct_model": 36.0,
-  "coverage50pct": 47.4
+  "n": 2032,
+  "medianAbsErrPct_model": 34.7,
+  "medianAbsErrPct_kelurahanMedian": 36.9,
+  "medianAbsErrPct_kecamatanMedian_raw": 49.2,
+  "within25pct_model": 38.8,
+  "coverage50pct": 49.4,
+  "biasLog": 0.01,
+  "target": "iklan berpin tepat (loc_level=titik), leave-one-out",
+  "allLocated": {
+   "n": 3296,
+   "medianAbsErrPct_model": 34.1,
+   "medianAbsErrPct_kelurahanMedian": 35.7,
+   "medianAbsErrPct_kecamatanMedian_raw": 50.0,
+   "within25pct_model": 38.9,
+   "coverage50pct": 49.4,
+   "biasLog": -0.002
+  },
+  "nKecamatanOnly": 939
  }
 }

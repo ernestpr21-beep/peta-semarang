@@ -1,0 +1,273 @@
+{
+ "text": [
+  {
+   "group": "Undip/Tembalang inti",
+   "n": 791,
+   "median": 5227273,
+   "restKec": [
+    "Tembalang",
+    "Banyumanik"
+   ],
+   "restN": 847,
+   "restMedian": 3250000
+  },
+  {
+   "group": "Unnes/Sekaran",
+   "n": 455,
+   "median": 2083333,
+   "restKec": [
+    "Gunungpati",
+    "Tembalang"
+   ],
+   "restN": 1492,
+   "restMedian": 3000000
+  },
+  {
+   "group": "UIN/Unwahas Ngaliyan",
+   "n": 323,
+   "median": 2000000,
+   "restKec": [
+    "Ngaliyan",
+    "Gunungpati"
+   ],
+   "restN": 824,
+   "restMedian": 1666667
+  },
+  {
+   "group": "Unika/Bendan",
+   "n": 118,
+   "median": 2925893,
+   "restKec": [
+    "Mijen",
+    "Gajahmungkur"
+   ],
+   "restN": 404,
+   "restMedian": 2798648
+  },
+  {
+   "group": "Udinus",
+   "n": 7,
+   "median": 4574132,
+   "restKec": [
+    "Gajahmungkur",
+    "Semarang Selatan"
+   ],
+   "restN": 244,
+   "restMedian": 6842342
+  },
+  {
+   "group": "Unissula/Kaligawe",
+   "n": 12,
+   "median": 3225000,
+   "restKec": [
+    "Genuk",
+    "Gajahmungkur"
+   ],
+   "restN": 242,
+   "restMedian": 3719128
+  }
+ ],
+ "perCampus": [
+  {
+   "campus": "Universitas Negeri Semarang",
+   "nNear": 125,
+   "near": 1997245,
+   "nFar": 66,
+   "far": 2125379
+  },
+  {
+   "campus": "Universitas Diponegoro",
+   "nNear": 115,
+   "near": 6666667,
+   "nFar": 132,
+   "far": 3553660
+  },
+  {
+   "campus": "Universitas Muhammadiyah Semarang",
+   "nNear": 94,
+   "near": 3700000,
+   "nFar": 130,
+   "far": 3074398
+  },
+  {
+   "campus": "Universitas Pandanaran",
+   "nNear": 44,
+   "near": 5000000,
+   "nFar": 90,
+   "far": 4083334
+  },
+  {
+   "campus": "Universitas Wahid Hasyim",
+   "nNear": 38,
+   "near": 1389980,
+   "nFar": 156,
+   "far": 1245000
+  },
+  {
+   "campus": "Politeknik Kesehatan Kemenkes Semarang",
+   "nNear": 37,
+   "near": 6500000,
+   "nFar": 50,
+   "far": 5872748
+  },
+  {
+   "campus": "Soegijapranata Catholic University",
+   "nNear": 31,
+   "near": 2041667,
+   "nFar": 86,
+   "far": 1843570
+  },
+  {
+   "campus": "Pasca Sarjana UNNES",
+   "nNear": 20,
+   "near": 6493584,
+   "nFar": 24,
+   "far": 4513889
+  },
+  {
+   "campus": "Akademi Pelayaran Niaga (AKPELNI) Semarang",
+   "nNear": 17,
+   "near": 2741176,
+   "nFar": 45,
+   "far": 3350000
+  },
+  {
+   "campus": "Sekolah Tinggi Theologi Baptis Indonesia",
+   "nNear": 16,
+   "near": 6240310,
+   "nFar": 35,
+   "far": 5250000
+  },
+  {
+   "campus": "Politeknik Ilmu Pelayaran Semarang",
+   "nNear": 16,
+   "near": 6266347,
+   "nFar": 38,
+   "far": 7984308
+  },
+  {
+   "campus": "Universitas Katolik Soegijapranata",
+   "nNear": 15,
+   "near": 4219409,
+   "nFar": 31,
+   "far": 6684492
+  },
+  {
+   "campus": "Universitas Dian Nuswantoro",
+   "nNear": 12,
+   "near": 6495511,
+   "nFar": 22,
+   "far": 5997602
+  },
+  {
+   "campus": "Kampus II Universitas Islam Negeri Walisongo",
+   "nNear": 9,
+   "near": 5500000,
+   "nFar": 42,
+   "far": 4686294
+  },
+  {
+   "campus": "Universitas Semarang",
+   "nNear": 8,
+   "near": 2805934,
+   "nFar": 58,
+   "far": 3543478
+  },
+  {
+   "campus": "Kampus III Universitas Islam Negeri Walisongo",
+   "nNear": 8,
+   "near": 2750000,
+   "nFar": 25,
+   "far": 3000000
+  }
+ ],
+ "bands": [
+  {
+   "from": 0,
+   "to": 500,
+   "n": 346,
+   "median": 3963294
+  },
+  {
+   "from": 500,
+   "to": 1000,
+   "n": 299,
+   "median": 3746667
+  },
+  {
+   "from": 1000,
+   "to": 2000,
+   "n": 633,
+   "median": 3552632
+  },
+  {
+   "from": 2000,
+   "to": 4000,
+   "n": 648,
+   "median": 2065641
+  },
+  {
+   "from": 4000,
+   "to": null,
+   "n": 106,
+   "median": 1500000
+  }
+ ],
+ "regression": {
+  "kecamatan": [
+   {
+    "from": 0,
+    "to": 500,
+    "coef": 0.4298,
+    "se": 0.0421,
+    "n": 346
+   },
+   {
+    "from": 500,
+    "to": 1000,
+    "coef": 0.3071,
+    "se": 0.0431,
+    "n": 299
+   },
+   {
+    "from": 1000,
+    "to": 2000,
+    "coef": 0.2446,
+    "se": 0.0339,
+    "n": 633
+   }
+  ],
+  "kelurahan": [
+   {
+    "from": 0,
+    "to": 500,
+    "coef": 0.1515,
+    "se": 0.0656,
+    "n": 346
+   },
+   {
+    "from": 500,
+    "to": 1000,
+    "coef": 0.1063,
+    "se": 0.0571,
+    "n": 299
+   },
+   {
+    "from": 1000,
+    "to": 2000,
+    "coef": 0.0918,
+    "se": 0.043,
+    "n": 633
+   }
+  ]
+ },
+ "tembalangText": {
+  "kecOnlyN": 225,
+  "kecOnlyMedian": 5000000,
+  "kecOnlyArea": 187,
+  "kelExactN": 55,
+  "kelExactMedian": 6000000,
+  "kecExactN": 425,
+  "kecExactMedian": 4166667
+ }
+}

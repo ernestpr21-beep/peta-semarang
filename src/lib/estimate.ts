@@ -41,6 +41,11 @@ export interface PriceEstimateResult {
   used: UsedComparable[];
   area: number;
   sizeFactor: number;
+  /** pengali premi jalan utama pusat kota yang dipakai di titik ini (1 = tidak ada) */
+  cbdFactor: number;
+  /** pengali kedekatan kampus yang dipakai (1 = tidak ada) */
+  campusFactor: number;
+  campus: { name: string; distanceM: number } | null;
   dateMin: string;
   dateMax: string;
 }
@@ -53,7 +58,7 @@ export interface PriceUnavailable {
 export type PriceResult = PriceEstimateResult | PriceUnavailable;
 
 const RADII = [400, 600, 800, 1000, 1500, 2000, 3000];
-const MIN_EFF = 8;
+const MIN_EFF_DEFAULT = 10;
 const MAX_USED = 30;
 const PRIOR_STRENGTH = 3; // setara 3 pembanding
 const Z50 = 0.674; // rentang 50% tengah
@@ -77,6 +82,29 @@ function monthsBetween(a: string, b: string) {
   return (yb - ya) * 12 + (mb - ma);
 }
 
+/** bobot ketepatan lokasi: pin iklan 1, pusat kelurahan 0,5; tingkat kecamatan tidak dipakai */
+export function locWeight(c: Comparable) {
+  if (c.loc === "kec") return 0;
+  return c.exact ? 1 : 0.5;
+}
+
+/** Premi tambahan tier jalan utama di pusat kota (dari regresi; 1 bila model lama) */
+export function cbdFrontageFactor(model: PriceModel, lat: number, lng: number) {
+  const f = model.cbdFrontage;
+  if (!f) return { factor: 1, sdLog: 0, distanceM: Infinity };
+  const d = haversineMeters(lat, lng, f.center[0], f.center[1]);
+  const k = Math.exp(-d / f.scaleM);
+  const postSd = Math.sqrt(1 / (1 / (f.priorSD * f.priorSD) + 1 / (f.coefSE * f.coefSE)));
+  return { factor: Math.exp(f.coef * k), sdLog: postSd * k, distanceM: d };
+}
+
+/** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
+export function campusFactor(model: PriceModel, distanceM: number | null | undefined) {
+  if (!model.campus || distanceM == null || !Number.isFinite(distanceM)) return 1;
+  const b = model.campus.bands.find((x) => distanceM >= x.minM && distanceM < x.maxM);
+  return b ? Math.exp(b.coef) : 1;
+}
+
 export function sizeFactor(model: PriceModel, area: number) {
   const a = Math.max(30, Math.min(50000, area));
   return Math.pow(a / model.refArea, model.sizeElasticity);
@@ -98,13 +126,16 @@ export function estimatePrice(opts: {
   kelStat: AreaStat | null;
   kecStat: AreaStat | null;
   area?: number;
+  /** kampus terdekat (jarak ke poligon); dipakai untuk faktor kedekatan kampus */
+  campus?: { name: string; distanceM: number } | null;
 }): PriceResult {
   const { lat, lng, comps, model } = opts;
   if (!opts.insideCity) return { available: false, reason: "Titik di luar Kota Semarang — estimasi tidak dihitung." };
   if (!comps.length) return { available: false, reason: "Data estimasi tidak tersedia." };
 
-  // 1. Jarak ke semua pembanding
-  const all = comps.map((c) => ({ c, d: haversineMeters(lat, lng, c.lat, c.lng) }));
+  // 1. Jarak ke semua pembanding (iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai)
+  const MIN_EFF = model.minEffComparables ?? MIN_EFF_DEFAULT;
+  const all = comps.filter((c) => locWeight(c) > 0).map((c) => ({ c, d: haversineMeters(lat, lng, c.lat, c.lng) }));
   all.sort((a, b) => a.d - b.d);
 
   // 2. Radius adaptif: perbesar sampai jumlah pembanding efektif cukup
@@ -113,7 +144,7 @@ export function estimatePrice(opts: {
   let chosen: { c: Comparable; d: number }[] = [];
   for (const r of RADII) {
     const inR = all.filter((x) => x.d <= r);
-    const eff = inR.reduce((s, x) => s + (x.c.exact ? 1 : 0.5), 0);
+    const eff = inR.reduce((s, x) => s + locWeight(x.c), 0);
     radius = r;
     chosen = inR;
     if (eff >= MIN_EFF) break;
@@ -123,7 +154,7 @@ export function estimatePrice(opts: {
   // 3. Bobot: jarak (kernel Cauchy), ketepatan lokasi, umur iklan
   const h = Math.max(250, radius / 2.5);
   const used: UsedComparable[] = chosen.map(({ c, d }) => {
-    const w = (1 / (1 + (d / h) ** 2)) * (c.exact ? 1 : 0.5) * recency(c);
+    const w = (1 / (1 + (d / h) ** 2)) * locWeight(c) * recency(c);
     return { c, distanceM: d, weight: w };
   });
 
@@ -151,7 +182,9 @@ export function estimatePrice(opts: {
     const ws = used.map((u) => u.weight);
     muLocal = weightedQuantile(vals, ws, 0.5);
     const dev = vals.map((v) => Math.abs(v - (muLocal as number)));
-    const mad = weightedQuantile(dev, ws, 0.5);
+    // sebaran: bobot diratakan (akar bobot) agar 1–2 pembanding sangat dekat tidak mendominasi lebar rentang
+    // (dikalibrasi leave-one-out: cakupan rentang 50% lebih dekat ke 50%, lihat analysis/compare_versions.py)
+    const mad = weightedQuantile(dev, ws.map(Math.sqrt), 0.5);
     nEff = wsum ** 2 / ws.reduce((s, w) => s + w * w, 0);
     // sebaran lokal: MAD terboboti (×1.4826 ≈ σ), dicampur sebaran kota jika data sedikit
     const sRaw = Math.max(SPREAD_FLOOR, 1.4826 * mad);
@@ -167,15 +200,19 @@ export function estimatePrice(opts: {
 
   const area = opts.area ?? model.refArea;
   const sf = sizeFactor(model, area);
-  const basePoint = Math.exp(mu);
+  // pembanding sudah dinormalisasi ke "jauh dari kampus" → kalikan kembali faktor kampus di titik ini
+  const campusF = campusFactor(model, opts.campus?.distanceM);
+  const basePoint = Math.exp(mu) * campusF;
 
+  const cbd = cbdFrontageFactor(model, lat, lng);
   const tiers = {} as Record<AccessTier, TierPrice>;
   for (const t of TIER_ORDER) {
     const ti = model.tiers[t];
     // ketidakpastian faktor akses ikut melebarkan rentang
-    const sigT = Math.log(ti.hi / ti.lo) / (2 * 1.96);
+    const sigT0 = Math.log(ti.hi / ti.lo) / (2 * 1.96);
+    const sigT = t === "utama" ? Math.sqrt(sigT0 * sigT0 + cbd.sdLog * cbd.sdLog) : sigT0;
     const sig = Math.sqrt(sigma * sigma + sigT * sigT);
-    const point = basePoint * ti.factor * sf;
+    const point = basePoint * ti.factor * (t === "utama" ? cbd.factor : 1) * sf;
     tiers[t] = {
       tier: t,
       point: roundSig(point, 2),
@@ -227,6 +264,9 @@ export function estimatePrice(opts: {
     used: used.sort((a, b) => a.distanceM - b.distanceM),
     area,
     sizeFactor: sf,
+    cbdFactor: cbd.factor,
+    campusFactor: campusF,
+    campus: opts.campus ?? null,
     dateMin: dates[0] ?? "",
     dateMax: dates[dates.length - 1] ?? "",
   };

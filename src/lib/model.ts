@@ -16,10 +16,13 @@ export interface Comparable {
   /** YYYY-MM tanggal iklan dibuat/diperbarui */
   date: string;
   src: string;
-  kel: string;
+  /** null bila lokasi iklan hanya diketahui sampai kecamatan */
+  kel: string | null;
   kec: string;
-  /** true = koordinat iklan spesifik; false = hanya tingkat kelurahan */
+  /** true = koordinat iklan spesifik (pin); false = perkiraan */
   exact: boolean;
+  /** tingkat ketepatan lokasi: titik (pin iklan), kel (pusat kelurahan teks), kec (hanya kecamatan — tidak dipakai sebagai pembanding titik) */
+  loc?: "titik" | "kel" | "kec";
   url: string;
   title: string;
 }
@@ -60,6 +63,32 @@ export interface PriceModel {
   unknownTierFactor: number;
   cityMedianPn: number;
   citySpreadLog: number;
+  /** jumlah pembanding efektif minimum sebelum radius diperbesar */
+  minEffComparables?: number;
+  locLevels?: Record<string, number>;
+  /** pengali harga dasar menurut jarak ke kampus terdekat (pita jarak) */
+  campus?: {
+    minHa: number;
+    priorSD: number;
+    nCampuses: number;
+    bands: { minM: number; maxM: number; coef: number; coefRaw: number; se: number; n: number }[];
+    note: string;
+  };
+  /** premi tambahan muka jalan utama di pusat kota: exp(coef · exp(−d/scaleM)) */
+  cbdFrontage?: {
+    center: [number, number];
+    centerName: string;
+    scaleM: number;
+    coef: number;
+    coefRaw: number;
+    coefSE: number;
+    shrink: number;
+    priorSD: number;
+    nUtamaWithin3L: number;
+    rssByScale: Record<string, number>;
+    rssFlat: number;
+    note: string;
+  };
   regression: {
     n: number;
     r2Within: number;
@@ -79,7 +108,21 @@ export interface PriceModel {
     medianAbsErrPct_kecamatanMedian_raw: number;
     within25pct_model: number;
     coverage50pct: number;
+    biasLog?: number;
+    target?: string;
+    allLocated?: ValidationStats;
+    nKecamatanOnly?: number;
   };
+}
+
+export interface ValidationStats {
+  n: number;
+  medianAbsErrPct_model: number;
+  medianAbsErrPct_kelurahanMedian: number;
+  medianAbsErrPct_kecamatanMedian_raw: number;
+  within25pct_model: number;
+  coverage50pct: number;
+  biasLog: number;
 }
 
 export interface AreaStat {
@@ -114,6 +157,8 @@ export interface Dataset {
     kelurahanTotal: number;
   };
   comparables: Comparable[];
+  /** poligon kampus (OSM, ≥ 2 ha) untuk faktor kedekatan kampus; cincin [lat, lng] */
+  campuses?: { name: string; areaHa: number; rings: number[][][] }[];
   kelurahan: AreaStat[];
   kecamatan: AreaStat[];
   model: PriceModel;
