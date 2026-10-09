@@ -1,5 +1,5 @@
 {
- "version": "2026-10-4",
+ "version": "2026-10-5",
  "minEffComparables": 10,
  "locLevels": {
   "titik": 2032,
@@ -347,6 +347,700 @@
    "note": "leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan."
   },
   "note": "Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor."
+ },
+ "corridor": {
+  "k": 4,
+  "bwM": 1500,
+  "minWeight": 0.01,
+  "maxRoadM": 60,
+  "aliases": {
+   "brigjen sudiarto": "majapahit"
+  },
+  "roads": {
+   "ahmad yani": {
+    "label": "Ahmad Yani",
+    "n": 1,
+    "pts": [
+     [
+      -6.99238,
+      110.42764,
+      0.811
+     ]
+    ]
+   },
+   "dr cipto": {
+    "label": "Dr Cipto",
+    "n": 3,
+    "pts": [
+     [
+      -6.97264,
+      110.4342,
+      0.807
+     ],
+     [
+      -6.97215,
+      110.4341,
+      -0.541
+     ],
+     [
+      -6.97264,
+      110.4342,
+      -0.861
+     ]
+    ]
+   },
+   "dr wahidin": {
+    "label": "Dr Wahidin",
+    "n": 4,
+    "pts": [
+     [
+      -7.01823,
+      110.42667,
+      0.984
+     ],
+     [
+      -7.01312,
+      110.43163,
+      1.564
+     ],
+     [
+      -7.00981,
+      110.43192,
+      0.064
+     ],
+     [
+      -7.00981,
+      110.43192,
+      0.206
+     ]
+    ]
+   },
+   "gajah": {
+    "label": "Gajah",
+    "n": 2,
+    "pts": [
+     [
+      -6.98702,
+      110.44809,
+      -0.766
+     ],
+     [
+      -6.98126,
+      110.449,
+      -0.776
+     ]
+    ]
+   },
+   "gatot subroto": {
+    "label": "Gatot Subroto",
+    "n": 3,
+    "pts": [
+     [
+      -6.99534,
+      110.36674,
+      0.207
+     ],
+     [
+      -6.99734,
+      110.36611,
+      0.342
+     ],
+     [
+      -7.00026,
+      110.36662,
+      -0.396
+     ]
+    ]
+   },
+   "hanoman": {
+    "label": "Hanoman",
+    "n": 1,
+    "pts": [
+     [
+      -6.98342,
+      110.36948,
+      0.383
+     ]
+    ]
+   },
+   "imam bonjol": {
+    "label": "Imam Bonjol",
+    "n": 1,
+    "pts": [
+     [
+      -6.9698,
+      110.4228,
+      1.04
+     ]
+    ]
+   },
+   "jenderal urip sumoharjo": {
+    "label": "Jenderal Urip Sumoharjo",
+    "n": 2,
+    "pts": [
+     [
+      -6.97569,
+      110.32068,
+      0.89
+     ],
+     [
+      -6.97256,
+      110.30894,
+      -1.119
+     ]
+    ]
+   },
+   "jendral sudirman": {
+    "label": "Jendral Sudirman",
+    "n": 1,
+    "pts": [
+     [
+      -6.9826,
+      110.39192,
+      -0.329
+     ]
+    ]
+   },
+   "kaligawe": {
+    "label": "Kaligawe",
+    "n": 1,
+    "pts": [
+     [
+      -6.95561,
+      110.46715,
+      -1.223
+     ]
+    ]
+   },
+   "kompol maksum": {
+    "label": "Kompol Maksum",
+    "n": 1,
+    "pts": [
+     [
+      -6.99877,
+      110.4336,
+      -0.075
+     ]
+    ]
+   },
+   "madukoro": {
+    "label": "Madukoro",
+    "n": 1,
+    "pts": [
+     [
+      -6.97307,
+      110.40049,
+      -0.245
+     ]
+    ]
+   },
+   "majapahit": {
+    "label": "Majapahit – Brigjen Sudiarto",
+    "n": 16,
+    "pts": [
+     [
+      -7.00892,
+      110.46512,
+      -0.203
+     ],
+     [
+      -7.00897,
+      110.46548,
+      -0.16
+     ],
+     [
+      -7.00665,
+      110.45749,
+      0.63
+     ],
+     [
+      -7.00565,
+      110.45423,
+      1.555
+     ],
+     [
+      -7.00791,
+      110.4619,
+      0.123
+     ],
+     [
+      -7.00901,
+      110.46546,
+      1.008
+     ],
+     [
+      -6.99942,
+      110.44414,
+      1.218
+     ],
+     [
+      -7.00732,
+      110.45959,
+      1.872
+     ],
+     [
+      -7.01028,
+      110.46984,
+      1.652
+     ],
+     [
+      -7.00729,
+      110.45977,
+      0.984
+     ],
+     [
+      -7.01405,
+      110.48038,
+      2.079
+     ],
+     [
+      -7.01152,
+      110.47448,
+      1.925
+     ],
+     [
+      -6.99866,
+      110.44225,
+      0.875
+     ],
+     [
+      -7.01113,
+      110.47326,
+      0.631
+     ],
+     [
+      -7.01005,
+      110.46925,
+      0.61
+     ],
+     [
+      -7.01655,
+      110.48615,
+      0.736
+     ]
+    ]
+   },
+   "mayjen mt haryono": {
+    "label": "Mayjen Mt Haryono",
+    "n": 1,
+    "pts": [
+     [
+      -7.00899,
+      110.43247,
+      0.055
+     ]
+    ]
+   },
+   "mgr soegiyopranoto": {
+    "label": "Mgr Soegiyopranoto",
+    "n": 1,
+    "pts": [
+     [
+      -6.98405,
+      110.40831,
+      1.449
+     ]
+    ]
+   },
+   "mr wuryanto": {
+    "label": "Mr Wuryanto",
+    "n": 1,
+    "pts": [
+     [
+      -7.08679,
+      110.37024,
+      0.239
+     ]
+    ]
+   },
+   "mt haryono": {
+    "label": "Mt Haryono",
+    "n": 1,
+    "pts": [
+     [
+      -6.97988,
+      110.4314,
+      1.056
+     ]
+    ]
+   },
+   "pamularsih": {
+    "label": "Pamularsih",
+    "n": 1,
+    "pts": [
+     [
+      -6.99,
+      110.39556,
+      -0.502
+     ]
+    ]
+   },
+   "pemuda": {
+    "label": "Pemuda",
+    "n": 1,
+    "pts": [
+     [
+      -6.98375,
+      110.41002,
+      0.137
+     ]
+    ]
+   },
+   "perintis kemerdekaan": {
+    "label": "Perintis Kemerdekaan",
+    "n": 6,
+    "pts": [
+     [
+      -7.07857,
+      110.41149,
+      0.93
+     ],
+     [
+      -7.07469,
+      110.41119,
+      0.959
+     ],
+     [
+      -7.07546,
+      110.4113,
+      0.759
+     ],
+     [
+      -7.1015,
+      110.40907,
+      2.072
+     ],
+     [
+      -7.10264,
+      110.40907,
+      2.207
+     ],
+     [
+      -7.08455,
+      110.40975,
+      0.621
+     ]
+    ]
+   },
+   "rm hadi soebono": {
+    "label": "Rm Hadi Soebono",
+    "n": 12,
+    "pts": [
+     [
+      -7.04748,
+      110.3216,
+      -0.132
+     ],
+     [
+      -7.05292,
+      110.31659,
+      -0.134
+     ],
+     [
+      -7.0491,
+      110.32138,
+      0.043
+     ],
+     [
+      -7.04993,
+      110.32068,
+      -0.716
+     ],
+     [
+      -7.0491,
+      110.32138,
+      -0.395
+     ],
+     [
+      -7.0286,
+      110.33463,
+      -0.443
+     ],
+     [
+      -7.05144,
+      110.31723,
+      1.695
+     ],
+     [
+      -7.0286,
+      110.33463,
+      0.5
+     ],
+     [
+      -7.08336,
+      110.30995,
+      -1.062
+     ],
+     [
+      -7.0286,
+      110.33463,
+      0.103
+     ],
+     [
+      -7.05144,
+      110.31723,
+      -1.77
+     ],
+     [
+      -7.05959,
+      110.31256,
+      -0.076
+     ]
+    ]
+   },
+   "rm soebagiyono": {
+    "label": "Rm Soebagiyono",
+    "n": 2,
+    "pts": [
+     [
+      -7.08575,
+      110.31055,
+      0.025
+     ],
+     [
+      -7.09578,
+      110.33631,
+      -0.004
+     ]
+    ]
+   },
+   "rm soebagiyono tjondro koesoemo": {
+    "label": "Rm Soebagiyono Tjondro Koesoemo",
+    "n": 5,
+    "pts": [
+     [
+      -7.09117,
+      110.35805,
+      -0.065
+     ],
+     [
+      -7.09111,
+      110.35617,
+      -0.313
+     ],
+     [
+      -7.09017,
+      110.36063,
+      0.445
+     ],
+     [
+      -7.08816,
+      110.3617,
+      0.064
+     ],
+     [
+      -7.0919,
+      110.35217,
+      0.323
+     ]
+    ]
+   },
+   "semarang boja": {
+    "label": "Semarang Boja",
+    "n": 1,
+    "pts": [
+     [
+      -7.02455,
+      110.33509,
+      1.356
+     ]
+    ]
+   },
+   "setiabudi": {
+    "label": "Setiabudi",
+    "n": 2,
+    "pts": [
+     [
+      -7.0586,
+      110.41448,
+      1.549
+     ],
+     [
+      -7.0558,
+      110.4154,
+      0.899
+     ]
+    ]
+   },
+   "soekarno hatta": {
+    "label": "Soekarno Hatta",
+    "n": 9,
+    "pts": [
+     [
+      -7.00643,
+      110.47121,
+      -0.849
+     ],
+     [
+      -7.00643,
+      110.47121,
+      -1.1
+     ],
+     [
+      -6.99807,
+      110.46402,
+      1.057
+     ],
+     [
+      -6.99934,
+      110.46535,
+      0.903
+     ],
+     [
+      -6.99932,
+      110.46522,
+      0.806
+     ],
+     [
+      -6.98787,
+      110.45588,
+      0.65
+     ],
+     [
+      -7.00352,
+      110.4687,
+      0.656
+     ],
+     [
+      -7.00573,
+      110.47057,
+      -1.303
+     ],
+     [
+      -7.00573,
+      110.47057,
+      -0.329
+     ]
+    ]
+   },
+   "sriwijaya": {
+    "label": "Sriwijaya",
+    "n": 2,
+    "pts": [
+     [
+      -7.00486,
+      110.4295,
+      -0.333
+     ],
+     [
+      -7.00243,
+      110.42505,
+      0.405
+     ]
+    ]
+   },
+   "sultan agung": {
+    "label": "Sultan Agung",
+    "n": 1,
+    "pts": [
+     [
+      -7.02116,
+      110.41981,
+      1.182
+     ]
+    ]
+   },
+   "teuku umar": {
+    "label": "Teuku Umar",
+    "n": 2,
+    "pts": [
+     [
+      -7.02911,
+      110.41849,
+      0.088
+     ],
+     [
+      -7.02793,
+      110.41839,
+      0.034
+     ]
+    ]
+   }
+  },
+  "validation": {
+   "frontage": {
+    "manualBefore": {
+     "n": 85,
+     "medianAbsErrPct": 92.6,
+     "biasLog": -0.323
+    },
+    "manualAfter": {
+     "n": 85,
+     "medianAbsErrPct": 66.5,
+     "biasLog": -0.096
+    },
+    "autoBefore": {
+     "n": 85,
+     "medianAbsErrPct": 102.9,
+     "biasLog": -0.401
+    },
+    "autoAfter": {
+     "n": 85,
+     "medianAbsErrPct": 73.2,
+     "biasLog": -0.174
+    },
+    "autoNonOutlierBefore": {
+     "n": 70,
+     "medianAbsErrPct": 73.4,
+     "biasLog": -0.173
+    },
+    "autoNonOutlierAfter": {
+     "n": 70,
+     "medianAbsErrPct": 55.8,
+     "biasLog": -0.092
+    },
+    "autoTextBefore": {
+     "n": 37,
+     "medianAbsErrPct": 142.2,
+     "biasLog": -0.885
+    },
+    "autoTextAfter": {
+     "n": 37,
+     "medianAbsErrPct": 88.7,
+     "biasLog": -0.551
+    },
+    "autoPinBefore": {
+     "n": 48,
+     "medianAbsErrPct": 65.3,
+     "biasLog": -0.116
+    },
+    "autoPinAfter": {
+     "n": 48,
+     "medianAbsErrPct": 52.5,
+     "biasLog": -0.033
+    }
+   },
+   "display": {
+    "before": {
+     "n": 2032,
+     "medianAbsErrPct": 34.3,
+     "biasLog": 0.005,
+     "within25pct": 39.8,
+     "coverage50pct": 50.9,
+     "biasByDetectedTier": {
+      "utama": 0.037,
+      "lingkungan": 0.013,
+      "gang": -0.038,
+      "tanpa": 0.002
+     }
+    },
+    "after": {
+     "n": 2032,
+     "medianAbsErrPct": 34.3,
+     "biasLog": 0.005,
+     "within25pct": 40.0,
+     "coverage50pct": 50.8,
+     "biasByDetectedTier": {
+      "utama": 0.046,
+      "lingkungan": 0.013,
+      "gang": -0.038,
+      "tanpa": 0.002
+     }
+    },
+    "nWithPremium": 37
+   }
+  },
+  "note": "Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama."
  },
  "smoothPrior": {
   "bwM": 1500,

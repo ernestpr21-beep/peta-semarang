@@ -49,9 +49,20 @@ export interface PriceEstimateResult {
   cbdFactor: number;
   /** pengali kedekatan kampus yang dipakai (1 = tidak ada) */
   campusFactor: number;
+  /** premi koridor jalan arteri untuk tier utama (sudah termasuk di tiers.utama & autoTiers.utama); null bila tidak berlaku */
+  corridor: CorridorPremium | null;
   campus: { name: string; distanceM: number } | null;
   dateMin: string;
   dateMax: string;
+}
+
+export interface CorridorPremium {
+  key: string;
+  label: string;
+  factor: number;
+  nEff: number;
+  /** jumlah iklan muka jalan ruas ini yang ikut terboboti */
+  nUsed: number;
 }
 
 export interface PriceUnavailable {
@@ -100,6 +111,43 @@ export function cbdFrontageFactor(model: PriceModel, lat: number, lng: number) {
   const k = Math.exp(-d / f.scaleM);
   const postSd = Math.sqrt(1 / (1 / (f.priorSD * f.priorSD) + 1 / (f.coefSE * f.coefSE)));
   return { factor: Math.exp(f.coef * k), sdLog: postSd * k, distanceM: d };
+}
+
+/** Nama jalan ternormalisasi — sama dengan nn() di data-pipeline/corridor.py */
+export function corridorKey(name: string, aliases: Record<string, string> = {}) {
+  let s = name.normalize("NFKD").toLowerCase();
+  s = s.replace(/\b(jalan|jl|jln|raya|ruas)\b\.?/g, " ");
+  s = s
+    .replace(/brigadir jenderal/g, "brigjen")
+    .replace(/letnan jenderal/g, "letjen")
+    .replace(/mayor jenderal/g, "mayjen")
+    .replace(/kiai haji/g, "kh")
+    .replace(/dokter/g, "dr");
+  s = s.replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  return aliases[s] ?? s;
+}
+
+/** Premi koridor jalan arteri di titik (lat, lng) bila jalan utama terdekat (≤ maxRoadM) adalah ruas koridor bernama */
+export function corridorPremium(model: PriceModel, lat: number, lng: number, mainRoad?: { name: string | null; distanceM: number } | null): CorridorPremium | null {
+  const cm = model.corridor;
+  if (!cm || !mainRoad?.name || !(mainRoad.distanceM <= cm.maxRoadM)) return null;
+  const key = corridorKey(mainRoad.name, cm.aliases);
+  const road = cm.roads[key];
+  if (!road) return null;
+  const vals: number[] = [];
+  const ws: number[] = [];
+  for (const [a, b, v] of road.pts) {
+    const w = Math.exp(-0.5 * (haversineMeters(lat, lng, a, b) / cm.bwM) ** 2);
+    if (w > cm.minWeight) {
+      vals.push(v);
+      ws.push(w);
+    }
+  }
+  if (!ws.length) return null;
+  const tot = ws.reduce((s, w) => s + w, 0);
+  const nEff = tot ** 2 / ws.reduce((s, w) => s + w * w, 0);
+  const prem = (nEff * weightedQuantile(vals, ws, 0.5)) / (nEff + cm.k);
+  return { key, label: road.label, factor: Math.exp(prem), nEff, nUsed: ws.length };
 }
 
 /** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
@@ -159,6 +207,8 @@ export function estimatePrice(opts: {
   area?: number;
   /** kampus terdekat (jarak ke poligon); dipakai untuk faktor kedekatan kampus */
   campus?: { name: string; distanceM: number } | null;
+  /** jalan utama OSM terdekat (nama & jarak) — untuk premi koridor jalan arteri */
+  mainRoad?: { name: string | null; distanceM: number } | null;
 }): PriceResult {
   const { lat, lng, comps, model } = opts;
   if (!opts.insideCity) return { available: false, reason: "Titik di luar Kota Semarang — estimasi tidak dihitung." };
@@ -251,6 +301,8 @@ export function estimatePrice(opts: {
   const basePoint = Math.exp(mu) * campusF;
 
   const cbd = cbdFrontageFactor(model, lat, lng);
+  const corridor = corridorPremium(model, lat, lng, opts.mainRoad);
+  const corrF = corridor?.factor ?? 1;
   const ss = spreadScale(model, area);
   const tiers = {} as Record<AccessTier, TierPrice>;
   const raw = {} as Record<AccessTier, number>;
@@ -260,7 +312,7 @@ export function estimatePrice(opts: {
     const sigT0 = Math.log(ti.hi / ti.lo) / (2 * 1.96);
     const sigT = t === "utama" ? Math.sqrt(sigT0 * sigT0 + cbd.sdLog * cbd.sdLog) : sigT0;
     const sig = Math.sqrt(sigma * sigma + sigT * sigT) * ss;
-    const point = basePoint * ti.factor * (t === "utama" ? cbd.factor : 1) * sf;
+    const point = basePoint * ti.factor * (t === "utama" ? cbd.factor * corrF : 1) * sf;
     raw[t] = point;
     let high = point * Math.exp(Z50 * sig);
     // gang / tanpa akses: batas atas tidak melebihi titik estimasi tier di atasnya (lokasi & luas sama)
@@ -281,10 +333,10 @@ export function estimatePrice(opts: {
   for (const t of TIER_ORDER) {
     if (!aa) {
       autoTiers[t] = tiers[t];
-      autoFactors[t] = model.tiers[t].factor * (t === "utama" ? cbd.factor : 1);
+      autoFactors[t] = model.tiers[t].factor * (t === "utama" ? cbd.factor * corrF : 1);
       continue;
     }
-    const f = aa.factors[t] * (t === "utama" ? Math.pow(cbd.factor, aa.cbdScale) : 1);
+    const f = aa.factors[t] * (t === "utama" ? Math.pow(cbd.factor, aa.cbdScale) * corrF : 1);
     const sig = Math.sqrt(sigma * sigma + aa.sdLog * aa.sdLog) * ss;
     const point = basePoint * f * sf;
     autoFactors[t] = f;
@@ -338,6 +390,7 @@ export function estimatePrice(opts: {
     sizeFactor: sf,
     cbdFactor: cbd.factor,
     campusFactor: campusF,
+    corridor,
     campus: opts.campus ?? null,
     dateMin: dates[0] ?? "",
     dateMax: dates[dates.length - 1] ?? "",

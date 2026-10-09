@@ -123,6 +123,21 @@ export interface PriceModel {
     };
     note: string;
   };
+  /** premi koridor jalan arteri bernama (2026-10-5): residu iklan muka jalan per ruas, lihat Metodologi */
+  corridor?: {
+    k: number;
+    bwM: number;
+    minWeight: number;
+    maxRoadM: number;
+    aliases: Record<string, string>;
+    /** kunci = nama jalan ternormalisasi; pts = [lat, lng, residu log terhadap estimasi tier utama] */
+    roads: Record<string, { label: string; n: number; pts: [number, number, number][] }>;
+    validation: {
+      frontage: Record<string, { n: number; medianAbsErrPct: number; biasLog: number }>;
+      display: { before: AutoAccessStats; after: AutoAccessStats; nWithPremium: number };
+    };
+    note: string;
+  };
   /** prior wilayah halus (median berbobot jarak) menggantikan median kelurahan */
   smoothPrior?: { bwM: number; maxM: number; minN: number; note: string };
   commercialFactor: number;

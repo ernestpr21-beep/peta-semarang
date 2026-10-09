@@ -458,6 +458,71 @@ auto_access = {'factors': {t: round(math.exp(_amono[t]), 3) for t in AUTO_ORDER}
                               'note': 'leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan.'},
                'note': 'Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor.'}
 print('akses otomatis', json.dumps(auto_access, ensure_ascii=False))
+# ---------- koridor jalan arteri (2026-10-5) ----------
+# Audit Majapahit (analysis/audit/corridor_cv*.py): iklan muka jalan di koridor arteri komersial (Majapahit–Brigjen Sudiarto,
+# Soekarno-Hatta, Perintis Kemerdekaan, …) jauh di atas estimasi karena pembanding terdekat adalah bidang dalam, dan iklan muka
+# jalan termahal justru dibuang aturan outlier per kelurahan. Premi koridor = median berbobot jarak (Gauss, bw CORR_BW) residu
+# iklan muka jalan pada ruas arteri BERNAMA SAMA (termasuk yang ditandai outlier), disusutkan ke 0 dengan kekuatan CORR_K.
+import corridor as CORR
+CORR_K, CORR_BW = 4, 1500
+CORR_EVIDENCE = os.environ.get('CORR_EVIDENCE', 'all')  # all | teks (uji)
+_ut_log = math.log(tiers['utama']['factor'])
+_dk = lambda a, ppm: (round(a), round(math.log(ppm), 2))
+_ev = []  # (id, kunci ruas, lat, lng, residu, dupkey, row|None)
+_rows_by_id = {f"{r['source']}:{r['source_id']}": r for r in rows}
+for r in csv.DictReader(open(os.path.join(OUT, 'listings_all.csv'))):
+    if r['loc_level'] != 'titik' or not r['lat'] or not (r['flags'] == '' or r['flags'].startswith('outlier')): continue
+    lat, lng = float(r['lat']), float(r['lng']); k, how = CORR.tie(r, lat, lng)
+    if not k: continue
+    i = f"{r['source']}:{r['source_id']}"; m = _rows_by_id.get(i)
+    if m is None:  # iklan outlier: fitur dihitung seperti pipeline
+        m = {'lat': lat, 'lng': lng, 'kelurahan': r['kelurahan'], 'kecamatan': r['kecamatan'], 'exact': int(r['exact']), 'area_m2': float(r['area_m2']), 'ppm': float(r['ppm']), 'source': r['source']}
+        p_ = math.pi / 180; _x = math.sin((CBD_CENTER[0] - lat) * p_ / 2) ** 2 + math.cos(lat * p_) * math.cos(CBD_CENTER[0] * p_) * math.sin((CBD_CENTER[1] - lng) * p_ / 2) ** 2
+        m['d_cbd'] = 2 * 6371008.8 * math.asin(math.sqrt(_x)); m['d_campus'] = campus_dist_m(lat, lng)
+        d = r['date'][:7] if r['date'] else AS_OF; y, mo = map(int, d.split('-')); ya, ma = map(int, AS_OF.split('-')); m['age_y'] = max(0, ((ya - y) * 12 + (ma - mo)) / 12)
+        m['size_z'] = size_z(area_level(r['kelurahan'], r['kecamatan']))
+    mu, _, sig = predict(m, loc_rows)  # leave-one-out (predict melewati baris itu sendiri)
+    neu = mu + math.log(size_factor(m['area_m2'], m['size_z']) * campus_factor(m['d_campus'])) - trend_used * m['age_y'] - math.log(SRC_ADJ[m['source']])
+    res = math.log(m['ppm']) - neu - _ut_log - math.log(cbd_factor(m['d_cbd']))
+    pl, pg = CORR.project(k, lat, lng)
+    _ev.append({'id': i, 'k': k, 'lat': pl, 'lng': pg, 'res': res, 'dk': _dk(m['area_m2'], m['ppm']), 'outlier': r['flags'] != '', 'how': how, 'sig': sig,
+                'auto': res + _ut_log - _amono['utama'] + (1 - AUTO_CBD_SCALE) * math.log(cbd_factor(m['d_cbd']))})
+_by_k = defaultdict(list)
+for e in _ev:
+    if CORR_EVIDENCE == 'all' or e['how'] == 'teks': _by_k[e['k']].append(e)
+def _prem_loo(e):
+    ev = _by_k.get(e['k'], [])
+    if not ev: return 0.0
+    return CORR.premium([(x['lat'], x['lng'], x['res']) for x in ev], e['lat'], e['lng'], CORR_K, CORR_BW, lambda j: ev[j]['id'] == e['id'] or ev[j]['dk'] == e['dk'])[0]
+def _cstat(es):
+    es = [x for x in es]; return {'n': len(es), 'medianAbsErrPct': mape([abs(x) for x in es]), 'biasLog': round(-statistics.median(es), 3)}
+_pl = {e['id']: _prem_loo(e) for e in _ev}
+corr_val = {'frontage': {
+    'manualBefore': _cstat([e['res'] for e in _ev]), 'manualAfter': _cstat([e['res'] - _pl[e['id']] for e in _ev]),
+    'autoBefore': _cstat([e['auto'] for e in _ev]), 'autoAfter': _cstat([e['auto'] - _pl[e['id']] for e in _ev]),
+    'autoNonOutlierBefore': _cstat([e['auto'] for e in _ev if not e['outlier']]), 'autoNonOutlierAfter': _cstat([e['auto'] - _pl[e['id']] for e in _ev if not e['outlier']]),
+    'autoTextBefore': _cstat([e['auto'] for e in _ev if e['how'] == 'teks']), 'autoTextAfter': _cstat([e['auto'] - _pl[e['id']] for e in _ev if e['how'] == 'teks']),
+    'autoPinBefore': _cstat([e['auto'] for e in _ev if e['how'] == 'pin']), 'autoPinAfter': _cstat([e['auto'] - _pl[e['id']] for e in _ev if e['how'] == 'pin'])}}
+# tampilan (tier deteksi OSM) untuk semua iklan berpin tepat: premi hanya untuk 'utama' terdeteksi yang ruas terdekatnya koridor
+_ev_pts = {k: [(x['lat'], x['lng'], x['res']) for x in v] for k, v in _by_k.items()}
+def _corr_prem_at(r):
+    if r['osm_tier'] != 'utama': return 0.0
+    d, hw, nm = CORR.nearest_main(r['lat'], r['lng']); k = CORR.key(nm) if nm else None
+    if k not in _by_k or d > 30: return 0.0
+    ev = _by_k[k]; i = f"{r['source']}:{r['source_id']}"; dk = _dk(r['area_m2'], r['ppm'])
+    return CORR.premium(_ev_pts[k], r['lat'], r['lng'], CORR_K, CORR_BW, lambda j: ev[j]['id'] == i or ev[j]['dk'] == dk)[0]
+_cp = {id(r): _corr_prem_at(r) for r, _, _ in _auto_src}
+corr_val['display'] = {'before': auto_access['validation']['after'], 'after': _dstats(lambda r: _auto_pred(r) + _cp[id(r)], lambda r, s: math.sqrt(s * s + AUTO_SD ** 2)),
+                       'nWithPremium': sum(1 for v in _cp.values() if abs(v) > 1e-9)}
+_labels = {}
+for k in _by_k:
+    nms = sorted({x for x in CORR.ROADS if CORR.key(x) == k}, key=lambda x: (x != k, x))
+    _labels[k] = ' – '.join(n.title() for n in nms)
+corridor_model = {'k': CORR_K, 'bwM': CORR_BW, 'minWeight': 0.01, 'maxRoadM': 60, 'aliases': CORR.ALIASES,
+                  'roads': {k: {'label': _labels[k], 'n': len(v), 'pts': [[round(x['lat'], 5), round(x['lng'], 5), round(x['res'], 3)] for x in v]} for k, v in sorted(_by_k.items())},
+                  'validation': corr_val,
+                  'note': 'Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama.'}
+print('koridor', len(_ev), 'iklan,', len(_by_k), 'ruas', json.dumps(corr_val, ensure_ascii=False))
 def vstats(sub):
     errs = [abs(e) for _, e, _, _, _ in sub]
     return {'n': len(sub), 'medianAbsErrPct_model': mape(errs),
@@ -506,7 +571,7 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-4', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-5', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
                   'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
                   'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},
@@ -521,7 +586,7 @@ model = {
                      'note': 'Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1.'},
     'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
                  'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
-    'autoAccess': auto_access, 'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
+    'autoAccess': auto_access, 'corridor': corridor_model, 'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
     'tiers': tiers, 'cityMedianPn': round(city_med), 'citySpreadLog': round(city_spread, 4),
     'regression': {'n': n_reg, 'r2Within': round(r2w, 3), 'sigma': round(sigma, 3), 'nOsm': n_osm, 'r2WithinOsm': round(r2w_osm, 3),
                    'coefText': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_txt.items()}, 'coefOsm': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_osm.items()},

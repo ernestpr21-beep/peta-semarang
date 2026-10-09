@@ -591,6 +591,7 @@ export function MetodologiPage() {
       </p>
 
       {model.autoAccess ? <AutoAccessSection model={model} /> : null}
+      {model.corridor ? <CorridorSection model={model} /> : null}
 
       {ev.data ? <EvidenceSection ev={ev.data} model={model} /> : null}
       {ev.data?.v3 ? <SizeGangSection ev={ev.data.v3} model={model} /> : null}
@@ -693,6 +694,80 @@ function AutoAccessSection({ model }: { model: PriceModel }) {
         Validasi silang blok spasial (blok 2 km keluar bersama, faktor dikalibrasi hanya dari lipatan latih): galat harga tampil 45,6% → 38,8%, bias −16% → 0%. Aturan lain yang diuji dan <b>tidak</b> memperbaiki
         validasi: koreksi kata kunci iklan (BU/cicilan/sawah/hook), buang pencilan lebih ketat, dedup lintas portal, tren waktu lebih curam, ukuran radius/kernel/jumlah pembanding, dan gradient boosting
         (LightGBM: galat 35,8–36,8% tetapi bias kuat ke rata-rata — wilayah murah terlalu tinggi, mahal terlalu rendah). Skrip: <code>data-pipeline/analysis/audit/</code>.
+      </p>
+    </>
+  );
+}
+
+function CorridorSection({ model }: { model: PriceModel }) {
+  const c = model.corridor!;
+  const f = c.validation.frontage;
+  const d = c.validation.display;
+  const pctLog = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(Math.round((Math.exp(x) - 1) * 100))}%`;
+  const roads = Object.values(c.roads).sort((a, b) => b.n - a.n);
+  const rows: [string, string, string][] = [
+    ["Iklan muka jalan arteri, harga tampil (deteksi OSM)", "autoBefore", "autoAfter"],
+    ["… hanya yang teksnya menyebut muka jalan itu", "autoTextBefore", "autoTextAfter"],
+    ["… tanpa iklan yang ditandai pencilan", "autoNonOutlierBefore", "autoNonOutlierAfter"],
+    ["Iklan muka jalan arteri, tier utama dipilih manual", "manualBefore", "manualAfter"],
+  ];
+  return (
+    <>
+      <h3 id="koridor-arteri">4c. Premi koridor jalan arteri (audit Jl. Majapahit, Okt 2026, model {model.version})</h3>
+      <p>
+        Laporan: Jl. Majapahit tampil jauh terlalu murah (Rp2,7–6,8 jt/m²). Iklan yang menyebut bidang di muka Jl. Majapahit–Brigjen Sudiarto meminta ±Rp7–30 jt/m², sedangkan pembanding terdekat di
+        titik itu adalah bidang dalam perumahan/kampung (Rp2–4 jt/m²). Premi jalan utama yang seragam (×{model.tiers.utama.factor.toFixed(2)}, deteksi otomatis ×{model.autoAccess?.factors.utama.toFixed(2)}) tidak
+        cukup di koridor komersial seperti ini, dan iklan muka jalan termahal justru terbuang oleh aturan pencilan per kelurahan (aturan itu membandingkan dengan bidang dalam di kelurahan yang sama). Di tingkat kota
+        rata-rata premi muka jalan arteri sudah kira-kira pas (±×1,1); kekurangannya terpusat pada koridor tertentu (Majapahit–Sudiarto, Soekarno-Hatta, Perintis Kemerdekaan).
+      </p>
+      <p>
+        Karena itu tier <b>jalan utama</b> kini mendapat <b>premi koridor</b> bila jalan utama terdekat (≤ {c.maxRoadM} m) adalah ruas arteri (OSM trunk/primary) bernama yang punya iklan muka jalan: premi = median
+        residu log iklan muka jalan pada ruas bernama sama (terhadap estimasi tier utama, leave-one-out; termasuk iklan yang ditandai pencilan), berbobot Gauss(jarak/{(c.bwM / 1000).toLocaleString("id-ID")} km), lalu
+        disusutkan ke 0 dengan bobot nEff/(nEff + {c.k}). Iklan dikaitkan ke ruas bila teksnya menyebut bidang di muka/pinggir jalan itu (pin ≤ 1,5 km dari ruas) atau pinnya ≤ 30 m dari ruas itu. Ruas
+        "Brigjen Sudiarto" di OSM digabung dengan Jl. Majapahit (satu jalan arteri menerus; iklan di ruas timur menyebutnya Jl. Majapahit). Ruas: {roads.slice(0, 8).map((r) => `${r.label} (${r.n})`).join(", ")}
+        {roads.length > 8 ? `, dan ${roads.length - 8} ruas lain dengan 1–2 iklan` : ""}. Premi bisa juga &lt; 1 bila iklan di ruas itu lebih murah dari estimasi. Ruas kolektor (secondary) tidak diberi premi koridor: di
+        sana iklan muka jalan rata-rata justru sedikit di bawah estimasi.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Leave-one-out (iklan itu sendiri & salinannya dikeluarkan dari bukti koridor)</th>
+            <th>Sebelum</th>
+            <th>Sesudah</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([lab, kb, ka]) =>
+            f[kb] && f[ka] ? (
+              <tr key={kb}>
+                <td>
+                  {lab} (n={f[kb].n})
+                </td>
+                <td className="num">
+                  {f[kb].medianAbsErrPct}% · bias {pctLog(f[kb].biasLog)}
+                </td>
+                <td className="num">
+                  {f[ka].medianAbsErrPct}% · bias {pctLog(f[ka].biasLog)}
+                </td>
+              </tr>
+            ) : null,
+          )}
+          <tr>
+            <td>Semua iklan berpin tepat, harga tampil (n={d.after.n}; {d.nWithPremium} mendapat premi koridor)</td>
+            <td className="num">
+              {d.before.medianAbsErrPct}% · ±25%: {d.before.within25pct}% · cakupan {d.before.coverage50pct}%
+            </td>
+            <td className="num">
+              {d.after.medianAbsErrPct}% · ±25%: {d.after.within25pct}% · cakupan {d.after.coverage50pct}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p className="text-fg-muted">
+        Validasi silang blok spasial (blok 2 km; 86 iklan muka jalan arteri): galat harga tampil 102% → 58%, pada Majapahit–Sudiarto (16 iklan) 183% → 86%; pada seluruh 380 iklan muka jalan bernama (termasuk
+        kolektor) 42,6% → 41,1%, tanpa pencilan 39,1% → 37,2%. Yang diuji dan <b>tidak</b> dipakai: premi muka jalan menurut jarak saja (tanpa nama ruas) — memperburuk validasi; premi koridor juga untuk ruas kolektor —
+        leave-one-out memburuk. Estimasi di koridor tetap di bawah median harga iklan muka jalan (premi disusutkan; harga penawaran ≠ transaksi). Di persimpangan, ruas yang dipakai adalah jalan utama
+        terdekat. Skrip: <code>data-pipeline/corridor.py</code>, <code>data-pipeline/analysis/audit/corridor_cv*.py</code>.
       </p>
     </>
   );

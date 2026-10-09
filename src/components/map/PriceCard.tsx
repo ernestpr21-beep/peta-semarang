@@ -52,7 +52,9 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
   // tier hasil deteksi OSM belum pasti → harga utama memakai faktor akses terkalibrasi (lihat Metodologi)
   const isAuto = !tierIsManual && !!model.autoAccess;
   const main = isAuto ? price.autoTiers[t] : price.tiers[t];
-  const accessFactor = isAuto ? price.autoFactors[t] : model.tiers[t].factor * (t === "utama" ? price.cbdFactor : 1);
+  // premi koridor jalan arteri (hanya tier utama) ditampilkan sebagai baris tersendiri
+  const corr = t === "utama" ? price.corridor : null;
+  const accessFactor = (isAuto ? price.autoFactors[t] / (corr?.factor ?? 1) : model.tiers[t].factor * (t === "utama" ? price.cbdFactor : 1));
   const ti = model.tiers[t];
   const noAccess = price.tiers.tanpa;
   const withAccess = price.tiers[t === "tanpa" ? "lingkungan" : t];
@@ -235,6 +237,14 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                 <td className="text-fg-muted">× faktor akses ({isAuto ? `deteksi OSM: ${ti.short.toLowerCase()}, terkalibrasi` : ti.short}{t === "utama" && price.cbdFactor > 1.01 ? ", termasuk premi pusat kota" : ""})</td>
                 <td>×{accessFactor.toFixed(2)}</td>
               </tr>
+              {corr ? (
+                <tr>
+                  <td className="text-fg-muted">
+                    × premi koridor Jl. {corr.label} ({corr.nUsed} iklan muka jalan di ruas ini, bobot menurut jarak)
+                  </td>
+                  <td>×{corr.factor.toFixed(2)}</td>
+                </tr>
+              ) : null}
               <tr>
                 <td className="text-fg-muted">× faktor luas ({area.toLocaleString("id-ID")} m²)</td>
                 <td>×{price.sizeFactor.toFixed(2)}</td>

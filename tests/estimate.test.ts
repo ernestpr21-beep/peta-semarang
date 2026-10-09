@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { estimatePrice, findAreaStat, sizeFactor, type PriceEstimateResult } from "../src/lib/estimate";
+import { corridorKey, corridorPremium, estimatePrice, findAreaStat, sizeFactor, type PriceEstimateResult } from "../src/lib/estimate";
 import { detectAccess, type Road } from "../src/lib/access";
 import { findFeature, nearestCampus, type GeoCollection } from "../src/lib/geo";
 import { computeLocationScore, SCORE_SEARCH_RADIUS } from "../src/lib/score";
@@ -195,5 +195,37 @@ describe("model 2026-10-4 (prototipe audit): akses hasil deteksi OSM terkalibras
       expect(a.priorLevel).toBe("sekitar");
       expect(Math.abs(Math.log(a.tiers.lingkungan.point / b.tiers.lingkungan.point))).toBeLessThan(Math.log(1.15));
     }
+  });
+});
+
+describe("model 2026-10-5: premi koridor jalan arteri (audit Jl. Majapahit)", () => {
+  const m = ds.model;
+  it("nama jalan OSM dinormalisasi sama dengan pipeline (alias Brigjen Sudiarto → Majapahit)", () => {
+    expect(corridorKey("Jalan Majapahit", m.corridor!.aliases)).toBe("majapahit");
+    expect(corridorKey("Jalan Brigadir Jenderal Sudiarto", m.corridor!.aliases)).toBe("majapahit");
+    expect(corridorKey("Jalan Soekarno-Hatta")).toBe("soekarno hatta");
+  });
+  it("Jl. Majapahit (Gayamsari): tier utama naik ≈ ×2 (iklan muka jalan Rp7–30 jt/m²), tier lain tidak berubah", () => {
+    const lat = -7.00434, lng = 110.45198;
+    const k = findFeature(lat, lng, kel)?.properties;
+    const base = { lat, lng, insideCity: true, comps: ds.comparables, model: m, kelStat: findAreaStat(ds.kelurahan, k?.name ?? null, k?.kecamatan),
+      kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null), campus: nearestCampus(lat, lng, ds.campuses) };
+    const r0 = estimatePrice(base) as PriceEstimateResult;
+    const r1 = estimatePrice({ ...base, mainRoad: { name: "Jalan Majapahit", distanceM: 10 } }) as PriceEstimateResult;
+    expect(r1.corridor?.key).toBe("majapahit");
+    expect(r1.corridor!.factor).toBeGreaterThan(1.5);
+    expect(r1.autoTiers.utama.point).toBeGreaterThan(7e6);
+    expect(r1.tiers.lingkungan.point).toBe(r0.tiers.lingkungan.point);
+    expect(r1.autoTiers.gang.point).toBe(r0.autoTiers.gang.point);
+    // jauh dari ruas (> maxRoadM) atau ruas tanpa bukti → tanpa premi
+    expect(corridorPremium(m, lat, lng, { name: "Jalan Majapahit", distanceM: 200 })).toBeNull();
+    expect(corridorPremium(m, lat, lng, { name: "Jalan Kedungmundu", distanceM: 5 })).toBeNull();
+  });
+  it("validasi tersimpan: galat iklan muka jalan arteri turun, validasi harga tampil keseluruhan tidak memburuk", () => {
+    const v = m.corridor!.validation;
+    expect(v.frontage.autoAfter.medianAbsErrPct).toBeLessThan(v.frontage.autoBefore.medianAbsErrPct);
+    expect(v.frontage.manualAfter.medianAbsErrPct).toBeLessThan(v.frontage.manualBefore.medianAbsErrPct);
+    expect(v.display.after.medianAbsErrPct).toBeLessThanOrEqual(v.display.before.medianAbsErrPct);
+    expect(v.display.after.within25pct).toBeGreaterThanOrEqual(v.display.before.within25pct);
   });
 });

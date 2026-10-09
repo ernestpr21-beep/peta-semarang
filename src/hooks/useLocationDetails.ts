@@ -63,8 +63,9 @@ export function useLocationDetails(): LocationDetails {
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
       area,
       campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
+      mainRoad: access?.nearest.utama ? { name: access.nearest.utama.name, distanceM: access.nearest.utama.distanceM } : null,
     });
-  }, [clicked, ds.data, admin, area]);
+  }, [clicked, ds.data, admin, area, access]);
 
   const facilitiesAll = useMemo(
     () => (clicked && fac.data ? facilitiesNear(fac.data.rows, clicked.lat, clicked.lng, SCORE_SEARCH_RADIUS) : null),
