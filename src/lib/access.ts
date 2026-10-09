@@ -104,3 +104,25 @@ export function detectAccess(lat: number, lng: number, roads: Road[]): AccessDet
   }
   return { tier, reason, nearest, nearestDrivable: drivable, roadsChecked: roads.length };
 }
+
+/** Semua jalan utama bernama dalam maxM dari titik (jarak minimum per nama) — untuk premi koridor di persimpangan */
+export function namedMainRoadsWithin(lat: number, lng: number, roads: Road[], maxM: number): { name: string; highway: string; distanceM: number }[] {
+  const proj = localProjector(lat, lng);
+  const best = new Map<string, { name: string; highway: string; distanceM: number }>();
+  for (const r of roads) {
+    if (r.c !== "utama" || !r.n) continue;
+    const g = r.g;
+    let [px, py] = proj(g[0], g[1]);
+    for (let i = 2; i < g.length; i += 2) {
+      const [qx, qy] = proj(g[i], g[i + 1]);
+      if (!(Math.min(px, qx) > maxM || Math.max(px, qx) < -maxM || Math.min(py, qy) > maxM || Math.max(py, qy) < -maxM)) {
+        const d = distToSegment(px, py, qx, qy);
+        const cur = best.get(r.n);
+        if (d <= maxM && (!cur || d < cur.distanceM)) best.set(r.n, { name: r.n, highway: r.hw, distanceM: d });
+      }
+      px = qx;
+      py = qy;
+    }
+  }
+  return [...best.values()].sort((a, b) => a.distanceM - b.distanceM);
+}

@@ -723,7 +723,9 @@ function CorridorSection({ model }: { model: PriceModel }) {
       <p>
         Karena itu tier <b>jalan utama</b> kini mendapat <b>premi koridor</b> bila jalan utama terdekat (≤ {c.maxRoadM} m) adalah ruas arteri (OSM trunk/primary) bernama yang punya iklan muka jalan: premi = median
         residu log iklan muka jalan pada ruas bernama sama (terhadap estimasi tier utama, leave-one-out; termasuk iklan yang ditandai pencilan), berbobot Gauss(jarak/{(c.bwM / 1000).toLocaleString("id-ID")} km), lalu
-        disusutkan ke 0 dengan bobot nEff/(nEff + {c.k}). Iklan dikaitkan ke ruas bila teksnya menyebut bidang di muka/pinggir jalan itu (pin ≤ 1,5 km dari ruas) atau pinnya ≤ 30 m dari ruas itu. Ruas
+        disusutkan ke 0 dengan bobot nEff/(nEff + {c.k}) (k dikalibrasi ulang 2026-10-6 dari 4 ke 2: dengan k = 4 estimasi di ruas masih ±40% di bawah iklan muka jalan). Iklan dikaitkan ke ruas bila teksnya menyebut bidang di muka/pinggir jalan itu (pin ≤ 1,5 km dari ruas), atau pinnya ≤ 30 m dari ruas itu{" "}
+        <b>dan</b> teksnya menyebut akses jalan utama atau nama ruas itu (sejak 2026-10-6; sebelumnya kavling murah tanpa keterangan yang kebetulan berpin di persimpangan ikut terhitung). Bila ada beberapa ruas
+        koridor dalam {c.maxRoadM} m (persimpangan), preminya digabung berbobot jumlah bukti efektif (nEff), sehingga ruas dengan sedikit bukti tidak menimpa ruas arteri utama. Ruas
         "Brigjen Sudiarto" di OSM digabung dengan Jl. Majapahit (satu jalan arteri menerus; iklan di ruas timur menyebutnya Jl. Majapahit). Ruas: {roads.slice(0, 8).map((r) => `${r.label} (${r.n})`).join(", ")}
         {roads.length > 8 ? `, dan ${roads.length - 8} ruas lain dengan 1–2 iklan` : ""}. Premi bisa juga &lt; 1 bila iklan di ruas itu lebih murah dari estimasi. Ruas kolektor (secondary) tidak diberi premi koridor: di
         sana iklan muka jalan rata-rata justru sedikit di bawah estimasi.
@@ -764,10 +766,26 @@ function CorridorSection({ model }: { model: PriceModel }) {
         </tbody>
       </table>
       <p className="text-fg-muted">
-        Validasi silang blok spasial (blok 2 km; 86 iklan muka jalan arteri): galat harga tampil 102% → 58%, pada Majapahit–Sudiarto (16 iklan) 183% → 86%; pada seluruh 380 iklan muka jalan bernama (termasuk
-        kolektor) 42,6% → 41,1%, tanpa pencilan 39,1% → 37,2%. Yang diuji dan <b>tidak</b> dipakai: premi muka jalan menurut jarak saja (tanpa nama ruas) — memperburuk validasi; premi koridor juga untuk ruas kolektor —
-        leave-one-out memburuk. Estimasi di koridor tetap di bawah median harga iklan muka jalan (premi disusutkan; harga penawaran ≠ transaksi). Di persimpangan, ruas yang dipakai adalah jalan utama
-        terdekat. Skrip: <code>data-pipeline/corridor.py</code>, <code>data-pipeline/analysis/audit/corridor_cv*.py</code>.
+        Uji bersama 2026-10-6 (versi lama vs baru pada himpunan iklan yang sama; salinan iklan uji dikeluarkan dari pembanding; harga dihitung di titik ruas jalan terdekat seperti saat pengguna
+        mengklik jalan): 31 iklan yang teksnya menyebut muka jalan arteri — galat harga tampil leave-one-out 75,9% → 66,5% (bias −40% → −30%), validasi silang blok spasial 2 km 98% → 78%; seluruh 1.871 iklan
+        berpin tepat — leave-one-out 34,5% → 34,1%, validasi silang 35,3% → 34,3% (dalam ±25%: 39,4% → 38,4% leave-one-out, 39,0% → 39,2% validasi silang). Estimasi di koridor <b>masih di bawah</b> harga iklan
+        muka jalan (±30%): premi disusutkan karena tiap ruas hanya punya sedikit iklan, dan harga penawaran ≠ transaksi. Yang diuji dan tidak dipakai: premi menurut jarak saja (tanpa nama ruas), premi untuk ruas
+        kolektor. Skrip: <code>data-pipeline/corridor.py</code>, <code>data-pipeline/analysis/audit/corridor_cv*.py</code>, <code>eval_set_v6.py</code>, <code>tests/validate-cv.test.ts</code>.
+      </p>
+      <h3 id="pembersihan-2026-10-6">4d. Pembersihan data: salinan lintas wilayah &amp; pencilan menurut kelas akses (model {model.version})</h3>
+      <p>
+        <b>Salinan lintas kelurahan/portal.</b> Satu bidang sering diiklankan beberapa agen dengan pin berserakan (mis. 7.252 m² @ Rp7 jt/m² di Jl. Majapahit tercatat 10× dari Kalicari sampai Bugangan), sehingga
+        deduplikasi lama (kunci kelurahan + luas + harga) gagal dan bidang itu berbobot berlipat. Kini dua iklan dianggap sama bila luasnya sama (±0,5 m² atau ±0,1%) dan harga totalnya sama (±1%), dan teksnya mirip (Jaccard
+        bigram ≥ 0,3) atau luasnya khas (≥ 300 m², bukan kelipatan 25 m²) dengan pin ≤ 5 km; yang disimpan pin tepat paling sentral di antara salinannya.
+      </p>
+      <p>
+        <b>Pencilan menurut kelas akses.</b> Aturan pencilan membandingkan harga/m² dengan median kelurahan; bidang muka jalan utama yang wajar ikut terbuang karena dibandingkan dengan bidang dalam. Kini simpangan
+        diukur setelah koreksi kelas akses dari teks (koreksi = median simpangan kelas itu di seluruh kota: jalan utama +19%, gang −15%). Iklan muka jalan yang masih ekstrem (mis. Rp19–22 jt/m² di Brigjen Sudiarto)
+        tetap tidak dipakai sebagai pembanding bidang dalam, tetapi ikut menjadi bukti premi koridor di atas.
+      </p>
+      <p className="text-fg-muted">
+        Premi pusat kota untuk jalan utama hasil deteksi kini dipilih dengan kriteria bias median terkecil (sebelumnya galat absolut median, yang kurvanya datar pada ±43 iklan sehingga pilihannya melompat-lompat bila
+        data sedikit berubah).
       </p>
     </>
   );

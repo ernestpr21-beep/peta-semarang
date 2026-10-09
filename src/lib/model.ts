@@ -129,9 +129,11 @@ export interface PriceModel {
     bwM: number;
     minWeight: number;
     maxRoadM: number;
+    /** 2026-10-6: gabungkan semua ruas koridor ≤ maxRoadM (persimpangan) */
+    blend?: boolean;
     aliases: Record<string, string>;
     /** kunci = nama jalan ternormalisasi; pts = [lat, lng, residu log terhadap estimasi tier utama] */
-    roads: Record<string, { label: string; n: number; pts: [number, number, number][] }>;
+    roads: Record<string, { label: string; n: number; pts: [number, number, number][]; ids?: string[]; text?: boolean[] }>;
     validation: {
       frontage: Record<string, { n: number; medianAbsErrPct: number; biasLog: number }>;
       display: { before: AutoAccessStats; after: AutoAccessStats; nWithPremium: number };

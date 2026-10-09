@@ -250,6 +250,49 @@ for k, g in groups.items():
             dups += 1
 print('duplicates', dups)
 
+# ---------- dedup lintas kelurahan/portal (2026-10-6) ----------
+# Bidang yang sama sering diiklankan beberapa agen dengan pin berserakan di kelurahan berbeda (mis. 7.252 m² @ Rp7 jt/m²
+# tercatat 7× dari Kalicari sampai Bugangan), sehingga kunci kelurahan di atas gagal. Dua iklan dianggap sama bila luasnya sama
+# (±0,5 m² atau ±0,1%) dan harga totalnya sama (±1%), DAN teksnya mirip (Jaccard bigram ≥ 0,3) ATAU luasnya khas (≥ 300 m², bukan
+# kelipatan 25 m²) dan pinnya ≤ 5 km. Yang disimpan: pin tepat yang paling sentral di antara salinan (medoid), lalu deskripsi terpanjang.
+DEDUP_X = os.environ.get('DEDUP_X', '1') == '1'
+def _bigr(r):
+    t = re.sub(r'[^a-z0-9 ]', ' ', ((r['title'] or '') + ' ' + (r['description'] or '')).lower()).split()
+    return set(zip(t, t[1:]))
+def _dm(a, b):
+    if a['lat'] is None or b['lat'] is None: return 9e9
+    return math.hypot((a['lat'] - b['lat']) * 110574, (a['lng'] - b['lng']) * 110500)
+dups_x = 0
+if DEDUP_X:
+    cand = [r for r in out_all if not r['flags'] and r['area_m2'] and r['ppm']]
+    cand.sort(key=lambda r: r['area_m2'])
+    bg = {id(r): _bigr(r) for r in cand}
+    parent = {}
+    def _find(i):
+        while parent.get(i, i) != i: i = parent[i]
+        return i
+    for i, x in enumerate(cand):
+        tol = max(0.5, 0.001 * x['area_m2'])
+        for y in cand[i + 1:]:
+            if y['area_m2'] - x['area_m2'] > tol: break
+            tx, ty = x['area_m2'] * x['ppm'], y['area_m2'] * y['ppm']
+            if abs(tx - ty) > 0.01 * max(tx, ty): continue
+            distinct = any(a >= 300 and round(a) % 25 != 0 for a in (x['area_m2'], y['area_m2']))
+            sim = len(bg[id(x)] & bg[id(y)]) / max(1, len(bg[id(x)] | bg[id(y)]))
+            if sim >= 0.3 or (distinct and _dm(x, y) <= 5000):
+                parent[_find(id(y))] = _find(id(x))
+    comp = defaultdict(list)
+    for r in cand: comp[_find(id(r))].append(r)
+    for g in comp.values():
+        if len(g) < 2: continue
+        def rank(x):
+            return (-x['exact'], sum(_dm(x, y) for y in g if y['exact']) if x['exact'] else 0, -len(x['description'] or ''), x['date'])
+        g.sort(key=rank)
+        for x in g[1:]:
+            x['flags'] = 'duplikat lintas wilayah dari ' + g[0]['source'] + ':' + g[0]['source_id']
+            dups_x += 1
+print('duplicates lintas kelurahan/portal', dups_x)
+
 # ---------- outlier per kelurahan (log harga/m² setelah koreksi luas kasar) ----------
 ok = [r for r in out_all if not r['flags']]
 def logadj(r):
@@ -260,16 +303,36 @@ for r in ok:
 byc = defaultdict(list)
 for r in ok:
     byc[r['kecamatan']].append(r)
+# 2026-10-6: pencilan diukur SETELAH koreksi kelas akses dari teks. Sebelumnya bidang muka jalan utama dibandingkan langsung dengan
+# bidang dalam se-kelurahan sehingga iklan muka jalan yang wajar (mis. Jl. Majapahit Rp22–30 jt/m²) terbuang sebagai pencilan.
+# Koreksi per kelas = median simpangan (logadj − median pool) iklan kelas itu di seluruh kota (data, bukan angka tetap).
+OUTLIER_TIER = os.environ.get('OUTLIER_TIER', '1') == '1'
+def _pool(r):
+    return byk[r['kelurahan']] if r['kelurahan'] and len(byk[r['kelurahan']]) >= 6 else byc[r['kecamatan']]
+tier_off = defaultdict(float)
+if OUTLIER_TIER:
+    _dev = defaultdict(list)
+    _pm = {}
+    for r in ok:
+        pl = _pool(r)
+        if len(pl) < 5: continue
+        k = id(pl)
+        if k not in _pm: _pm[k] = statistics.median([logadj(x) for x in pl])
+        _dev[r['access_tier'] or ''].append(logadj(r) - _pm[k])
+    _base = statistics.median(_dev['']) if _dev[''] else 0.0
+    for t, v in _dev.items(): tier_off[t] = statistics.median(v) - _base if len(v) >= 20 else 0.0
+    print('koreksi kelas akses untuk pencilan', {t: round(v, 3) for t, v in tier_off.items()})
+def logadj_t(r): return logadj(r) - tier_off[r['access_tier'] or '']
 outl = 0
 for r in ok:
-    pool = byk[r['kelurahan']] if r['kelurahan'] and len(byk[r['kelurahan']]) >= 6 else byc[r['kecamatan']]
-    vals = [logadj(x) for x in pool]
+    pool = _pool(r)
+    vals = [logadj_t(x) for x in pool]
     if len(vals) < 5:
         continue
     med = statistics.median(vals)
     mad = statistics.median([abs(v - med) for v in vals]) * 1.4826
     mad = max(mad, 0.25)
-    z = (logadj(r) - med) / mad
+    z = (logadj_t(r) - med) / mad
     if abs(z) > 3.0:
         r['flags'] = f'outlier (z={z:.1f} vs median {"kelurahan" if pool is byk[r["kelurahan"]] else "kecamatan"})'
         outl += 1

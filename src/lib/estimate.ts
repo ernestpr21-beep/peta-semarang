@@ -127,11 +127,10 @@ export function corridorKey(name: string, aliases: Record<string, string> = {}) 
   return aliases[s] ?? s;
 }
 
-/** Premi koridor jalan arteri di titik (lat, lng) bila jalan utama terdekat (≤ maxRoadM) adalah ruas koridor bernama */
-export function corridorPremium(model: PriceModel, lat: number, lng: number, mainRoad?: { name: string | null; distanceM: number } | null): CorridorPremium | null {
-  const cm = model.corridor;
-  if (!cm || !mainRoad?.name || !(mainRoad.distanceM <= cm.maxRoadM)) return null;
-  const key = corridorKey(mainRoad.name, cm.aliases);
+type RoadNear = { name: string | null; distanceM: number };
+
+function corridorOne(model: PriceModel, key: string, lat: number, lng: number) {
+  const cm = model.corridor!;
   const road = cm.roads[key];
   if (!road) return null;
   const vals: number[] = [];
@@ -146,8 +145,32 @@ export function corridorPremium(model: PriceModel, lat: number, lng: number, mai
   if (!ws.length) return null;
   const tot = ws.reduce((s, w) => s + w, 0);
   const nEff = tot ** 2 / ws.reduce((s, w) => s + w * w, 0);
-  const prem = (nEff * weightedQuantile(vals, ws, 0.5)) / (nEff + cm.k);
-  return { key, label: road.label, factor: Math.exp(prem), nEff, nUsed: ws.length };
+  return { key, label: road.label, prem: (nEff * weightedQuantile(vals, ws, 0.5)) / (nEff + cm.k), nEff, nUsed: ws.length };
+}
+
+/**
+ * Premi koridor jalan arteri di titik (lat, lng). `roads` = jalan utama bernama di dekat titik (atau satu jalan utama terdekat).
+ * Model 2026-10-6 (blend): semua ruas koridor ≤ maxRoadM dipakai, premi digabung berbobot nEff — di persimpangan, ruas dengan
+ * bukti sedikit tidak menimpa ruas arteri yang buktinya banyak. Tanpa blend: hanya ruas terdekat.
+ */
+export function corridorPremium(model: PriceModel, lat: number, lng: number, roads?: RoadNear | RoadNear[] | null): CorridorPremium | null {
+  const cm = model.corridor;
+  if (!cm || !roads) return null;
+  let list = (Array.isArray(roads) ? roads : [roads]).filter((r) => r.name && r.distanceM <= cm.maxRoadM).sort((a, b) => a.distanceM - b.distanceM);
+  if (!cm.blend) list = list.slice(0, 1);
+  const parts = [...new Set(list.map((r) => corridorKey(r.name as string, cm.aliases)))]
+    .map((k) => corridorOne(model, k, lat, lng))
+    .filter((x): x is NonNullable<typeof x> => !!x);
+  if (!parts.length) return null;
+  const nEff = parts.reduce((s, p) => s + p.nEff, 0);
+  const prem = parts.reduce((s, p) => s + p.prem * p.nEff, 0) / nEff;
+  return {
+    key: parts.map((p) => p.key).join("+"),
+    label: parts.map((p) => p.label).join(" / "),
+    factor: Math.exp(prem),
+    nEff,
+    nUsed: parts.reduce((s, p) => s + p.nUsed, 0),
+  };
 }
 
 /** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
@@ -207,8 +230,8 @@ export function estimatePrice(opts: {
   area?: number;
   /** kampus terdekat (jarak ke poligon); dipakai untuk faktor kedekatan kampus */
   campus?: { name: string; distanceM: number } | null;
-  /** jalan utama OSM terdekat (nama & jarak) — untuk premi koridor jalan arteri */
-  mainRoad?: { name: string | null; distanceM: number } | null;
+  /** jalan utama OSM bernama di dekat titik (nama & jarak; satu atau beberapa) — untuk premi koridor jalan arteri */
+  mainRoad?: RoadNear | RoadNear[] | null;
 }): PriceResult {
   const { lat, lng, comps, model } = opts;
   if (!opts.insideCity) return { available: false, reason: "Titik di luar Kota Semarang — estimasi tidak dihitung." };

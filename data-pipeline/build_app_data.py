@@ -429,11 +429,13 @@ _ag = {t: [y for r, y, _ in _auto_src if r['osm_tier'] == t] for t in AUTO_ORDER
 _amed = {t: (statistics.median(v) if v else unknown_b) for t, v in _ag.items()}
 _ashr = [(len(_ag[t]) * _amed[t] + 30 * unknown_b) / (len(_ag[t]) + 30) for t in AUTO_ORDER]
 _amono = dict(zip(AUTO_ORDER, _pava(_ashr, [len(_ag[t]) for t in AUTO_ORDER])))
-# premi pusat kota untuk 'utama' hasil deteksi: skala s ∈ {0, ¼, ½, ¾, 1} yang meminimalkan galat absolut median (utama terdeteksi < 4 km)
+# premi pusat kota untuk 'utama' hasil deteksi: skala s ∈ {0, ¼, ½, ¾, 1} dengan bias median terkecil (|median galat|) pada utama
+# terdeteksi < 4 km. 2026-10-6: sebelumnya kriteria galat absolut median — kurvanya datar (n≈43, hanya ±7 iklan < 1,5 km) sehingga
+# pilihan melompat (1 → ¼) karena perubahan kecil data; kriteria bias stabil (semua skala masih di bawah harga iklan → s terbesar).
 _best = (9.0, 0.0)
 for _s in (0.0, 0.25, 0.5, 0.75, 1.0):
-    _e = [abs(_amono['utama'] + _s * math.log(cbd_factor(r['d_cbd'])) - y) for r, y, _ in _auto_src if r['osm_tier'] == 'utama' and r['d_cbd'] < 4000]
-    if _e and statistics.median(_e) < _best[0]: _best = (statistics.median(_e), _s)
+    _b = [_amono['utama'] + _s * math.log(cbd_factor(r['d_cbd'])) - y for r, y, _ in _auto_src if r['osm_tier'] == 'utama' and r['d_cbd'] < 4000]
+    if _b and abs(statistics.median(_b)) <= _best[0] + 1e-9: _best = (abs(statistics.median(_b)), _s)
 AUTO_CBD_SCALE = _best[1]
 def _auto_pred(r):
     return _amono[r['osm_tier']] + (AUTO_CBD_SCALE * math.log(cbd_factor(r['d_cbd'])) if r['osm_tier'] == 'utama' else 0.0)
@@ -458,13 +460,13 @@ auto_access = {'factors': {t: round(math.exp(_amono[t]), 3) for t in AUTO_ORDER}
                               'note': 'leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan.'},
                'note': 'Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor.'}
 print('akses otomatis', json.dumps(auto_access, ensure_ascii=False))
-# ---------- koridor jalan arteri (2026-10-5) ----------
+# ---------- koridor jalan arteri (2026-10-5; persimpangan & keanggotaan 2026-10-6) ----------
 # Audit Majapahit (analysis/audit/corridor_cv*.py): iklan muka jalan di koridor arteri komersial (Majapahit–Brigjen Sudiarto,
 # Soekarno-Hatta, Perintis Kemerdekaan, …) jauh di atas estimasi karena pembanding terdekat adalah bidang dalam, dan iklan muka
 # jalan termahal justru dibuang aturan outlier per kelurahan. Premi koridor = median berbobot jarak (Gauss, bw CORR_BW) residu
 # iklan muka jalan pada ruas arteri BERNAMA SAMA (termasuk yang ditandai outlier), disusutkan ke 0 dengan kekuatan CORR_K.
 import corridor as CORR
-CORR_K, CORR_BW = 4, 1500
+CORR_K, CORR_BW = 2, 1500  # k: 2026-10-6 dikalibrasi ulang (LOO+CV pada iklan muka jalan, harga di ruas jalan): k=4 terlalu menyusutkan
 CORR_EVIDENCE = os.environ.get('CORR_EVIDENCE', 'all')  # all | teks (uji)
 _ut_log = math.log(tiers['utama']['factor'])
 _dk = lambda a, ppm: (round(a), round(math.log(ppm), 2))
@@ -505,12 +507,20 @@ corr_val = {'frontage': {
     'autoPinBefore': _cstat([e['auto'] for e in _ev if e['how'] == 'pin']), 'autoPinAfter': _cstat([e['auto'] - _pl[e['id']] for e in _ev if e['how'] == 'pin'])}}
 # tampilan (tier deteksi OSM) untuk semua iklan berpin tepat: premi hanya untuk 'utama' terdeteksi yang ruas terdekatnya koridor
 _ev_pts = {k: [(x['lat'], x['lng'], x['res']) for x in v] for k, v in _by_k.items()}
+CORR_MAX_ROAD = 60
+CORR_BLEND = os.environ.get('CORR_BLEND', '1') == '1'  # 2026-10-6: semua ruas koridor ≤ 60 m digabung (persimpangan); 0 = hanya ruas terdekat
 def _corr_prem_at(r):
     if r['osm_tier'] != 'utama': return 0.0
-    d, hw, nm = CORR.nearest_main(r['lat'], r['lng']); k = CORR.key(nm) if nm else None
-    if k not in _by_k or d > 30: return 0.0
-    ev = _by_k[k]; i = f"{r['source']}:{r['source_id']}"; dk = _dk(r['area_m2'], r['ppm'])
-    return CORR.premium(_ev_pts[k], r['lat'], r['lng'], CORR_K, CORR_BW, lambda j: ev[j]['id'] == i or ev[j]['dk'] == dk)[0]
+    i = f"{r['source']}:{r['source_id']}"; dk = _dk(r['area_m2'], r['ppm'])
+    if CORR_BLEND:
+        ks = [k for k in CORR.nearby_keys(r['lat'], r['lng'], CORR_MAX_ROAD) if k in _by_k]
+    else:
+        d, hw, nm = CORR.nearest_main(r['lat'], r['lng']); k = CORR.key(nm) if nm else None
+        ks = [k] if (k in _by_k and d <= CORR_MAX_ROAD) else []
+    ps = []
+    for k in ks:
+        ev = _by_k[k]; ps.append(CORR.premium(_ev_pts[k], r['lat'], r['lng'], CORR_K, CORR_BW, lambda j: ev[j]['id'] == i or ev[j]['dk'] == dk))
+    return CORR.blend(ps)[0]
 _cp = {id(r): _corr_prem_at(r) for r, _, _ in _auto_src}
 corr_val['display'] = {'before': auto_access['validation']['after'], 'after': _dstats(lambda r: _auto_pred(r) + _cp[id(r)], lambda r, s: math.sqrt(s * s + AUTO_SD ** 2)),
                        'nWithPremium': sum(1 for v in _cp.values() if abs(v) > 1e-9)}
@@ -518,8 +528,8 @@ _labels = {}
 for k in _by_k:
     nms = sorted({x for x in CORR.ROADS if CORR.key(x) == k}, key=lambda x: (x != k, x))
     _labels[k] = ' – '.join(n.title() for n in nms)
-corridor_model = {'k': CORR_K, 'bwM': CORR_BW, 'minWeight': 0.01, 'maxRoadM': 60, 'aliases': CORR.ALIASES,
-                  'roads': {k: {'label': _labels[k], 'n': len(v), 'pts': [[round(x['lat'], 5), round(x['lng'], 5), round(x['res'], 3)] for x in v]} for k, v in sorted(_by_k.items())},
+corridor_model = {'k': CORR_K, 'bwM': CORR_BW, 'minWeight': 0.01, 'maxRoadM': CORR_MAX_ROAD, 'blend': CORR_BLEND, 'aliases': CORR.ALIASES,
+                  'roads': {k: {'label': _labels[k], 'n': len(v), 'pts': [[round(x['lat'], 5), round(x['lng'], 5), round(x['res'], 3)] for x in v], 'ids': [x['id'] for x in v], 'text': [x['how'] == 'teks' for x in v]} for k, v in sorted(_by_k.items())},
                   'validation': corr_val,
                   'note': 'Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama.'}
 print('koridor', len(_ev), 'iklan,', len(_by_k), 'ruas', json.dumps(corr_val, ensure_ascii=False))
@@ -571,7 +581,7 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-5', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
                   'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
                   'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},

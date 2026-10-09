@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useAppStore } from "@/lib/store";
 import { useDataset, useFacilities, useKecamatan, useKelurahan, useKota, useReverseGeocode, useRoadsAround } from "@/lib/data";
 import { findFeature, nearestCampus } from "@/lib/geo";
-import { detectAccess, type AccessDetection } from "@/lib/access";
+import { detectAccess, namedMainRoadsWithin, type AccessDetection } from "@/lib/access";
 import { estimatePrice, findAreaStat, type PriceResult } from "@/lib/estimate";
 import { facilitiesNear, type Facility } from "@/lib/facilities";
 import { computeLocationScore, SCORE_SEARCH_RADIUS, type LocationScore } from "@/lib/score";
@@ -63,9 +63,9 @@ export function useLocationDetails(): LocationDetails {
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
       area,
       campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
-      mainRoad: access?.nearest.utama ? { name: access.nearest.utama.name, distanceM: access.nearest.utama.distanceM } : null,
+      mainRoad: clicked && roads.roads ? namedMainRoadsWithin(clicked.lat, clicked.lng, roads.roads, ds.data.model.corridor?.maxRoadM ?? 60) : null,
     });
-  }, [clicked, ds.data, admin, area, access]);
+  }, [clicked, ds.data, admin, area, roads.roads]);
 
   const facilitiesAll = useMemo(
     () => (clicked && fac.data ? facilitiesNear(fac.data.rows, clicked.lat, clicked.lng, SCORE_SEARCH_RADIUS) : null),

@@ -15,27 +15,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 22000000,
-    "low": 12000000,
-    "high": 40000000
+    "point": 26000000,
+    "low": 14000000,
+    "high": 49000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 8800000,
-    "low": 4900000,
+    "point": 9100000,
+    "low": 5100000,
     "high": 16000000
    },
    "gang": {
     "tier": "gang",
-    "point": 7400000,
+    "point": 7500000,
     "low": 4100000,
-    "high": 8800000
+    "high": 9100000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 4900000,
-    "low": 2700000,
-    "high": 7400000
+    "point": 5000000,
+    "low": 2800000,
+    "high": 7500000
    }
   }
  },
@@ -55,26 +55,26 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 21000000,
-    "low": 14000000,
-    "high": 33000000
+    "point": 25000000,
+    "low": 16000000,
+    "high": 38000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 9200000,
-    "low": 6100000,
+    "point": 9400000,
+    "low": 6300000,
     "high": 14000000
    },
    "gang": {
     "tier": "gang",
     "point": 7700000,
     "low": 5100000,
-    "high": 9200000
+    "high": 9400000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 5100000,
-    "low": 3300000,
+    "point": 5200000,
+    "low": 3400000,
     "high": 7700000
    }
   }
@@ -91,31 +91,31 @@
   "radiusM": 800,
   "nearestM": 45,
   "medianDistanceM": 662,
-  "confidence": "sedang",
+  "confidence": "tinggi",
   "tiers": {
    "utama": {
     "tier": "utama",
     "point": 19000000,
     "low": 13000000,
-    "high": 28000000
+    "high": 27000000
    },
    "lingkungan": {
     "tier": "lingkungan",
     "point": 11000000,
-    "low": 7600000,
+    "low": 7800000,
     "high": 16000000
    },
    "gang": {
     "tier": "gang",
-    "point": 9200000,
+    "point": 9000000,
     "low": 6400000,
     "high": 11000000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 6100000,
-    "low": 4100000,
-    "high": 8800000
+    "low": 4200000,
+    "high": 8700000
    }
   }
  },
@@ -127,35 +127,35 @@
   "kecamatan": "Tembalang",
   "detectedAccess": "lingkungan",
   "accessReason": "3 m dari jalan tanpa nama (service) (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 19,
+  "nUsed": 16,
   "radiusM": 400,
   "nearestM": 15,
-  "medianDistanceM": 307,
+  "medianDistanceM": 279,
   "confidence": "tinggi",
   "tiers": {
    "utama": {
     "tier": "utama",
     "point": 6200000,
-    "low": 5200000,
+    "low": 5300000,
     "high": 7300000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 5400000,
-    "low": 4600000,
-    "high": 6300000
+    "point": 5300000,
+    "low": 4500000,
+    "high": 6200000
    },
    "gang": {
     "tier": "gang",
-    "point": 4500000,
-    "low": 3800000,
-    "high": 5300000
+    "point": 4300000,
+    "low": 3600000,
+    "high": 5100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 2900000,
     "low": 2400000,
-    "high": 3600000
+    "high": 3500000
    }
   }
  },
@@ -167,33 +167,33 @@
   "kecamatan": "Banyumanik",
   "detectedAccess": "lingkungan",
   "accessReason": "6 m dari Jalan Kalingga Dalam (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 24,
+  "nUsed": 21,
   "radiusM": 600,
   "nearestM": 208,
-  "medianDistanceM": 399,
+  "medianDistanceM": 409,
   "confidence": "tinggi",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 5300000,
-    "low": 4300000,
-    "high": 6600000
+    "point": 5400000,
+    "low": 4400000,
+    "high": 6700000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 4700000,
-    "low": 3800000,
+    "point": 4600000,
+    "low": 3700000,
     "high": 5700000
    },
    "gang": {
     "tier": "gang",
-    "point": 3900000,
-    "low": 3200000,
-    "high": 4700000
+    "point": 3800000,
+    "low": 3000000,
+    "high": 4600000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 2600000,
+    "point": 2500000,
     "low": 2000000,
     "high": 3200000
    }
@@ -207,7 +207,7 @@
   "kecamatan": "Ngaliyan",
   "detectedAccess": "lingkungan",
   "accessReason": "18 m dari jalan tanpa nama (residential) (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 12,
+  "nUsed": 10,
   "radiusM": 1000,
   "nearestM": 175,
   "medianDistanceM": 779,
@@ -216,25 +216,25 @@
    "utama": {
     "tier": "utama",
     "point": 3500000,
-    "low": 2500000,
-    "high": 5000000
+    "low": 2400000,
+    "high": 5200000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 3100000,
-    "low": 2200000,
-    "high": 4300000
+    "point": 3000000,
+    "low": 2000000,
+    "high": 4400000
    },
    "gang": {
     "tier": "gang",
-    "point": 2600000,
-    "low": 1800000,
-    "high": 3100000
+    "point": 2400000,
+    "low": 1700000,
+    "high": 3000000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 1700000,
-    "low": 1200000,
+    "point": 1600000,
+    "low": 1100000,
     "high": 2400000
    }
   }
@@ -247,35 +247,35 @@
   "kecamatan": "Gunungpati",
   "detectedAccess": "tanpa",
   "accessReason": "tidak ada jalan/gang OSM dalam 60 m (jalan mobil terdekat 96 m)",
-  "nUsed": 11,
-  "radiusM": 600,
+  "nUsed": 14,
+  "radiusM": 800,
   "nearestM": 75,
-  "medianDistanceM": 424,
+  "medianDistanceM": 576,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
     "point": 2000000,
     "low": 1600000,
-    "high": 2700000
+    "high": 2400000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 1800000,
+    "point": 1700000,
     "low": 1400000,
-    "high": 2300000
+    "high": 2000000
    },
    "gang": {
     "tier": "gang",
-    "point": 1500000,
+    "point": 1400000,
     "low": 1100000,
-    "high": 1800000
+    "high": 1700000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 980000,
-    "low": 740000,
-    "high": 1300000
+    "point": 910000,
+    "low": 730000,
+    "high": 1100000
    }
   }
  },
@@ -295,9 +295,9 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2200000,
-    "low": 1700000,
-    "high": 2900000
+    "point": 2300000,
+    "low": 1800000,
+    "high": 3000000
    },
    "lingkungan": {
     "tier": "lingkungan",
@@ -314,7 +314,7 @@
    "tanpa": {
     "tier": "tanpa",
     "point": 1100000,
-    "low": 800000,
+    "low": 810000,
     "high": 1400000
    }
   }
@@ -327,7 +327,7 @@
   "kecamatan": "Tugu",
   "detectedAccess": "tanpa",
   "accessReason": "tidak ada jalan/gang OSM dalam 60 m (jalan mobil terdekat 167 m)",
-  "nUsed": 20,
+  "nUsed": 19,
   "radiusM": 1500,
   "nearestM": 552,
   "medianDistanceM": 1277,
@@ -335,26 +335,26 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2800000,
-    "low": 2200000,
-    "high": 3400000
+    "point": 2900000,
+    "low": 2400000,
+    "high": 3600000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 2400000,
-    "low": 1900000,
+    "point": 2500000,
+    "low": 2000000,
     "high": 3000000
    },
    "gang": {
     "tier": "gang",
     "point": 2000000,
-    "low": 1600000,
-    "high": 2400000
+    "low": 1700000,
+    "high": 2500000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 1300000,
-    "low": 1000000,
+    "point": 1400000,
+    "low": 1100000,
     "high": 1700000
    }
   }
@@ -375,9 +375,9 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2400000,
+    "point": 2500000,
     "low": 1900000,
-    "high": 3100000
+    "high": 3200000
    },
    "lingkungan": {
     "tier": "lingkungan",
@@ -388,13 +388,13 @@
    "gang": {
     "tier": "gang",
     "point": 1700000,
-    "low": 1400000,
+    "low": 1300000,
     "high": 2100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 1100000,
-    "low": 880000,
+    "low": 870000,
     "high": 1500000
    }
   }
@@ -407,7 +407,7 @@
   "kecamatan": "Pedurungan",
   "detectedAccess": "lingkungan",
   "accessReason": "1 m dari Jalan Tlogo Timur VI (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 26,
+  "nUsed": 24,
   "radiusM": 400,
   "nearestM": 231,
   "medianDistanceM": 233,
@@ -415,27 +415,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 4700000,
-    "low": 3800000,
-    "high": 6000000
+    "point": 4600000,
+    "low": 3900000,
+    "high": 5400000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 4000000,
-    "low": 3200000,
-    "high": 5100000
+    "point": 3900000,
+    "low": 3300000,
+    "high": 4600000
    },
    "gang": {
     "tier": "gang",
-    "point": 3400000,
+    "point": 3200000,
     "low": 2700000,
-    "high": 4000000
+    "high": 3800000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 2200000,
-    "low": 1700000,
-    "high": 2800000
+    "low": 1800000,
+    "high": 2600000
    }
   }
  }

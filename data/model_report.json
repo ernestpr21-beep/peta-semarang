@@ -1,52 +1,52 @@
 {
- "version": "2026-10-5",
+ "version": "2026-10-6",
  "minEffComparables": 10,
  "locLevels": {
-  "titik": 2032,
-  "kelurahan": 1264,
-  "kecamatan": 939
+  "titik": 1871,
+  "kelurahan": 1158,
+  "kecamatan": 849
  },
  "asOf": "2026-10",
  "refArea": 150,
- "sizeElasticity": -0.0374,
- "sizeElasticitySE": 0.0083,
+ "sizeElasticity": -0.0481,
+ "sizeElasticitySE": 0.0087,
  "sizeCurve": {
   "knots": [
    {
     "minM2": 0,
     "maxM2": 75,
     "area": 70,
-    "coefRaw": -0.2438,
-    "se": 0.0687,
-    "coef": -0.2362,
-    "slopeRaw": -0.3271,
-    "slopeSE": 0.1924,
-    "slope": -0.2383,
-    "n": 123
+    "coefRaw": -0.1604,
+    "se": 0.0697,
+    "coef": -0.1568,
+    "slopeRaw": -0.1828,
+    "slopeSE": 0.2004,
+    "slope": -0.1346,
+    "n": 110
    },
    {
     "minM2": 75,
     "maxM2": 100,
     "area": 88,
-    "coefRaw": -0.0225,
-    "se": 0.0641,
-    "coef": -0.026,
-    "slopeRaw": -0.0258,
-    "slopeSE": 0.1756,
-    "slope": -0.0258,
-    "n": 131
+    "coefRaw": 0.0222,
+    "se": 0.0645,
+    "coef": 0.0166,
+    "slopeRaw": 0.0877,
+    "slopeSE": 0.1842,
+    "slope": 0.0554,
+    "n": 126
    },
    {
     "minM2": 100,
     "maxM2": 125,
     "area": 120,
-    "coefRaw": -0.1427,
-    "se": 0.049,
-    "coef": -0.1435,
-    "slopeRaw": -0.0784,
-    "slopeSE": 0.0888,
-    "slope": -0.0787,
-    "n": 554
+    "coefRaw": -0.1326,
+    "se": 0.0503,
+    "coef": -0.1336,
+    "slopeRaw": -0.0776,
+    "slopeSE": 0.0947,
+    "slope": -0.0788,
+    "n": 489
    },
    {
     "minM2": 125,
@@ -54,71 +54,71 @@
     "area": 148,
     "coefRaw": 0.0,
     "se": 0.0,
-    "coef": -0.0046,
+    "coef": -0.0047,
     "slopeRaw": 0.0,
     "slopeSE": 0.0,
-    "slope": -0.0066,
-    "n": 427
+    "slope": -0.0083,
+    "n": 394
    },
    {
     "minM2": 175,
     "maxM2": 250,
     "area": 208,
-    "coefRaw": 0.118,
-    "se": 0.0417,
-    "coef": 0.1112,
-    "slopeRaw": 0.1917,
-    "slopeSE": 0.1127,
-    "slope": 0.1613,
-    "n": 510
+    "coefRaw": 0.1205,
+    "se": 0.0426,
+    "coef": 0.1135,
+    "slopeRaw": 0.2431,
+    "slopeSE": 0.1199,
+    "slope": 0.2014,
+    "n": 490
    },
    {
     "minM2": 250,
     "maxM2": 400,
-    "area": 301,
-    "coefRaw": 0.1629,
-    "se": 0.0422,
-    "coef": 0.1552,
-    "slopeRaw": 0.2504,
-    "slopeSE": 0.1131,
-    "slope": 0.2126,
-    "n": 488
+    "area": 300,
+    "coefRaw": 0.1788,
+    "se": 0.0438,
+    "coef": 0.1704,
+    "slopeRaw": 0.3258,
+    "slopeSE": 0.1223,
+    "slope": 0.2711,
+    "n": 442
    },
    {
     "minM2": 400,
     "maxM2": 700,
-    "area": 504,
-    "coefRaw": 0.2304,
-    "se": 0.0444,
-    "coef": 0.2208,
-    "slopeRaw": 0.6086,
-    "slopeSE": 0.109,
-    "slope": 0.531,
-    "n": 388
+    "area": 502,
+    "coefRaw": 0.225,
+    "se": 0.0464,
+    "coef": 0.2151,
+    "slopeRaw": 0.6741,
+    "slopeSE": 0.1153,
+    "slope": 0.5791,
+    "n": 352
    },
    {
     "minM2": 700,
     "maxM2": 1500,
-    "area": 957,
-    "coefRaw": 0.273,
-    "se": 0.0471,
-    "coef": 0.2619,
-    "slopeRaw": 0.8284,
-    "slopeSE": 0.118,
-    "slope": 0.7108,
-    "n": 305
+    "area": 962,
+    "coefRaw": 0.2813,
+    "se": 0.0488,
+    "coef": 0.2694,
+    "slopeRaw": 0.8501,
+    "slopeSE": 0.1242,
+    "slope": 0.7174,
+    "n": 282
    },
    {
     "minM2": 1500,
     "maxM2": null,
-    "area": 3779,
-    "coefRaw": 0.0113,
-    "se": 0.0497,
-    "coef": 0.0064,
-    "slopeRaw": 0.7342,
-    "slopeSE": 0.101,
-    "slope": 0.6528,
-    "n": 370
+    "area": 3682,
+    "coefRaw": -0.0357,
+    "se": 0.0516,
+    "coef": -0.0393,
+    "slopeRaw": 0.729,
+    "slopeSE": 0.1069,
+    "slope": 0.6385,
+    "n": 344
    }
   ],
   "refBin": [
@@ -127,46 +127,46 @@
   ],
   "priorSD": 0.3,
   "rss": {
-   "bins": 747.11,
-   "linear": 805.29
+   "bins": 685.12,
+   "linear": 736.69
   },
-  "levelCenter": 3300000,
-  "zMin": -1.035,
+  "levelCenter": 3246774,
+  "zMin": -1.034,
   "zMax": 0.0,
   "note": "Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal."
  },
- "commercialFactor": 1.055,
+ "commercialFactor": 1.033,
  "recencyHalfLifeYears": 2,
- "trendPerYear": 0.0313,
- "trendRaw": 0.0313,
- "trendSE": 0.0103,
- "sourceEffect": 1.171,
+ "trendPerYear": 0.035,
+ "trendRaw": 0.035,
+ "trendSE": 0.0107,
+ "sourceEffect": 1.176,
  "sourceAdj": {
-  "lamudi": 0.886,
-  "pinhome": 1.038
+  "lamudi": 0.884,
+  "pinhome": 1.04
  },
- "unknownTierFactor": 1.03,
+ "unknownTierFactor": 1.038,
  "cbdFrontage": {
   "center": [
    -6.990464,
    110.422918
   ],
   "centerName": "Simpang Lima",
-  "scaleM": 1500,
-  "coef": 0.7581,
-  "coefRaw": 1.0056,
-  "coefSE": 0.2857,
-  "shrink": 0.754,
+  "scaleM": 1000,
+  "coef": 0.8893,
+  "coefRaw": 1.55,
+  "coefSE": 0.4309,
+  "shrink": 0.574,
   "priorSD": 0.5,
-  "nUtamaWithin3L": 119,
+  "nUtamaWithin3L": 44,
   "rssByScale": {
-   "750": 747.658,
-   "1000": 747.129,
-   "1500": 747.112,
-   "2000": 747.488,
-   "3000": 748.14
+   "750": 685.664,
+   "1000": 685.119,
+   "1500": 685.149,
+   "2000": 685.603,
+   "3000": 686.358
   },
-  "rssFlat": 750.095,
+  "rssFlat": 688.245,
   "note": "Faktor tambahan untuk tier jalan utama: exp(coef · exp(−jarak ke Simpang Lima / scaleM))."
  },
  "campus": {
@@ -176,26 +176,26 @@
    {
     "maxM": 500,
     "minM": 0,
-    "coefRaw": 0.1505,
-    "se": 0.0561,
-    "coef": 0.1454,
-    "n": 507
+    "coefRaw": 0.1669,
+    "se": 0.0584,
+    "coef": 0.1608,
+    "n": 461
    },
    {
     "maxM": 1000,
     "minM": 500,
-    "coefRaw": 0.1101,
-    "se": 0.047,
-    "coef": 0.1074,
-    "n": 481
+    "coefRaw": 0.1022,
+    "se": 0.0495,
+    "coef": 0.0995,
+    "n": 442
    },
    {
     "maxM": 2000,
     "minM": 1000,
-    "coefRaw": 0.1035,
-    "se": 0.0354,
-    "coef": 0.1021,
-    "n": 1186
+    "coefRaw": 0.0995,
+    "se": 0.0372,
+    "coef": 0.098,
+    "n": 1081
    }
   ],
   "nCampuses": 27,
@@ -206,65 +206,65 @@
    {
     "minM2": 0,
     "maxM2": 100,
-    "scale": 0.927,
-    "scaleRaw": 0.898,
-    "n": 254
+    "scale": 0.868,
+    "scaleRaw": 0.812,
+    "n": 236
    },
    {
     "minM2": 100,
     "maxM2": 175,
-    "scale": 0.929,
-    "scaleRaw": 0.922,
-    "n": 981
+    "scale": 0.92,
+    "scaleRaw": 0.911,
+    "n": 883
    },
    {
     "minM2": 175,
     "maxM2": 500,
-    "scale": 1.045,
-    "scaleRaw": 1.049,
-    "n": 1172
+    "scale": 1.046,
+    "scaleRaw": 1.05,
+    "n": 1090
    },
    {
     "minM2": 500,
     "maxM2": 1500,
-    "scale": 1.075,
-    "scaleRaw": 1.09,
-    "n": 519
+    "scale": 1.081,
+    "scaleRaw": 1.098,
+    "n": 476
    },
    {
     "minM2": 1500,
     "maxM2": null,
-    "scale": 1.421,
-    "scaleRaw": 1.535,
-    "n": 370
+    "scale": 1.36,
+    "scaleRaw": 1.465,
+    "n": 344
    }
   ],
   "calibration": {
    "crossFitCoverage50": [
     {
-     "withScale": 47.8,
+     "withScale": 48.6,
      "without": 48.2,
-     "n": 1672
+     "n": 1532
     },
     {
-     "withScale": 51.0,
-     "without": 49.1,
-     "n": 1624
+     "withScale": 50.5,
+     "without": 49.2,
+     "n": 1497
     }
    ],
    "coverageByClassWithout": [
-    53.9,
+    55.5,
     53.8,
-    48.5,
-    48.4,
-    32.4
+    47.8,
+    47.9,
+    34.9
    ],
    "coverageByClassWith": [
+    52.5,
+    50.1,
+    49.8,
     50.0,
-    50.3,
-    50.9,
-    50.9,
-    48.1
+    48.0
    ]
   },
   "note": "Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1."
@@ -279,18 +279,18 @@
    "mult": 1.0
   },
   "gangCheck": {
-   "n": 27,
-   "q25LogVsLingPoint": -0.506,
-   "medianLogVsLingPoint": -0.26,
-   "q75LogVsLingPoint": 0.141,
-   "shareAboveLingPoint": 40.7,
+   "n": 25,
+   "q25LogVsLingPoint": -0.532,
+   "medianLogVsLingPoint": -0.32,
+   "q75LogVsLingPoint": 0.047,
+   "shareAboveLingPoint": 36.0,
    "withoutCap": {
-    "coverage50": 44.4,
-    "aboveHigh": 33.3
+    "coverage50": 40.0,
+    "aboveHigh": 28.0
    },
    "withCap": {
-    "coverage50": 37.0,
-    "aboveHigh": 40.7
+    "coverage50": 32.0,
+    "aboveHigh": 36.0
    },
    "capMult": 1.0
   },
@@ -298,49 +298,49 @@
  },
  "autoAccess": {
   "factors": {
-   "utama": 1.057,
-   "lingkungan": 1.057,
-   "gang": 1.057,
-   "tanpa": 1.009
+   "utama": 1.058,
+   "lingkungan": 1.058,
+   "gang": 1.058,
+   "tanpa": 1.019
   },
   "cbdScale": 1.0,
   "sdLog": 0.1,
   "n": {
-   "utama": 246,
-   "lingkungan": 1031,
-   "gang": 415,
-   "tanpa": 340
+   "utama": 232,
+   "lingkungan": 960,
+   "gang": 379,
+   "tanpa": 300
   },
   "medianRaw": {
-   "utama": 1.057,
-   "lingkungan": 1.043,
-   "gang": 1.098,
-   "tanpa": 1.007
+   "utama": 1.045,
+   "lingkungan": 1.046,
+   "gang": 1.101,
+   "tanpa": 1.018
   },
   "validation": {
    "before": {
-    "n": 2032,
-    "medianAbsErrPct": 41.3,
-    "biasLog": -0.15,
-    "within25pct": 33.1,
-    "coverage50pct": 43.5,
+    "n": 1871,
+    "medianAbsErrPct": 41.4,
+    "biasLog": -0.147,
+    "within25pct": 33.9,
+    "coverage50pct": 42.9,
     "biasByDetectedTier": {
-     "utama": 0.115,
-     "lingkungan": -0.042,
-     "gang": -0.272,
-     "tanpa": -0.604
+     "utama": 0.131,
+     "lingkungan": -0.045,
+     "gang": -0.296,
+     "tanpa": -0.615
     }
    },
    "after": {
-    "n": 2032,
-    "medianAbsErrPct": 34.3,
-    "biasLog": 0.005,
-    "within25pct": 39.8,
+    "n": 1871,
+    "medianAbsErrPct": 33.6,
+    "biasLog": 0.002,
+    "within25pct": 38.4,
     "coverage50pct": 50.9,
     "biasByDetectedTier": {
-     "utama": 0.037,
-     "lingkungan": 0.013,
-     "gang": -0.038,
+     "utama": 0.025,
+     "lingkungan": 0.011,
+     "gang": -0.04,
      "tanpa": 0.002
     }
    },
@@ -349,10 +349,11 @@
   "note": "Faktor akses untuk tier hasil deteksi otomatis (belum dipastikan pengguna). Tier yang dipilih manual memakai faktor tiers[].factor."
  },
  "corridor": {
-  "k": 4,
+  "k": 2,
   "bwM": 1500,
   "minWeight": 0.01,
   "maxRoadM": 60,
+  "blend": true,
   "aliases": {
    "brigjen sudiarto": "majapahit"
   },
@@ -364,8 +365,14 @@
      [
       -6.99238,
       110.42764,
-      0.811
+      0.822
      ]
+    ],
+    "ids": [
+     "pinhome:1360693"
+    ],
+    "text": [
+     true
     ]
    },
    "dr cipto": {
@@ -375,60 +382,76 @@
      [
       -6.97264,
       110.4342,
-      0.807
+      0.911
      ],
      [
       -6.97215,
       110.4341,
-      -0.541
+      -0.286
      ],
      [
       -6.97264,
       110.4342,
-      -0.861
+      -0.589
      ]
+    ],
+    "ids": [
+     "pinhome:1123636",
+     "pinhome:1140999",
+     "lamudi:41032-73-8acfd1b908d7-b0b0-19d7231-8928-7796"
+    ],
+    "text": [
+     true,
+     false,
+     false
     ]
    },
    "dr wahidin": {
     "label": "Dr Wahidin",
-    "n": 4,
+    "n": 3,
     "pts": [
      [
       -7.01823,
       110.42667,
-      0.984
+      1.032
      ],
      [
       -7.01312,
       110.43163,
-      1.564
+      1.606
      ],
      [
       -7.00981,
       110.43192,
-      0.064
-     ],
-     [
-      -7.00981,
-      110.43192,
-      0.206
+      0.258
      ]
+    ],
+    "ids": [
+     "pinhome:1037511",
+     "pinhome:2314210",
+     "lamudi:41032-73-aea6bf8585a9-1ea9-1a056a9-924c-77a4"
+    ],
+    "text": [
+     true,
+     true,
+     false
     ]
    },
    "gajah": {
     "label": "Gajah",
-    "n": 2,
+    "n": 1,
     "pts": [
      [
       -6.98702,
       110.44809,
-      -0.766
-     ],
-     [
-      -6.98126,
-      110.449,
-      -0.776
+      -0.756
      ]
+    ],
+    "ids": [
+     "pinhome:2292405"
+    ],
+    "text": [
+     true
     ]
    },
    "gatot subroto": {
@@ -438,18 +461,28 @@
      [
       -6.99534,
       110.36674,
-      0.207
+      0.222
      ],
      [
       -6.99734,
       110.36611,
-      0.342
+      0.357
      ],
      [
       -7.00026,
       110.36662,
-      -0.396
+      -0.347
      ]
+    ],
+    "ids": [
+     "pinhome:1759221",
+     "pinhome:1785073",
+     "pinhome:1889494"
+    ],
+    "text": [
+     true,
+     true,
+     true
     ]
    },
    "hanoman": {
@@ -459,8 +492,14 @@
      [
       -6.98342,
       110.36948,
-      0.383
+      0.375
      ]
+    ],
+    "ids": [
+     "pinhome:1462746"
+    ],
+    "text": [
+     true
     ]
    },
    "imam bonjol": {
@@ -470,46 +509,31 @@
      [
       -6.9698,
       110.4228,
-      1.04
+      1.053
      ]
+    ],
+    "ids": [
+     "lamudi:41032-73-c3b39d26286-42a7-19e0aea-b3dc-7094"
+    ],
+    "text": [
+     false
     ]
    },
    "jenderal urip sumoharjo": {
     "label": "Jenderal Urip Sumoharjo",
-    "n": 2,
+    "n": 1,
     "pts": [
-     [
-      -6.97569,
-      110.32068,
-      0.89
-     ],
      [
       -6.97256,
       110.30894,
-      -1.119
+      -1.09
      ]
-    ]
-   },
-   "jendral sudirman": {
-    "label": "Jendral Sudirman",
-    "n": 1,
-    "pts": [
-     [
-      -6.9826,
-      110.39192,
-      -0.329
-     ]
-    ]
-   },
-   "kaligawe": {
-    "label": "Kaligawe",
-    "n": 1,
-    "pts": [
-     [
-      -6.95561,
-      110.46715,
-      -1.223
-     ]
+    ],
+    "ids": [
+     "lamudi:41032-73-e85097118812-12ff-19f6a32-9ca4-74b6"
+    ],
+    "text": [
+     false
     ]
    },
    "kompol maksum": {
@@ -519,8 +543,14 @@
      [
       -6.99877,
       110.4336,
-      -0.075
+      -0.041
      ]
+    ],
+    "ids": [
+     "lamudi:41032-73-b53a34f92881-ffa5-19f3aa1-9903-72b2"
+    ],
+    "text": [
+     true
     ]
    },
    "madukoro": {
@@ -530,105 +560,87 @@
      [
       -6.97307,
       110.40049,
-      -0.245
+      -0.2
      ]
+    ],
+    "ids": [
+     "pinhome:1004603"
+    ],
+    "text": [
+     true
     ]
    },
    "majapahit": {
     "label": "Majapahit – Brigjen Sudiarto",
-    "n": 16,
+    "n": 9,
     "pts": [
      [
       -7.00892,
       110.46512,
-      -0.203
-     ],
-     [
-      -7.00897,
-      110.46548,
-      -0.16
-     ],
-     [
-      -7.00665,
-      110.45749,
-      0.63
+      -0.221
      ],
      [
       -7.00565,
       110.45423,
-      1.555
+      1.622
      ],
      [
       -7.00791,
       110.4619,
-      0.123
+      0.087
      ],
      [
       -7.00901,
       110.46546,
-      1.008
-     ],
-     [
-      -6.99942,
-      110.44414,
-      1.218
-     ],
-     [
-      -7.00732,
-      110.45959,
-      1.872
+      0.996
      ],
      [
       -7.01028,
       110.46984,
-      1.652
+      1.654
      ],
      [
       -7.00729,
       110.45977,
-      0.984
+      0.994
      ],
      [
       -7.01405,
       110.48038,
-      2.079
+      2.103
      ],
      [
       -7.01152,
       110.47448,
-      1.925
+      1.981
      ],
      [
       -6.99866,
       110.44225,
-      0.875
-     ],
-     [
-      -7.01113,
-      110.47326,
-      0.631
-     ],
-     [
-      -7.01005,
-      110.46925,
-      0.61
-     ],
-     [
-      -7.01655,
-      110.48615,
-      0.736
+      0.796
      ]
-    ]
-   },
-   "mayjen mt haryono": {
-    "label": "Mayjen Mt Haryono",
-    "n": 1,
-    "pts": [
-     [
-      -7.00899,
-      110.43247,
-      0.055
-     ]
+    ],
+    "ids": [
+     "pinhome:2941959",
+     "pinhome:2018821",
+     "pinhome:2806896",
+     "pinhome:2257502",
+     "pinhome:1406013",
+     "pinhome:2474943",
+     "pinhome:1052966",
+     "lamudi:41032-73-a7a9e2173686-8377-199945c-9ec3-72fd",
+     "lamudi:41032-73-da8bb08d3209-a1be-19ac8bd-9f9a-7a09"
+    ],
+    "text": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
     ]
    },
    "mgr soegiyopranoto": {
@@ -638,19 +650,14 @@
      [
       -6.98405,
       110.40831,
-      1.449
+      1.443
      ]
-    ]
-   },
-   "mr wuryanto": {
-    "label": "Mr Wuryanto",
-    "n": 1,
-    "pts": [
-     [
-      -7.08679,
-      110.37024,
-      0.239
-     ]
+    ],
+    "ids": [
+     "lamudi:41032-73-46e3ca58e199-7f29-19e61cf-a6ae-76df"
+    ],
+    "text": [
+     false
     ]
    },
    "mt haryono": {
@@ -660,30 +667,14 @@
      [
       -6.97988,
       110.4314,
-      1.056
+      1.12
      ]
-    ]
-   },
-   "pamularsih": {
-    "label": "Pamularsih",
-    "n": 1,
-    "pts": [
-     [
-      -6.99,
-      110.39556,
-      -0.502
-     ]
-    ]
-   },
-   "pemuda": {
-    "label": "Pemuda",
-    "n": 1,
-    "pts": [
-     [
-      -6.98375,
-      110.41002,
-      0.137
-     ]
+    ],
+    "ids": [
+     "lamudi:41032-73-2cb95ff42398-f06e-19b68b1-ba7f-7442"
+    ],
+    "text": [
+     false
     ]
    },
    "perintis kemerdekaan": {
@@ -693,99 +684,80 @@
      [
       -7.07857,
       110.41149,
-      0.93
+      0.878
      ],
      [
       -7.07469,
       110.41119,
-      0.959
+      0.998
      ],
      [
       -7.07546,
       110.4113,
-      0.759
+      0.771
      ],
      [
       -7.1015,
       110.40907,
-      2.072
+      2.06
      ],
      [
       -7.10264,
       110.40907,
-      2.207
+      2.011
      ],
      [
       -7.08455,
       110.40975,
-      0.621
+      0.6
      ]
+    ],
+    "ids": [
+     "pinhome:3087692",
+     "pinhome:1570285",
+     "pinhome:2492041",
+     "pinhome:2261289",
+     "pinhome:845071",
+     "lamudi:41032-73-1b02347fd415-930b-19fa95a-90e5-7b40"
+    ],
+    "text": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     false
     ]
    },
    "rm hadi soebono": {
     "label": "Rm Hadi Soebono",
-    "n": 12,
+    "n": 3,
     "pts": [
-     [
-      -7.04748,
-      110.3216,
-      -0.132
-     ],
-     [
-      -7.05292,
-      110.31659,
-      -0.134
-     ],
-     [
-      -7.0491,
-      110.32138,
-      0.043
-     ],
      [
       -7.04993,
       110.32068,
-      -0.716
-     ],
-     [
-      -7.0491,
-      110.32138,
-      -0.395
+      -0.721
      ],
      [
       -7.0286,
       110.33463,
-      -0.443
-     ],
-     [
-      -7.05144,
-      110.31723,
-      1.695
-     ],
-     [
-      -7.0286,
-      110.33463,
-      0.5
-     ],
-     [
-      -7.08336,
-      110.30995,
-      -1.062
-     ],
-     [
-      -7.0286,
-      110.33463,
-      0.103
-     ],
-     [
-      -7.05144,
-      110.31723,
-      -1.77
+      0.46
      ],
      [
       -7.05959,
       110.31256,
-      -0.076
+      -0.112
      ]
+    ],
+    "ids": [
+     "pinhome:1353645",
+     "lamudi:41032-73-478cefa6af36-d121-19f6121-9439-72c1",
+     "lamudi:41032-73-ec341829c453-1fff-2b5e0582-b69e-439e"
+    ],
+    "text": [
+     false,
+     false,
+     false
     ]
    },
    "rm soebagiyono": {
@@ -795,44 +767,38 @@
      [
       -7.08575,
       110.31055,
-      0.025
+      0.006
      ],
      [
       -7.09578,
       110.33631,
-      -0.004
+      -0.011
      ]
+    ],
+    "ids": [
+     "pinhome:2676716",
+     "pinhome:938576"
+    ],
+    "text": [
+     false,
+     true
     ]
    },
    "rm soebagiyono tjondro koesoemo": {
     "label": "Rm Soebagiyono Tjondro Koesoemo",
-    "n": 5,
+    "n": 1,
     "pts": [
-     [
-      -7.09117,
-      110.35805,
-      -0.065
-     ],
      [
       -7.09111,
       110.35617,
-      -0.313
-     ],
-     [
-      -7.09017,
-      110.36063,
-      0.445
-     ],
-     [
-      -7.08816,
-      110.3617,
-      0.064
-     ],
-     [
-      -7.0919,
-      110.35217,
-      0.323
+      -0.356
      ]
+    ],
+    "ids": [
+     "pinhome:2974950"
+    ],
+    "text": [
+     false
     ]
    },
    "semarang boja": {
@@ -842,102 +808,86 @@
      [
       -7.02455,
       110.33509,
-      1.356
+      1.408
      ]
+    ],
+    "ids": [
+     "pinhome:933428"
+    ],
+    "text": [
+     true
     ]
    },
    "setiabudi": {
     "label": "Setiabudi",
-    "n": 2,
+    "n": 1,
     "pts": [
      [
       -7.0586,
       110.41448,
-      1.549
-     ],
-     [
-      -7.0558,
-      110.4154,
-      0.899
+      1.606
      ]
+    ],
+    "ids": [
+     "pinhome:973173"
+    ],
+    "text": [
+     true
     ]
    },
    "soekarno hatta": {
     "label": "Soekarno Hatta",
-    "n": 9,
+    "n": 4,
     "pts": [
-     [
-      -7.00643,
-      110.47121,
-      -0.849
-     ],
-     [
-      -7.00643,
-      110.47121,
-      -1.1
-     ],
      [
       -6.99807,
       110.46402,
-      1.057
+      1.135
      ],
      [
       -6.99934,
       110.46535,
-      0.903
+      0.97
      ],
      [
       -6.99932,
       110.46522,
-      0.806
+      0.846
      ],
      [
       -6.98787,
       110.45588,
-      0.65
-     ],
-     [
-      -7.00352,
-      110.4687,
-      0.656
-     ],
-     [
-      -7.00573,
-      110.47057,
-      -1.303
-     ],
-     [
-      -7.00573,
-      110.47057,
-      -0.329
+      0.67
      ]
+    ],
+    "ids": [
+     "pinhome:2413042",
+     "pinhome:1581987",
+     "pinhome:2940347",
+     "pinhome:1145880"
+    ],
+    "text": [
+     true,
+     true,
+     true,
+     true
     ]
    },
    "sriwijaya": {
     "label": "Sriwijaya",
-    "n": 2,
-    "pts": [
-     [
-      -7.00486,
-      110.4295,
-      -0.333
-     ],
-     [
-      -7.00243,
-      110.42505,
-      0.405
-     ]
-    ]
-   },
-   "sultan agung": {
-    "label": "Sultan Agung",
     "n": 1,
     "pts": [
      [
-      -7.02116,
-      110.41981,
-      1.182
+      -7.00243,
+      110.42505,
+      0.362
      ]
+    ],
+    "ids": [
+     "lamudi:41032-73-314c4b12d921-528a-19ec04c-8822-786e"
+    ],
+    "text": [
+     false
     ]
    },
    "teuku umar": {
@@ -947,97 +897,105 @@
      [
       -7.02911,
       110.41849,
-      0.088
+      0.067
      ],
      [
       -7.02793,
       110.41839,
-      0.034
+      0.017
      ]
+    ],
+    "ids": [
+     "pinhome:1587673",
+     "pinhome:2944129"
+    ],
+    "text": [
+     true,
+     false
     ]
    }
   },
   "validation": {
    "frontage": {
     "manualBefore": {
-     "n": 85,
-     "medianAbsErrPct": 92.6,
-     "biasLog": -0.323
+     "n": 48,
+     "medianAbsErrPct": 118.9,
+     "biasLog": -0.72
     },
     "manualAfter": {
-     "n": 85,
-     "medianAbsErrPct": 66.5,
-     "biasLog": -0.096
+     "n": 48,
+     "medianAbsErrPct": 67.5,
+     "biasLog": -0.226
     },
     "autoBefore": {
-     "n": 85,
-     "medianAbsErrPct": 102.9,
-     "biasLog": -0.401
+     "n": 48,
+     "medianAbsErrPct": 143.3,
+     "biasLog": -0.826
     },
     "autoAfter": {
-     "n": 85,
-     "medianAbsErrPct": 73.2,
-     "biasLog": -0.174
+     "n": 48,
+     "medianAbsErrPct": 68.9,
+     "biasLog": -0.332
     },
     "autoNonOutlierBefore": {
-     "n": 70,
-     "medianAbsErrPct": 73.4,
-     "biasLog": -0.173
+     "n": 37,
+     "medianAbsErrPct": 76.0,
+     "biasLog": -0.463
     },
     "autoNonOutlierAfter": {
-     "n": 70,
-     "medianAbsErrPct": 55.8,
-     "biasLog": -0.092
+     "n": 37,
+     "medianAbsErrPct": 54.3,
+     "biasLog": -0.203
     },
     "autoTextBefore": {
-     "n": 37,
-     "medianAbsErrPct": 142.2,
-     "biasLog": -0.885
+     "n": 31,
+     "medianAbsErrPct": 167.4,
+     "biasLog": -0.983
     },
     "autoTextAfter": {
-     "n": 37,
-     "medianAbsErrPct": 88.7,
-     "biasLog": -0.551
+     "n": 31,
+     "medianAbsErrPct": 78.8,
+     "biasLog": -0.383
     },
     "autoPinBefore": {
-     "n": 48,
-     "medianAbsErrPct": 65.3,
-     "biasLog": -0.116
+     "n": 17,
+     "medianAbsErrPct": 76.0,
+     "biasLog": -0.364
     },
     "autoPinAfter": {
-     "n": 48,
-     "medianAbsErrPct": 52.5,
-     "biasLog": -0.033
+     "n": 17,
+     "medianAbsErrPct": 59.7,
+     "biasLog": -0.115
     }
    },
    "display": {
     "before": {
-     "n": 2032,
-     "medianAbsErrPct": 34.3,
-     "biasLog": 0.005,
-     "within25pct": 39.8,
+     "n": 1871,
+     "medianAbsErrPct": 33.6,
+     "biasLog": 0.002,
+     "within25pct": 38.4,
      "coverage50pct": 50.9,
      "biasByDetectedTier": {
-      "utama": 0.037,
-      "lingkungan": 0.013,
-      "gang": -0.038,
+      "utama": 0.025,
+      "lingkungan": 0.011,
+      "gang": -0.04,
       "tanpa": 0.002
      }
     },
     "after": {
-     "n": 2032,
-     "medianAbsErrPct": 34.3,
-     "biasLog": 0.005,
-     "within25pct": 40.0,
-     "coverage50pct": 50.8,
+     "n": 1871,
+     "medianAbsErrPct": 33.8,
+     "biasLog": 0.001,
+     "within25pct": 38.3,
+     "coverage50pct": 50.9,
      "biasByDetectedTier": {
-      "utama": 0.046,
-      "lingkungan": 0.013,
-      "gang": -0.038,
+      "utama": 0.025,
+      "lingkungan": 0.011,
+      "gang": -0.04,
       "tanpa": 0.002
      }
     },
-    "nWithPremium": 37
+    "nWithPremium": 34
    }
   },
   "note": "Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama."
@@ -1053,13 +1011,13 @@
    "label": "Pinggir jalan utama",
    "short": "Jalan utama",
    "desc": "Bidang berbatasan langsung dengan jalan raya/arteri/kolektor (mobil & truk, nilai komersial).",
-   "factor": 1.142,
-   "lo": 1.038,
-   "hi": 1.256,
-   "n": 560,
-   "nOsm": 246,
+   "factor": 1.176,
+   "lo": 1.069,
+   "hi": 1.293,
+   "n": 517,
+   "nOsm": 232,
    "basis": "data",
-   "dataFactor": 1.132,
+   "dataFactor": 1.168,
    "prior": 1.3,
    "priorNote": "Muka jalan utama/kolektor umumnya dihargai lebih tinggi (nilai komersial)."
   },
@@ -1070,8 +1028,8 @@
    "factor": 1.0,
    "lo": 1.0,
    "hi": 1.0,
-   "n": 801,
-   "nOsm": 1031,
+   "n": 729,
+   "nOsm": 960,
    "basis": "data",
    "dataFactor": null,
    "prior": 1.0,
@@ -1081,13 +1039,13 @@
    "label": "Gang sempit / akses motor",
    "short": "Gang sempit",
    "desc": "Hanya gang/jalan setapak (lebar < 3 m) atau bidang dalam yang perlu jalan masuk.",
-   "factor": 0.836,
-   "lo": 0.719,
-   "hi": 0.972,
-   "n": 27,
-   "nOsm": 415,
+   "factor": 0.819,
+   "lo": 0.702,
+   "hi": 0.956,
+   "n": 25,
+   "nOsm": 379,
    "basis": "campuran",
-   "dataFactor": 0.862,
+   "dataFactor": 0.834,
    "prior": 0.8,
    "priorNote": "Gang sempit/akses motor: pembangunan & logistik terbatas."
   },
@@ -1099,261 +1057,261 @@
    "lo": 0.41,
    "hi": 0.738,
    "n": 0,
-   "nOsm": 340,
+   "nOsm": 300,
    "basis": "prior",
    "dataFactor": null,
    "prior": 0.55,
    "priorNote": "Tanah terkurung: perlu membeli/menyewa jalan keluar (KUH Perdata ps. 667 memberi hak menuntut jalan keluar dengan ganti rugi)."
   }
  },
- "cityMedianPn": 2967576,
- "citySpreadLog": 0.3905,
+ "cityMedianPn": 2944623,
+ "citySpreadLog": 0.3928,
  "regression": {
-  "n": 3296,
-  "r2Within": 0.127,
-  "sigma": 0.491,
-  "nOsm": 2032,
-  "r2WithinOsm": 0.122,
+  "n": 3029,
+  "r2Within": 0.135,
+  "sigma": 0.492,
+  "nOsm": 1871,
+  "r2WithinOsm": 0.133,
   "coefText": {
    "size:0": [
-    -0.2438,
-    0.0687
+    -0.1604,
+    0.0697
    ],
    "size:1": [
-    -0.0225,
-    0.0641
+    0.0222,
+    0.0645
    ],
    "size:2": [
-    -0.1427,
-    0.049
+    -0.1326,
+    0.0503
    ],
    "size:4": [
-    0.118,
-    0.0417
+    0.1205,
+    0.0426
    ],
    "size:5": [
-    0.1629,
-    0.0422
+    0.1788,
+    0.0438
    ],
    "size:6": [
-    0.2304,
-    0.0444
+    0.225,
+    0.0464
    ],
    "size:7": [
-    0.273,
-    0.0471
+    0.2813,
+    0.0488
    ],
    "size:8": [
-    0.0113,
-    0.0497
+    -0.0357,
+    0.0516
    ],
    "sizez:0": [
-    -0.3271,
-    0.1924
+    -0.1828,
+    0.2004
    ],
    "sizez:1": [
-    -0.0258,
-    0.1756
+    0.0877,
+    0.1842
    ],
    "sizez:2": [
-    -0.0784,
-    0.0888
+    -0.0776,
+    0.0947
    ],
    "sizez:4": [
-    0.1917,
-    0.1127
+    0.2431,
+    0.1199
    ],
    "sizez:5": [
-    0.2504,
-    0.1131
+    0.3258,
+    0.1223
    ],
    "sizez:6": [
-    0.6086,
-    0.109
+    0.6741,
+    0.1153
    ],
    "sizez:7": [
-    0.8284,
-    0.118
+    0.8501,
+    0.1242
    ],
    "sizez:8": [
-    0.7342,
-    0.101
+    0.729,
+    0.1069
    ],
    "tier:utama": [
-    0.1244,
-    0.031
+    0.1556,
+    0.0309
    ],
    "tier:gang": [
-    -0.1485,
-    0.1003
+    -0.1815,
+    0.1048
    ],
    "tier:unknown": [
-    0.0298,
-    0.0218
+    0.0372,
+    0.0229
    ],
    "komersial": [
-    0.0535,
-    0.0196
+    0.0328,
+    0.0206
    ],
    "src_lamudi": [
-    0.1582,
-    0.0284
+    0.162,
+    0.0298
    ],
    "trend_per_year": [
-    0.0313,
-    0.0103
+    0.035,
+    0.0107
    ],
    "utama_cbd": [
-    1.0056,
-    0.2857
+    1.55,
+    0.4309
    ],
    "campus_500": [
-    0.1505,
-    0.0561
+    0.1669,
+    0.0584
    ],
    "campus_1000": [
-    0.1101,
-    0.047
+    0.1022,
+    0.0495
    ],
    "campus_2000": [
-    0.1035,
-    0.0354
+    0.0995,
+    0.0372
    ]
   },
   "coefOsm": {
    "size:0": [
-    -0.3126,
-    0.0934
+    -0.2076,
+    0.0939
    ],
    "size:1": [
-    -0.0693,
-    0.0873
+    0.0027,
+    0.0891
    ],
    "size:2": [
-    -0.207,
-    0.0643
+    -0.1776,
+    0.066
    ],
    "size:4": [
-    0.1022,
-    0.0561
+    0.1128,
+    0.0573
    ],
    "size:5": [
-    0.1977,
-    0.0561
+    0.227,
+    0.0578
    ],
    "size:6": [
-    0.2068,
-    0.0609
+    0.2264,
+    0.0626
    ],
    "size:7": [
-    0.3437,
-    0.063
+    0.379,
+    0.0652
    ],
    "size:8": [
-    0.1209,
-    0.0669
+    0.0833,
+    0.0693
    ],
    "sizez:0": [
-    -0.3703,
-    0.252
+    -0.2085,
+    0.2597
    ],
    "sizez:1": [
-    -0.018,
-    0.2164
+    0.118,
+    0.2272
    ],
    "sizez:2": [
-    -0.1832,
-    0.1115
+    -0.1647,
+    0.1175
    ],
    "sizez:4": [
-    0.0454,
-    0.1429
+    0.067,
+    0.1504
    ],
    "sizez:5": [
-    0.2437,
-    0.1401
+    0.3117,
+    0.1487
    ],
    "sizez:6": [
-    0.5513,
-    0.1392
+    0.6479,
+    0.1471
    ],
    "sizez:7": [
-    0.881,
-    0.1404
+    0.9278,
+    0.1472
    ],
    "sizez:8": [
-    0.733,
-    0.1285
+    0.7758,
+    0.1341
    ],
    "tier:utama": [
-    -0.0147,
-    0.0388
+    -0.0115,
+    0.0403
    ],
    "tier:gang": [
-    0.0105,
-    0.0313
+    0.0222,
+    0.0329
    ],
    "tier:tanpa": [
-    -0.0484,
-    0.0371
+    -0.0403,
+    0.0389
    ],
    "komersial": [
-    0.0518,
-    0.0258
+    0.0318,
+    0.027
    ],
    "src_lamudi": [
-    0.1563,
-    0.0381
+    0.1738,
+    0.0397
    ],
    "trend_per_year": [
-    0.0501,
-    0.0132
+    0.0495,
+    0.0139
    ],
    "campus_500": [
-    0.1273,
-    0.0639
+    0.1389,
+    0.0663
    ],
    "campus_1000": [
-    0.0781,
-    0.0555
+    0.0659,
+    0.0583
    ],
    "campus_2000": [
-    0.0772,
-    0.0417
+    0.082,
+    0.0435
    ]
   },
   "countsText": {
-   "unknown": 1908,
-   "utama": 560,
-   "lingkungan": 801,
-   "gang": 27
+   "unknown": 1758,
+   "utama": 517,
+   "lingkungan": 729,
+   "gang": 25
   },
   "countsOsm": {
-   "lingkungan": 1031,
-   "utama": 246,
-   "tanpa": 340,
-   "gang": 415
+   "lingkungan": 960,
+   "utama": 232,
+   "tanpa": 300,
+   "gang": 379
   },
   "note": "OLS log(harga/m²) dengan efek tetap kelurahan; akses dibanding jalan lingkungan; kolom \"unknown\" = iklan tanpa keterangan akses."
  },
  "validation": {
-  "n": 2032,
-  "medianAbsErrPct_model": 33.8,
+  "n": 1871,
+  "medianAbsErrPct_model": 33.7,
   "medianAbsErrPct_kelurahanMedian": 35.1,
-  "medianAbsErrPct_kecamatanMedian_raw": 49.2,
-  "within25pct_model": 40.1,
-  "coverage50pct": 49.9,
-  "biasLog": 0.015,
+  "medianAbsErrPct_kecamatanMedian_raw": 49.9,
+  "within25pct_model": 39.4,
+  "coverage50pct": 49.4,
+  "biasLog": 0.008,
   "target": "iklan berpin tepat (loc_level=titik), leave-one-out",
   "allLocated": {
-   "n": 3296,
-   "medianAbsErrPct_model": 32.8,
-   "medianAbsErrPct_kelurahanMedian": 33.5,
+   "n": 3029,
+   "medianAbsErrPct_model": 32.6,
+   "medianAbsErrPct_kelurahanMedian": 34.2,
    "medianAbsErrPct_kecamatanMedian_raw": 50.0,
-   "within25pct_model": 40.3,
-   "coverage50pct": 50.3,
-   "biasLog": -0.001
+   "within25pct_model": 39.9,
+   "coverage50pct": 49.9,
+   "biasLog": -0.002
   },
-  "nKecamatanOnly": 939
+  "nKecamatanOnly": 849
  }
 }

@@ -11,6 +11,7 @@ from scipy.spatial import cKDTree
 from common import PUB
 
 KX, KY = 110500, 110574
+PIN_NEEDS_TEXT = os.environ.get('CORR_PIN_TEXT', '1') == '1'
 # Satu jalan arteri menerus yang di OSM bernama dua: ruas timur "Brigjen Sudiarto" disebut "Jl. Majapahit" di iklan.
 ALIASES = {'brigjen sudiarto': 'majapahit'}
 TEXT_ALIAS = {'brigjen sudiarto': ['brigjen sudiarto', 'sudiarto'], 'soekarno hatta': ['soekarno hatta', 'sukarno hatta'], 'setiabudi': ['setiabudi', 'setia budi'],
@@ -77,9 +78,34 @@ def tie(r, lat, lng):
     tr = text_road(r.get('title') or '', r.get('description') or '', lat, lng)
     if tr and tr[1] <= 1500: k, how = key(tr[0]), 'teks'
     else:
+        # pin ≤ 30 m saja tidak cukup (2026-10-6): di persimpangan, kavling murah tanpa keterangan muka jalan ikut terhitung.
+        # Wajib: teks menyebut akses jalan utama, atau menyebut nama ruas itu.
         d, hw, nm = nearest_main(lat, lng)
         k, how = (key(nm) if (d <= 30 and hw in ('trunk', 'primary', 'secondary') and nm) else None), 'pin'
+        if k and PIN_NEEDS_TEXT and r.get('access_tier') != 'utama':
+            names = [x for x in ROADS if key(x) == k]
+            txt = nn((r.get('title') or '') + ' ' + (r.get('description') or '')[:1500])
+            if not any(re.search(r'\b' + re.escape(a) + r'\b', txt) for x in names for a in TEXT_ALIAS.get(x, [x])): k = None
     return (k, how) if k in ARTERIAL else (None, None)
+
+def nearby_keys(lat, lng, max_m):
+    """{kunci ruas: jarak m} semua ruas jalan utama bernama dalam max_m (untuk persimpangan)"""
+    p = np.array([lng * KX, lat * KY]); out = {}
+    for i in _tree.query_ball_point(p, max_m + 400):
+        a = _segs[i]
+        if not a[5]: continue
+        x1, y1, x2, y2 = a[1] * KX, a[0] * KY, a[3] * KX, a[2] * KY
+        dx, dy = x2 - x1, y2 - y1; t = max(0, min(1, ((p[0] - x1) * dx + (p[1] - y1) * dy) / (dx * dx + dy * dy or 1)))
+        d = math.hypot(p[0] - x1 - t * dx, p[1] - y1 - t * dy)
+        k = key(a[5])
+        if d <= max_m and d < out.get(k, 9e9): out[k] = d
+    return out
+
+def blend(prems):
+    """gabungan premi beberapa ruas koridor di dekat titik: rata-rata berbobot nEff (bukti lebih banyak lebih menentukan)"""
+    ps = [(p, n) for p, n in prems if n > 0]
+    if not ps: return 0.0, 0.0
+    return sum(p * n for p, n in ps) / sum(n for _, n in ps), sum(n for _, n in ps)
 
 def premium(pts, lat, lng, k_prior, bw, exclude=lambda i: False):
     """premi log koridor di (lat, lng): median berbobot Gauss(jarak/bw) residu iklan ruas yang sama, disusutkan ke 0 (kekuatan k_prior)"""

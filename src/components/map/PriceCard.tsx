@@ -92,7 +92,9 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
         {isAuto ? (
           <p className="mt-1.5 text-[10.5px] leading-snug text-fg-subtle">
             Deteksi otomatis dari jarak ke jalan OSM <b>belum memastikan</b> kondisi akses (banyak gang kampung belum terpetakan). Harga utama memakai faktor akses terkalibrasi untuk titik
-            dengan deteksi serupa (×{price.autoFactors[t].toFixed(2)}); pilih kondisi akses bila Anda tahu kondisinya.
+            dengan deteksi serupa (×{accessFactor.toFixed(2)})
+            {corr ? <>, ditambah premi koridor Jl. {corr.label} (×{corr.factor.toFixed(2)}, dari iklan muka jalan di ruas ini)</> : null}; pilih kondisi akses bila Anda tahu
+            kondisinya.
           </p>
         ) : (
           <p className="mt-1.5 text-[10.5px] leading-snug text-fg-subtle">Deteksi otomatis dari jarak ke jalan OSM — cek di lapangan/citra satelit dan ubah bila perlu.</p>

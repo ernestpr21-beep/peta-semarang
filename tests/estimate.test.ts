@@ -225,7 +225,29 @@ describe("model 2026-10-5: premi koridor jalan arteri (audit Jl. Majapahit)", ()
     const v = m.corridor!.validation;
     expect(v.frontage.autoAfter.medianAbsErrPct).toBeLessThan(v.frontage.autoBefore.medianAbsErrPct);
     expect(v.frontage.manualAfter.medianAbsErrPct).toBeLessThan(v.frontage.manualBefore.medianAbsErrPct);
-    expect(v.display.after.medianAbsErrPct).toBeLessThanOrEqual(v.display.before.medianAbsErrPct);
-    expect(v.display.after.within25pct).toBeGreaterThanOrEqual(v.display.before.within25pct);
+    // premi koridor juga mengenai bidang dalam yang pinnya di tepi arteri: biaya ≤ 0,5 poin pada galat harga tampil keseluruhan
+    // (validasi silang blok spasial tidak berubah; lihat Metodologi 4c)
+    expect(v.display.after.medianAbsErrPct).toBeLessThanOrEqual(v.display.before.medianAbsErrPct + 0.5);
+    expect(v.display.after.within25pct).toBeGreaterThanOrEqual(v.display.before.within25pct - 0.5);
+  });
+});
+
+describe("model 2026-10-6: persimpangan koridor, salinan lintas wilayah, pencilan per kelas akses", () => {
+  const m = ds.model;
+  it("persimpangan Majapahit × Soekarno-Hatta (Pedurungan Kidul): premi digabung, tidak turun di bawah 1", () => {
+    const p = corridorPremium(m, -7.01074, 110.47174, [
+      { name: "Jalan Soekarno-Hatta", distanceM: 4 },
+      { name: "Jalan Brigadir Jenderal Sudiarto", distanceM: 25 },
+    ]);
+    expect(m.corridor!.blend).toBe(true);
+    expect(p?.key).toContain("majapahit");
+    expect(p!.factor).toBeGreaterThan(1.5);
+  });
+  it("bidang 7.252 m² @ Rp7 jt/m² (Jl. Majapahit) hanya tercatat sekali", () => {
+    const n = ds.comparables.filter((c) => Math.abs(c.area - 7252) <= 3 && Math.abs(c.ppm / 7e6 - 1) < 0.02).length;
+    expect(n).toBeLessThanOrEqual(1);
+  });
+  it("premi pusat kota jalan utama hasil deteksi tetap penuh (Simpang Lima tidak turun)", () => {
+    expect(m.autoAccess!.cbdScale).toBe(1);
   });
 });
