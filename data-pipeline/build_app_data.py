@@ -304,7 +304,28 @@ kel_by = defaultdict(list)
 for r in loc_rows: kel_by[r['kelurahan']].append(r)
 kec_by = defaultdict(list)
 for r in rows: kec_by[r['kecamatan']].append(r)
+# ---------- penetapan harga berbasis kelurahan (model 2026-10-7) ----------
+# Pembanding & prior hanya dari kelurahan yang sama; median kelurahan disusutkan ke median kecamatan (setara KEL_M iklan),
+# median kecamatan disusutkan ke median kota (setara KEC_M iklan). Sama dengan kelurahanZone() di src/lib/estimate.ts.
+KEL_PRICING = os.environ.get('KEL_PRICING', '1') == '1'
+KEL_M = float(os.environ.get('KEL_M', '8')); KEC_M = float(os.environ.get('KEC_M', '3')); MIN_KEL = float(os.environ.get('MIN_KEL', '5')); WEAK_PS = float(os.environ.get('WEAK_PS', '8'))
+def _lw(c): return 1 if c['exact'] else 0.5
+kk_by = defaultdict(list)
+for r in loc_rows: kk_by[(r['kelurahan'], r['kecamatan'])].append(r)
+def kel_zone(kel, kec, excl=None):
+    city = math.log(city_med)
+    kc = [x for x in kec_by.get(kec, []) if x is not excl]
+    kl = [x for x in kk_by.get((kel, kec), []) if x is not excl] if kel else []
+    kecm = statistics.median([math.log(x['pn']) for x in kc]) if kc else None
+    kecv = city if kecm is None else (len(kc) * kecm + KEC_M * city) / (len(kc) + KEC_M)
+    eff = sum(_lw(x) for x in kl)
+    kelm = wq([math.log(x['pn']) for x in kl], [_lw(x) for x in kl], 0.5) if kl else None
+    v = kecv if kelm is None else (eff * kelm + KEL_M * kecv) / (eff + KEL_M)
+    lvl = 'kelurahan' if kl and eff >= MIN_KEL else 'kelurahan+kecamatan' if kl else 'kecamatan' if kc else 'kota'
+    return {'value': v, 'kecValue': kecv, 'kelMedian': kelm, 'kecMedian': kecm, 'nKel': len(kl), 'effKel': eff, 'nKec': len(kc), 'level': lvl}
 def predict(r0, pool):
+    if KEL_PRICING:
+        pool = [c for c in kk_by.get((r0['kelurahan'], r0['kecamatan']), []) if c is not r0] if r0['kelurahan'] else []
     al = sorted(((hav(r0['lat'], r0['lng'], c['lat'], c['lng']), c) for c in pool if c is not r0), key=lambda x: x[0])
     chosen = []; rad = RADII[-1]
     for R in RADII:
@@ -314,7 +335,11 @@ def predict(r0, pool):
     ws = [(1 / (1 + (d / h) ** 2)) * (1 if c['exact'] else 0.5) * 0.5 ** (c['age_y'] / 2) for d, c in chosen]
     # prior halus: median berbobot jarak (Gauss, bw SMOOTH_PRIOR_BW) dari pembanding ≤ 3·bw — tanpa lompatan di batas kelurahan
     sp = [(d, c) for d, c in al if d <= 3 * SMOOTH_PRIOR_BW]
-    if len(sp) >= 3:
+    PS = 3
+    if KEL_PRICING:
+        _z = kel_zone(r0['kelurahan'], r0['kecamatan'], r0); prior = _z['value']
+        if _z['level'] != 'kelurahan': PS = max(PS, WEAK_PS)
+    elif len(sp) >= 3:
         prior = wq([math.log(c['pn']) for _, c in sp], [math.exp(-0.5 * (d / SMOOTH_PRIOR_BW) ** 2) * (1 if c['exact'] else 0.5) for d, c in sp], 0.5)
     else:
         kl = [x for x in kel_by[r0['kelurahan']] if x is not r0]
@@ -325,8 +350,8 @@ def predict(r0, pool):
     mu = wq(vals, ws, 0.5); neff = sum(ws) ** 2 / sum(w * w for w in ws)
     mad = wq([abs(v - mu) for v in vals], [math.sqrt(w) for w in ws], 0.5)  # sama dengan estimate.ts
     k = min(1, neff / 6); sl = k * max(SPREAD_FLOOR, 1.4826 * mad) + (1 - k) * city_spread
-    se = sl / math.sqrt(max(1, neff + 1.5)); sig = math.sqrt(sl * sl + se * se)
-    return (neff * mu + 3 * prior) / (neff + 3), neff, sig
+    se = sl / math.sqrt(max(1, neff + PS * 0.5)); sig = math.sqrt(sl * sl + se * se)
+    return (neff * mu + PS * prior) / (neff + PS), neff, sig
 SPREAD_FLOOR = 0.25  # sama dengan src/lib/estimate.ts
 kec_med_all = {k: statistics.median([x['ppm'] for x in v]) for k, v in kec_by.items()}
 loo = []
@@ -581,7 +606,7 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-7' if KEL_PRICING else f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
                   'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
                   'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},
@@ -596,7 +621,9 @@ model = {
                      'note': 'Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1.'},
     'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
                  'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
-    'autoAccess': auto_access, 'corridor': corridor_model, 'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
+    'autoAccess': auto_access, 'corridor': corridor_model,
+    **({'kelurahanPricing': {'mKel': KEL_M, 'mKec': KEC_M, 'minKel': MIN_KEL, 'localStrength': 3, 'weakLocalStrength': WEAK_PS, 'note': 'Pembanding & prior hanya dari kelurahan titik (point-in-polygon). Prior = median kelurahan (berbobot lokasi) disusutkan ke median kecamatan setara mKel iklan; median kecamatan disusutkan ke median kota setara mKec iklan. Tingkat "kelurahan" bila bobot iklan ≥ minKel; di bawahnya median lokal disusutkan ke prior setara weakLocalStrength iklan (bukan localStrength).'}} if KEL_PRICING else {}),
+    'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
     'tiers': tiers, 'cityMedianPn': round(city_med), 'citySpreadLog': round(city_spread, 4),
     'regression': {'n': n_reg, 'r2Within': round(r2w, 3), 'sigma': round(sigma, 3), 'nOsm': n_osm, 'r2WithinOsm': round(r2w_osm, 3),
                    'coefText': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_txt.items()}, 'coefOsm': {k: [round(b, 4), round(s, 4)] for k, (b, s) in coef_osm.items()},
@@ -604,6 +631,25 @@ model = {
                    'note': 'OLS log(harga/m²) dengan efek tetap kelurahan; akses dibanding jalan lingkungan; kolom "unknown" = iklan tanpa keterangan akses.'},
     'validation': val,
 }
+# ---------- zona kelurahan: semua 177 poligon, nilai = median kelurahan bertingkat (lapisan peta & tabel Data zona) ----------
+_tf = os.path.join(OUT, 'kelurahan_terrain.json')
+terrain = {(t['name'], t['kec']): t for t in json.load(open(_tf))} if os.path.exists(_tf) else {}
+zones = []
+for f in json.load(open(os.path.join(PUB, 'kelurahan.geojson')))['features']:
+    nm, kc = f['properties']['name'], f['properties']['kecamatan']
+    z = kel_zone(nm, kc)
+    kl = kk_by.get((nm, kc), [])
+    if len(kl) >= 3:
+        p25, _, p75 = qs([x['pn'] for x in kl]); rk = 'kuartil'
+    else:
+        p25, p75 = math.exp(z['value'] - 0.674 * city_spread), math.exp(z['value'] + 0.674 * city_spread); rk = 'model'
+    conf = 'tinggi' if z['level'] == 'kelurahan' and z['nKel'] >= 10 else 'sedang' if z['level'] == 'kelurahan' else 'rendah'
+    t = terrain.get((nm, kc), {})
+    zones.append({'name': nm, 'kec': kc, 'value': round(math.exp(z['value'])), 'kelMedian': round(math.exp(z['kelMedian'])) if z['kelMedian'] is not None else None,
+                  'kecValue': round(math.exp(z['kecValue'])), 'low': round(p25), 'high': round(p75), 'rangeKind': rk, 'n': z['nKel'], 'nExact': sum(x['exact'] for x in kl),
+                  'nKec': z['nKec'], 'level': z['level'], 'confidence': conf, 'terrain': t.get('cls'), 'elevM': t.get('elevM'), 'slopeDeg': t.get('slopeDeg')})
+zones.sort(key=lambda z: -z['value'])
+print('zona kelurahan', len(zones), Counter(z['level'] for z in zones))
 osm_meta = json.load(open(os.path.join(PUB, 'osm-meta.json')))
 dataset = {
     'meta': {'generatedAt': datetime.datetime.now().astimezone().isoformat(timespec='seconds'), 'refArea': REF_AREA,
@@ -612,7 +658,7 @@ dataset = {
              'dateMin': dates[0][:7], 'dateMax': dates[-1][:7], 'dateSources': dict(Counter(r['date_source'] for r in rows)),
              'sources': src_meta, 'blocked': blocked, 'osmExtract': ', '.join(sorted(set(x[:10] for x in osm_meta['roadsOsmBase']))),
              'kelurahanCovered': len(kel_stats), 'kelurahanTotal': 177},
-    'comparables': comps, 'campuses': [{'name': c['name'], 'areaHa': c['areaHa'], 'rings': c['rings']} for c in CAMPUSES], 'kelurahan': kel_stats, 'kecamatan': kec_stats, 'model': model,
+    'comparables': comps, 'campuses': [{'name': c['name'], 'areaHa': c['areaHa'], 'rings': c['rings']} for c in CAMPUSES], 'kelurahan': kel_stats, 'kecamatan': kec_stats, 'zones': zones, 'model': model,
 }
 json.dump(dataset, open(os.path.join(PUB, 'dataset.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
 json.dump(model, open(os.path.join(OUT, 'model_report.json'), 'w'), indent=1, ensure_ascii=False)

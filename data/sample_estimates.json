@@ -7,35 +7,35 @@
   "kecamatan": "Semarang Selatan",
   "detectedAccess": "tanpa",
   "accessReason": "tidak ada jalan/gang OSM dalam 60 m (jalan mobil terdekat 80 m)",
-  "nUsed": 18,
-  "radiusM": 600,
+  "nUsed": 10,
+  "radiusM": 3000,
   "nearestM": 158,
-  "medianDistanceM": 421,
+  "medianDistanceM": 717,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 26000000,
-    "low": 14000000,
-    "high": 49000000
+    "point": 34000000,
+    "low": 22000000,
+    "high": 51000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 9100000,
-    "low": 5100000,
-    "high": 16000000
+    "point": 12000000,
+    "low": 8200000,
+    "high": 17000000
    },
    "gang": {
     "tier": "gang",
-    "point": 7500000,
-    "low": 4100000,
-    "high": 9100000
+    "point": 9700000,
+    "low": 6700000,
+    "high": 12000000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 5000000,
-    "low": 2800000,
-    "high": 7500000
+    "point": 6500000,
+    "low": 4400000,
+    "high": 9500000
    }
   }
  },
@@ -47,11 +47,11 @@
   "kecamatan": "Semarang Selatan",
   "detectedAccess": "utama",
   "accessReason": "0 m dari Jalan Pandanaran (jalan utama/kolektor OSM)",
-  "nUsed": 16,
-  "radiusM": 600,
-  "nearestM": 207,
-  "medianDistanceM": 345,
-  "confidence": "sedang",
+  "nUsed": 5,
+  "radiusM": 3000,
+  "nearestM": 488,
+  "medianDistanceM": 531,
+  "confidence": "rendah",
   "tiers": {
    "utama": {
     "tier": "utama",
@@ -61,21 +61,21 @@
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 9400000,
-    "low": 6300000,
+    "point": 9300000,
+    "low": 6200000,
     "high": 14000000
    },
    "gang": {
     "tier": "gang",
-    "point": 7700000,
+    "point": 7600000,
     "low": 5100000,
-    "high": 9400000
+    "high": 9300000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 5200000,
+    "point": 5100000,
     "low": 3400000,
-    "high": 7700000
+    "high": 7600000
    }
   }
  },
@@ -87,35 +87,35 @@
   "kecamatan": "Semarang Selatan",
   "detectedAccess": "utama",
   "accessReason": "1 m dari Jalan Pandanaran (jalan utama/kolektor OSM)",
-  "nUsed": 19,
-  "radiusM": 800,
-  "nearestM": 45,
-  "medianDistanceM": 662,
-  "confidence": "tinggi",
+  "nUsed": 5,
+  "radiusM": 3000,
+  "nearestM": 351,
+  "medianDistanceM": 634,
+  "confidence": "rendah",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 19000000,
-    "low": 13000000,
-    "high": 27000000
+    "point": 15000000,
+    "low": 9700000,
+    "high": 22000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 11000000,
-    "low": 7800000,
-    "high": 16000000
+    "point": 8700000,
+    "low": 5800000,
+    "high": 13000000
    },
    "gang": {
     "tier": "gang",
-    "point": 9000000,
-    "low": 6400000,
-    "high": 11000000
+    "point": 7100000,
+    "low": 4800000,
+    "high": 8700000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 6100000,
-    "low": 4200000,
-    "high": 8700000
+    "point": 4800000,
+    "low": 3200000,
+    "high": 7100000
    }
   }
  },
@@ -136,7 +136,7 @@
    "utama": {
     "tier": "utama",
     "point": 6200000,
-    "low": 5300000,
+    "low": 5200000,
     "high": 7300000
    },
    "lingkungan": {
@@ -167,7 +167,7 @@
   "kecamatan": "Banyumanik",
   "detectedAccess": "lingkungan",
   "accessReason": "6 m dari Jalan Kalingga Dalam (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 21,
+  "nUsed": 20,
   "radiusM": 600,
   "nearestM": 208,
   "medianDistanceM": 409,
@@ -175,27 +175,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 5400000,
-    "low": 4400000,
-    "high": 6700000
+    "point": 5500000,
+    "low": 4500000,
+    "high": 6900000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 4600000,
-    "low": 3700000,
-    "high": 5700000
+    "point": 4700000,
+    "low": 3800000,
+    "high": 5800000
    },
    "gang": {
     "tier": "gang",
-    "point": 3800000,
-    "low": 3000000,
-    "high": 4600000
+    "point": 3900000,
+    "low": 3100000,
+    "high": 4700000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 2500000,
-    "low": 2000000,
-    "high": 3200000
+    "point": 2600000,
+    "low": 2100000,
+    "high": 3300000
    }
   }
  },
@@ -207,35 +207,35 @@
   "kecamatan": "Ngaliyan",
   "detectedAccess": "lingkungan",
   "accessReason": "18 m dari jalan tanpa nama (residential) (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 10,
-  "radiusM": 1000,
+  "nUsed": 11,
+  "radiusM": 2000,
   "nearestM": 175,
-  "medianDistanceM": 779,
+  "medianDistanceM": 910,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 3500000,
-    "low": 2400000,
-    "high": 5200000
+    "point": 3200000,
+    "low": 2000000,
+    "high": 5300000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 3000000,
-    "low": 2000000,
-    "high": 4400000
+    "point": 2700000,
+    "low": 1700000,
+    "high": 4500000
    },
    "gang": {
     "tier": "gang",
-    "point": 2400000,
-    "low": 1700000,
-    "high": 3000000
+    "point": 2300000,
+    "low": 1400000,
+    "high": 2700000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 1600000,
-    "low": 1100000,
-    "high": 2400000
+    "point": 1500000,
+    "low": 910000,
+    "high": 2300000
    }
   }
  },
@@ -247,35 +247,35 @@
   "kecamatan": "Gunungpati",
   "detectedAccess": "tanpa",
   "accessReason": "tidak ada jalan/gang OSM dalam 60 m (jalan mobil terdekat 96 m)",
-  "nUsed": 14,
-  "radiusM": 800,
+  "nUsed": 29,
+  "radiusM": 1000,
   "nearestM": 75,
-  "medianDistanceM": 576,
-  "confidence": "sedang",
+  "medianDistanceM": 824,
+  "confidence": "tinggi",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2000000,
-    "low": 1600000,
-    "high": 2400000
+    "point": 2100000,
+    "low": 1800000,
+    "high": 2500000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 1700000,
-    "low": 1400000,
-    "high": 2000000
+    "point": 1800000,
+    "low": 1500000,
+    "high": 2100000
    },
    "gang": {
     "tier": "gang",
-    "point": 1400000,
-    "low": 1100000,
-    "high": 1700000
+    "point": 1500000,
+    "low": 1200000,
+    "high": 1800000
    },
    "tanpa": {
     "tier": "tanpa",
-    "point": 910000,
-    "low": 730000,
-    "high": 1100000
+    "point": 990000,
+    "low": 820000,
+    "high": 1200000
    }
   }
  },
@@ -287,35 +287,35 @@
   "kecamatan": "Mijen",
   "detectedAccess": "lingkungan",
   "accessReason": "23 m dari jalan tanpa nama (service) (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 30,
+  "nUsed": 19,
   "radiusM": 1500,
   "nearestM": 227,
-  "medianDistanceM": 1074,
+  "medianDistanceM": 1118,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2300000,
+    "point": 2400000,
     "low": 1800000,
-    "high": 3000000
+    "high": 3300000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 1900000,
+    "point": 2100000,
     "low": 1500000,
-    "high": 2500000
+    "high": 2800000
    },
    "gang": {
     "tier": "gang",
-    "point": 1600000,
+    "point": 1700000,
     "low": 1200000,
-    "high": 1900000
+    "high": 2100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 1100000,
-    "low": 810000,
-    "high": 1400000
+    "low": 830000,
+    "high": 1600000
    }
   }
  },
@@ -327,27 +327,27 @@
   "kecamatan": "Tugu",
   "detectedAccess": "tanpa",
   "accessReason": "tidak ada jalan/gang OSM dalam 60 m (jalan mobil terdekat 167 m)",
-  "nUsed": 19,
-  "radiusM": 1500,
+  "nUsed": 8,
+  "radiusM": 3000,
   "nearestM": 552,
-  "medianDistanceM": 1277,
+  "medianDistanceM": 1465,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2900000,
-    "low": 2400000,
-    "high": 3600000
+    "point": 3000000,
+    "low": 2500000,
+    "high": 3500000
    },
    "lingkungan": {
     "tier": "lingkungan",
     "point": 2500000,
-    "low": 2000000,
+    "low": 2100000,
     "high": 3000000
    },
    "gang": {
     "tier": "gang",
-    "point": 2000000,
+    "point": 2100000,
     "low": 1700000,
     "high": 2500000
    },
@@ -367,35 +367,35 @@
   "kecamatan": "Genuk",
   "detectedAccess": "gang",
   "accessReason": "jalan mobil terdekat 36 m — titik kemungkinan bidang dalam yang perlu jalan masuk/gang",
-  "nUsed": 18,
-  "radiusM": 1500,
+  "nUsed": 8,
+  "radiusM": 3000,
   "nearestM": 176,
-  "medianDistanceM": 1095,
+  "medianDistanceM": 1333,
   "confidence": "sedang",
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 2500000,
-    "low": 1900000,
-    "high": 3200000
+    "point": 2400000,
+    "low": 1600000,
+    "high": 3700000
    },
    "lingkungan": {
     "tier": "lingkungan",
     "point": 2100000,
-    "low": 1600000,
-    "high": 2700000
+    "low": 1400000,
+    "high": 3100000
    },
    "gang": {
     "tier": "gang",
     "point": 1700000,
-    "low": 1300000,
+    "low": 1100000,
     "high": 2100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 1100000,
-    "low": 870000,
-    "high": 1500000
+    "low": 750000,
+    "high": 1700000
    }
   }
  },
@@ -407,7 +407,7 @@
   "kecamatan": "Pedurungan",
   "detectedAccess": "lingkungan",
   "accessReason": "1 m dari Jalan Tlogo Timur VI (jalan lingkungan yang bisa dilalui mobil)",
-  "nUsed": 24,
+  "nUsed": 22,
   "radiusM": 400,
   "nearestM": 231,
   "medianDistanceM": 233,
@@ -415,27 +415,27 @@
   "tiers": {
    "utama": {
     "tier": "utama",
-    "point": 4600000,
-    "low": 3900000,
-    "high": 5400000
+    "point": 4800000,
+    "low": 3800000,
+    "high": 6000000
    },
    "lingkungan": {
     "tier": "lingkungan",
-    "point": 3900000,
-    "low": 3300000,
-    "high": 4600000
+    "point": 4100000,
+    "low": 3200000,
+    "high": 5100000
    },
    "gang": {
     "tier": "gang",
-    "point": 3200000,
-    "low": 2700000,
-    "high": 3800000
+    "point": 3300000,
+    "low": 2600000,
+    "high": 4100000
    },
    "tanpa": {
     "tier": "tanpa",
     "point": 2200000,
     "low": 1800000,
-    "high": 2600000
+    "high": 2900000
    }
   }
  }

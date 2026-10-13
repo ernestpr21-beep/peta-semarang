@@ -12,6 +12,7 @@ import { findAreaStat } from "@/lib/estimate";
 import { formatCoord, formatRupiahShort, normalizeName } from "@/lib/utils";
 import { useLocationDetails } from "@/hooks/useLocationDetails";
 import { getBasemapLayers } from "./basemaps";
+import type { KelurahanZoneStat } from "@/lib/model";
 import { priceColor } from "./priceColor";
 
 const pinIcon = L.divIcon({ className: "semarang-pin", html: '<div class="semarang-pin-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 18] });
@@ -161,9 +162,17 @@ export default function MapInner() {
   const [zoom, setZoom] = useState(12);
   const ink = theme === "dark" ? "#9fd0c8" : "#0f6e6a";
 
+  const kelZone = useMemo(() => {
+    const m = new Map<string, KelurahanZoneStat>();
+    if (ds.data?.zones) for (const z of ds.data.zones) m.set(`${normalizeName(z.name)}|${normalizeName(z.kec)}`, z);
+    return m;
+  }, [ds.data]);
   const kelColor = useMemo(() => {
     const m = new Map<string, number>();
-    if (ds.data) for (const s of ds.data.kelurahan) m.set(`${normalizeName(s.name)}|${normalizeName(s.kec)}`, s.median);
+    if (ds.data) {
+      if (ds.data.zones) for (const z of ds.data.zones) m.set(`${normalizeName(z.name)}|${normalizeName(z.kec)}`, z.value);
+      else for (const s of ds.data.kelurahan) m.set(`${normalizeName(s.name)}|${normalizeName(s.kec)}`, s.median);
+    }
     return m;
   }, [ds.data]);
 
@@ -205,15 +214,22 @@ export default function MapInner() {
           data={kel.data as unknown as GeoJSON.FeatureCollection}
           style={(f) => {
             const p = f?.properties as { name: string; kecamatan: string };
-            const v = kelColor.get(`${normalizeName(p.name)}|${normalizeName(p.kecamatan)}`);
-            return { color: ink, weight: 0.6, fillColor: v ? priceColor(v) : "transparent", fillOpacity: v ? 0.45 : 0 };
+            const key = `${normalizeName(p.name)}|${normalizeName(p.kecamatan)}`;
+            const v = kelColor.get(key);
+            const z = kelZone.get(key);
+            // kelurahan tanpa data cukup (fallback kecamatan/kota) diberi isian lebih pucat
+            const op = !v ? 0 : z && z.level !== "kelurahan" ? 0.3 : 0.55;
+            return { color: ink, weight: 0.6, fillColor: v ? priceColor(v) : "transparent", fillOpacity: op, dashArray: z && z.level !== "kelurahan" ? "3 3" : undefined };
           }}
           onEachFeature={(f, layer) => {
             const p = f.properties as { name: string; kecamatan: string };
+            const z = kelZone.get(`${normalizeName(p.name)}|${normalizeName(p.kecamatan)}`);
             const st = ds.data ? findAreaStat(ds.data.kelurahan, p.name, p.kecamatan) : null;
+            const lvl = (l: string) => (l === "kelurahan" ? "data kelurahan" : l === "kelurahan+kecamatan" ? "kelurahan + susut ke kecamatan" : l === "kecamatan" ? "fallback kecamatan" : "fallback kota");
             layer.bindTooltip(
-              `<b>${p.name}</b> · ${p.kecamatan}<br/>${st ? `median ${formatRupiahShort(st.median)}/m² (n=${st.n})` : "belum ada data iklan"}`,
-              { sticky: true },
+              z
+                ? `<b>${p.name}</b> · Kec. ${p.kecamatan}<br/>median ${formatRupiahShort(z.value)}/m² · ${z.n} iklan<br/>keyakinan ${z.confidence} (${lvl(z.level)})${z.terrain === "berbukit" ? "<br/>medan berbukit" : ""}`
+                : `<b>${p.name}</b> · ${p.kecamatan}<br/>${st ? `median ${formatRupiahShort(st.median)}/m² (n=${st.n})` : "belum ada data iklan"}`,              { sticky: true },
             );
           }}
         />
@@ -221,7 +237,8 @@ export default function MapInner() {
 
       {kec.data ? (
         <GeoJSON
-          key={`kec-${theme}-${hover ?? ""}`}
+          key={`kec-${theme}-${hover ?? ""}-${showPrice ? "p" : ""}`}
+          interactive={!showPrice}
           data={kec.data as unknown as GeoJSON.FeatureCollection}
           style={(f) => {
             const name = (f?.properties as { name: string }).name;

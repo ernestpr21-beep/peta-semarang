@@ -45,7 +45,7 @@ export const useAppStore = create<AppState>()(
       theme: "light",
       basemap: "streets",
       showComparables: true,
-      showPriceLayer: false,
+      showPriceLayer: true,
       clicked: null,
       searchMarker: null,
       cursor: null,
@@ -76,6 +76,12 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "peta-semarang-ui",
+      // v1 (model 2026-10-7): peta harga per kelurahan jadi lapisan utama → aktifkan sekali untuk pengguna lama
+      version: 1,
+      migrate: (persisted, version) => {
+        const p = (persisted ?? {}) as Partial<AppState>;
+        return (version < 1 ? { ...p, showPriceLayer: true } : p) as AppState;
+      },
       partialize: (s) => ({ theme: s.theme, basemap: s.basemap, showComparables: s.showComparables, showPriceLayer: s.showPriceLayer, radiusM: s.radiusM, area: s.area }),
     },
   ),

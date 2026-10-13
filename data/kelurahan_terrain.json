@@ -1,0 +1,1241 @@
+[
+{
+"name": "Cabean",
+"kec": "Semarang Barat",
+"elevM": 7,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Bojongsalaman",
+"kec": "Semarang Barat",
+"elevM": 9,
+"slopeDeg": 4.6,
+"cls": "datar"
+},
+{
+"name": "Jatingaleh",
+"kec": "Candisari",
+"elevM": 126,
+"slopeDeg": 5.4,
+"cls": "berbukit"
+},
+{
+"name": "Karangturi",
+"kec": "Semarang Timur",
+"elevM": 7,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Karangtempel",
+"kec": "Semarang Timur",
+"elevM": 7,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Brumbungan",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Gabahan",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Dadapsari",
+"kec": "Semarang Utara",
+"elevM": 4,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Salaman Mloyo",
+"kec": "Semarang Barat",
+"elevM": 7,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Purwosari",
+"kec": "Semarang Utara",
+"elevM": 4,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Bulustalan",
+"kec": "Semarang Selatan",
+"elevM": 7,
+"slopeDeg": 2.3,
+"cls": "datar"
+},
+{
+"name": "Plombokan",
+"kec": "Semarang Utara",
+"elevM": 5,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Lempongsari",
+"kec": "Gajahmungkur",
+"elevM": 61,
+"slopeDeg": 11.0,
+"cls": "berbukit"
+},
+{
+"name": "Siwalan",
+"kec": "Gayamsari",
+"elevM": 5,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Sambirejo",
+"kec": "Gayamsari",
+"elevM": 3,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Sawah Besar",
+"kec": "Gayamsari",
+"elevM": 3,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Bulu Lor",
+"kec": "Semarang Utara",
+"elevM": 5,
+"slopeDeg": 1.3,
+"cls": "datar"
+},
+{
+"name": "Kaliwiru",
+"kec": "Candisari",
+"elevM": 96,
+"slopeDeg": 3.5,
+"cls": "datar"
+},
+{
+"name": "Petompon",
+"kec": "Gajahmungkur",
+"elevM": 24,
+"slopeDeg": 7.9,
+"cls": "datar"
+},
+{
+"name": "Barusari",
+"kec": "Semarang Selatan",
+"elevM": 9,
+"slopeDeg": 2.4,
+"cls": "datar"
+},
+{
+"name": "Gayamsari",
+"kec": "Gayamsari",
+"elevM": 8,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Rejosari",
+"kec": "Semarang Timur",
+"elevM": 5,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Sarirejo",
+"kec": "Semarang Timur",
+"elevM": 6,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Krobokan",
+"kec": "Semarang Barat",
+"elevM": 5,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Kranggan",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Wonotingal",
+"kec": "Candisari",
+"elevM": 85,
+"slopeDeg": 8.3,
+"cls": "berbukit"
+},
+{
+"name": "Karangrejo",
+"kec": "Gajahmungkur",
+"elevM": 111,
+"slopeDeg": 5.1,
+"cls": "berbukit"
+},
+{
+"name": "Jagalan",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 2.2,
+"cls": "datar"
+},
+{
+"name": "Panggung Kidul",
+"kec": "Semarang Utara",
+"elevM": 4,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Randusari",
+"kec": "Semarang Selatan",
+"elevM": 17,
+"slopeDeg": 6.4,
+"cls": "datar"
+},
+{
+"name": "Kebonagung",
+"kec": "Semarang Timur",
+"elevM": 5,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Bugangan",
+"kec": "Semarang Timur",
+"elevM": 4,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Bendungan",
+"kec": "Gajahmungkur",
+"elevM": 58,
+"slopeDeg": 10.3,
+"cls": "berbukit"
+},
+{
+"name": "Gajah Mungkur",
+"kec": "Gajahmungkur",
+"elevM": 87,
+"slopeDeg": 8.4,
+"cls": "berbukit"
+},
+{
+"name": "Kaligawe",
+"kec": "Gayamsari",
+"elevM": 4,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Mugassari",
+"kec": "Semarang Selatan",
+"elevM": 13,
+"slopeDeg": 4.4,
+"cls": "datar"
+},
+{
+"name": "Tawangmas",
+"kec": "Semarang Barat",
+"elevM": 4,
+"slopeDeg": 2.0,
+"cls": "datar"
+},
+{
+"name": "Karang Ayu",
+"kec": "Semarang Barat",
+"elevM": 5,
+"slopeDeg": 1.4,
+"cls": "datar"
+},
+{
+"name": "Kuningan",
+"kec": "Semarang Utara",
+"elevM": 4,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Mlatiharjo",
+"kec": "Semarang Timur",
+"elevM": 4,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Mlatibaru",
+"kec": "Semarang Timur",
+"elevM": 4,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Pleburan",
+"kec": "Semarang Selatan",
+"elevM": 8,
+"slopeDeg": 3.0,
+"cls": "datar"
+},
+{
+"name": "Pandean Lamper",
+"kec": "Gayamsari",
+"elevM": 7,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Tegalsari",
+"kec": "Candisari",
+"elevM": 42,
+"slopeDeg": 9.4,
+"cls": "berbukit"
+},
+{
+"name": "Panggung Lor",
+"kec": "Semarang Utara",
+"elevM": 3,
+"slopeDeg": 1.4,
+"cls": "datar"
+},
+{
+"name": "Bangunharjo",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 2.7,
+"cls": "datar"
+},
+{
+"name": "Kauman",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 3.0,
+"cls": "datar"
+},
+{
+"name": "Purwodinatan",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 2.9,
+"cls": "datar"
+},
+{
+"name": "Tambakrejo",
+"kec": "Gayamsari",
+"elevM": 2,
+"slopeDeg": 1.4,
+"cls": "datar"
+},
+{
+"name": "Rejomulyo",
+"kec": "Semarang Timur",
+"elevM": 4,
+"slopeDeg": 2.3,
+"cls": "datar"
+},
+{
+"name": "Bandarharjo",
+"kec": "Semarang Utara",
+"elevM": 3,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Wonodri",
+"kec": "Semarang Selatan",
+"elevM": 12,
+"slopeDeg": 4.7,
+"cls": "datar"
+},
+{
+"name": "Kembangsari",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 2.6,
+"cls": "datar"
+},
+{
+"name": "Peterongan",
+"kec": "Semarang Selatan",
+"elevM": 9,
+"slopeDeg": 2.2,
+"cls": "datar"
+},
+{
+"name": "Tawangsari",
+"kec": "Semarang Barat",
+"elevM": 4,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Bendan Duwur",
+"kec": "Gajahmungkur",
+"elevM": 53,
+"slopeDeg": 10.1,
+"cls": "berbukit"
+},
+{
+"name": "Tanjung Mas",
+"kec": "Semarang Utara",
+"elevM": 2,
+"slopeDeg": 2.0,
+"cls": "datar"
+},
+{
+"name": "Kemijen",
+"kec": "Semarang Timur",
+"elevM": 2,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Bendan Ngisor",
+"kec": "Gajahmungkur",
+"elevM": 33,
+"slopeDeg": 8.3,
+"cls": "datar"
+},
+{
+"name": "Lamper Lor",
+"kec": "Semarang Selatan",
+"elevM": 10,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Sampangan",
+"kec": "Gajahmungkur",
+"elevM": 15,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Lamper Kidul",
+"kec": "Semarang Selatan",
+"elevM": 12,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Lamper Tengah",
+"kec": "Semarang Selatan",
+"elevM": 10,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Sekayu",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 3.6,
+"cls": "datar"
+},
+{
+"name": "Miroto",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Pandansari",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 2.8,
+"cls": "datar"
+},
+{
+"name": "Candi",
+"kec": "Candisari",
+"elevM": 40,
+"slopeDeg": 9.1,
+"cls": "berbukit"
+},
+{
+"name": "Sukorejo",
+"kec": "Gunungpati",
+"elevM": 60,
+"slopeDeg": 8.6,
+"cls": "berbukit"
+},
+{
+"name": "Bongsari",
+"kec": "Semarang Barat",
+"elevM": 28,
+"slopeDeg": 7.5,
+"cls": "datar"
+},
+{
+"name": "Jomblang",
+"kec": "Candisari",
+"elevM": 33,
+"slopeDeg": 8.7,
+"cls": "datar"
+},
+{
+"name": "Muktiharjo Lor",
+"kec": "Genuk",
+"elevM": 5,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Pekunden",
+"kec": "Semarang Tengah",
+"elevM": 8,
+"slopeDeg": 2.8,
+"cls": "datar"
+},
+{
+"name": "Kalicari",
+"kec": "Pedurungan",
+"elevM": 8,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Gisikdrono",
+"kec": "Semarang Barat",
+"elevM": 21,
+"slopeDeg": 4.5,
+"cls": "datar"
+},
+{
+"name": "Kalibanteng Kidul",
+"kec": "Semarang Barat",
+"elevM": 23,
+"slopeDeg": 5.8,
+"cls": "datar"
+},
+{
+"name": "Kalibanteng Kulon",
+"kec": "Semarang Barat",
+"elevM": 8,
+"slopeDeg": 2.9,
+"cls": "datar"
+},
+{
+"name": "Karanganyar Gunung",
+"kec": "Candisari",
+"elevM": 97,
+"slopeDeg": 8.9,
+"cls": "berbukit"
+},
+{
+"name": "Terboyo Kulon",
+"kec": "Genuk",
+"elevM": 0,
+"slopeDeg": 1.3,
+"cls": "datar"
+},
+{
+"name": "Terboyo Wetan",
+"kec": "Genuk",
+"elevM": 0,
+"slopeDeg": 1.0,
+"cls": "datar"
+},
+{
+"name": "Ngijo",
+"kec": "Gunungpati",
+"elevM": 258,
+"slopeDeg": 8.3,
+"cls": "berbukit"
+},
+{
+"name": "Kalisegoro",
+"kec": "Gunungpati",
+"elevM": 184,
+"slopeDeg": 8.8,
+"cls": "berbukit"
+},
+{
+"name": "Trimulyo",
+"kec": "Genuk",
+"elevM": 2,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Pedurungan Lor",
+"kec": "Pedurungan",
+"elevM": 16,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Sekaran",
+"kec": "Gunungpati",
+"elevM": 163,
+"slopeDeg": 9.5,
+"cls": "berbukit"
+},
+{
+"name": "Mangunsari",
+"kec": "Gunungpati",
+"elevM": 292,
+"slopeDeg": 7.2,
+"cls": "berbukit"
+},
+{
+"name": "Tembalang",
+"kec": "Tembalang",
+"elevM": 197,
+"slopeDeg": 6.7,
+"cls": "berbukit"
+},
+{
+"name": "Gemah",
+"kec": "Pedurungan",
+"elevM": 16,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Jangli",
+"kec": "Tembalang",
+"elevM": 105,
+"slopeDeg": 9.8,
+"cls": "berbukit"
+},
+{
+"name": "Bulusan",
+"kec": "Tembalang",
+"elevM": 138,
+"slopeDeg": 7.2,
+"cls": "berbukit"
+},
+{
+"name": "Krapyak",
+"kec": "Semarang Barat",
+"elevM": 7,
+"slopeDeg": 3.0,
+"cls": "datar"
+},
+{
+"name": "Pakintelan",
+"kec": "Gunungpati",
+"elevM": 310,
+"slopeDeg": 9.8,
+"cls": "berbukit"
+},
+{
+"name": "Tambak Harjo",
+"kec": "Semarang Barat",
+"elevM": 1,
+"slopeDeg": 0.9,
+"cls": "datar"
+},
+{
+"name": "Bangetayu Kulon",
+"kec": "Genuk",
+"elevM": 5,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Patemon",
+"kec": "Gunungpati",
+"elevM": 235,
+"slopeDeg": 9.1,
+"cls": "berbukit"
+},
+{
+"name": "Cangkiran",
+"kec": "Mijen",
+"elevM": 283,
+"slopeDeg": 5.5,
+"cls": "berbukit"
+},
+{
+"name": "Mangunharjo",
+"kec": "Tembalang",
+"elevM": 74,
+"slopeDeg": 9.1,
+"cls": "berbukit"
+},
+{
+"name": "Polaman",
+"kec": "Mijen",
+"elevM": 270,
+"slopeDeg": 7.0,
+"cls": "berbukit"
+},
+{
+"name": "Karangkidul",
+"kec": "Semarang Tengah",
+"elevM": 8,
+"slopeDeg": 2.5,
+"cls": "datar"
+},
+{
+"name": "Pendrikan Kidul",
+"kec": "Semarang Tengah",
+"elevM": 7,
+"slopeDeg": 2.1,
+"cls": "datar"
+},
+{
+"name": "Pendrikan Lor",
+"kec": "Semarang Tengah",
+"elevM": 6,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Kembangarum",
+"kec": "Semarang Barat",
+"elevM": 29,
+"slopeDeg": 7.0,
+"cls": "datar"
+},
+{
+"name": "Palebon",
+"kec": "Pedurungan",
+"elevM": 12,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Sumurejo",
+"kec": "Gunungpati",
+"elevM": 336,
+"slopeDeg": 8.1,
+"cls": "berbukit"
+},
+{
+"name": "Nongkosawit",
+"kec": "Gunungpati",
+"elevM": 258,
+"slopeDeg": 6.5,
+"cls": "berbukit"
+},
+{
+"name": "Gebangsari",
+"kec": "Genuk",
+"elevM": 4,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Cepoko",
+"kec": "Gunungpati",
+"elevM": 247,
+"slopeDeg": 7.1,
+"cls": "berbukit"
+},
+{
+"name": "Genuksari",
+"kec": "Genuk",
+"elevM": 4,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Gunung Pati",
+"kec": "Gunungpati",
+"elevM": 301,
+"slopeDeg": 8.0,
+"cls": "berbukit"
+},
+{
+"name": "Karangmalang",
+"kec": "Mijen",
+"elevM": 307,
+"slopeDeg": 8.2,
+"cls": "berbukit"
+},
+{
+"name": "Banjardowo",
+"kec": "Genuk",
+"elevM": 4,
+"slopeDeg": 1.4,
+"cls": "datar"
+},
+{
+"name": "Tlogosari Kulon",
+"kec": "Pedurungan",
+"elevM": 6,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Manyaran",
+"kec": "Semarang Barat",
+"elevM": 32,
+"slopeDeg": 7.1,
+"cls": "datar"
+},
+{
+"name": "Ngemplaksimongan",
+"kec": "Semarang Barat",
+"elevM": 14,
+"slopeDeg": 6.3,
+"cls": "datar"
+},
+{
+"name": "Kudu",
+"kec": "Genuk",
+"elevM": 7,
+"slopeDeg": 1.7,
+"cls": "datar"
+},
+{
+"name": "Pudakpayung",
+"kec": "Banyumanik",
+"elevM": 318,
+"slopeDeg": 9.2,
+"cls": "berbukit"
+},
+{
+"name": "Penggaron Lor",
+"kec": "Genuk",
+"elevM": 12,
+"slopeDeg": 2.2,
+"cls": "datar"
+},
+{
+"name": "Karangroto",
+"kec": "Genuk",
+"elevM": 5,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Gedawang",
+"kec": "Banyumanik",
+"elevM": 204,
+"slopeDeg": 9.3,
+"cls": "berbukit"
+},
+{
+"name": "Jabungan",
+"kec": "Banyumanik",
+"elevM": 97,
+"slopeDeg": 9.9,
+"cls": "berbukit"
+},
+{
+"name": "Tandang",
+"kec": "Tembalang",
+"elevM": 50,
+"slopeDeg": 8.2,
+"cls": "berbukit"
+},
+{
+"name": "Tlogosari Wetan",
+"kec": "Pedurungan",
+"elevM": 8,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Meteseh",
+"kec": "Tembalang",
+"elevM": 44,
+"slopeDeg": 5.1,
+"cls": "berbukit"
+},
+{
+"name": "Tambangan",
+"kec": "Mijen",
+"elevM": 250,
+"slopeDeg": 4.7,
+"cls": "datar"
+},
+{
+"name": "Jatirejo",
+"kec": "Gunungpati",
+"elevM": 220,
+"slopeDeg": 8.6,
+"cls": "berbukit"
+},
+{
+"name": "Mangkang Kulon",
+"kec": "Tugu",
+"elevM": 0,
+"slopeDeg": 1.1,
+"cls": "datar"
+},
+{
+"name": "Sadeng",
+"kec": "Gunungpati",
+"elevM": 102,
+"slopeDeg": 10.7,
+"cls": "berbukit"
+},
+{
+"name": "Sembungharjo",
+"kec": "Genuk",
+"elevM": 9,
+"slopeDeg": 2.2,
+"cls": "datar"
+},
+{
+"name": "Bangetayu Wetan",
+"kec": "Genuk",
+"elevM": 11,
+"slopeDeg": 2.0,
+"cls": "datar"
+},
+{
+"name": "Kramas",
+"kec": "Tembalang",
+"elevM": 196,
+"slopeDeg": 5.5,
+"cls": "berbukit"
+},
+{
+"name": "Penggaron Kidul",
+"kec": "Pedurungan",
+"elevM": 15,
+"slopeDeg": 2.0,
+"cls": "datar"
+},
+{
+"name": "Bubakan",
+"kec": "Mijen",
+"elevM": 290,
+"slopeDeg": 6.3,
+"cls": "berbukit"
+},
+{
+"name": "Sendangguwo",
+"kec": "Tembalang",
+"elevM": 25,
+"slopeDeg": 6.4,
+"cls": "datar"
+},
+{
+"name": "Mangunharjo",
+"kec": "Tugu",
+"elevM": 1,
+"slopeDeg": 1.1,
+"cls": "datar"
+},
+{
+"name": "Mangkang Wetan",
+"kec": "Tugu",
+"elevM": 1,
+"slopeDeg": 0.7,
+"cls": "datar"
+},
+{
+"name": "Ngaliyan",
+"kec": "Ngaliyan",
+"elevM": 118,
+"slopeDeg": 7.7,
+"cls": "berbukit"
+},
+{
+"name": "Purwoyoso",
+"kec": "Ngaliyan",
+"elevM": 36,
+"slopeDeg": 5.6,
+"cls": "datar"
+},
+{
+"name": "Bambankerep",
+"kec": "Ngaliyan",
+"elevM": 65,
+"slopeDeg": 6.1,
+"cls": "berbukit"
+},
+{
+"name": "Tambakaji",
+"kec": "Ngaliyan",
+"elevM": 62,
+"slopeDeg": 6.7,
+"cls": "berbukit"
+},
+{
+"name": "Randugarut",
+"kec": "Tugu",
+"elevM": 1,
+"slopeDeg": 1.1,
+"cls": "datar"
+},
+{
+"name": "Pedurungan Tengah",
+"kec": "Pedurungan",
+"elevM": 13,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Banyumanik",
+"kec": "Banyumanik",
+"elevM": 250,
+"slopeDeg": 7.3,
+"cls": "berbukit"
+},
+{
+"name": "Tlogomulyo",
+"kec": "Pedurungan",
+"elevM": 10,
+"slopeDeg": 1.8,
+"cls": "datar"
+},
+{
+"name": "Jatisari",
+"kec": "Mijen",
+"elevM": 246,
+"slopeDeg": 5.5,
+"cls": "berbukit"
+},
+{
+"name": "Purwosari",
+"kec": "Mijen",
+"elevM": 231,
+"slopeDeg": 5.6,
+"cls": "berbukit"
+},
+{
+"name": "Plamongan Sari",
+"kec": "Pedurungan",
+"elevM": 20,
+"slopeDeg": 2.4,
+"cls": "datar"
+},
+{
+"name": "Padangsari",
+"kec": "Banyumanik",
+"elevM": 205,
+"slopeDeg": 7.5,
+"cls": "berbukit"
+},
+{
+"name": "Bringin",
+"kec": "Ngaliyan",
+"elevM": 117,
+"slopeDeg": 7.5,
+"cls": "berbukit"
+},
+{
+"name": "Kandri",
+"kec": "Gunungpati",
+"elevM": 207,
+"slopeDeg": 8.9,
+"cls": "berbukit"
+},
+{
+"name": "Plalangan",
+"kec": "Gunungpati",
+"elevM": 334,
+"slopeDeg": 8.0,
+"cls": "berbukit"
+},
+{
+"name": "Pongangan",
+"kec": "Gunungpati",
+"elevM": 170,
+"slopeDeg": 9.0,
+"cls": "berbukit"
+},
+{
+"name": "Pedalangan",
+"kec": "Banyumanik",
+"elevM": 207,
+"slopeDeg": 2.8,
+"cls": "datar"
+},
+{
+"name": "Sendangmulyo",
+"kec": "Tembalang",
+"elevM": 33,
+"slopeDeg": 4.0,
+"cls": "datar"
+},
+{
+"name": "Karanganyar",
+"kec": "Tugu",
+"elevM": 2,
+"slopeDeg": 2.4,
+"cls": "datar"
+},
+{
+"name": "Sambiroto",
+"kec": "Tembalang",
+"elevM": 55,
+"slopeDeg": 7.5,
+"cls": "berbukit"
+},
+{
+"name": "Tugurejo",
+"kec": "Tugu",
+"elevM": 1,
+"slopeDeg": 1.6,
+"cls": "datar"
+},
+{
+"name": "Kedungmundu",
+"kec": "Tembalang",
+"elevM": 26,
+"slopeDeg": 3.9,
+"cls": "datar"
+},
+{
+"name": "Jerakah",
+"kec": "Tugu",
+"elevM": 3,
+"slopeDeg": 2.4,
+"cls": "datar"
+},
+{
+"name": "Wonolopo",
+"kec": "Mijen",
+"elevM": 233,
+"slopeDeg": 4.8,
+"cls": "datar"
+},
+{
+"name": "Mijen",
+"kec": "Mijen",
+"elevM": 239,
+"slopeDeg": 5.2,
+"cls": "berbukit"
+},
+{
+"name": "Pedurungan Kidul",
+"kec": "Pedurungan",
+"elevM": 20,
+"slopeDeg": 1.9,
+"cls": "datar"
+},
+{
+"name": "Muktiharjo Kidul",
+"kec": "Pedurungan",
+"elevM": 4,
+"slopeDeg": 1.5,
+"cls": "datar"
+},
+{
+"name": "Jatibarang",
+"kec": "Mijen",
+"elevM": 223,
+"slopeDeg": 6.5,
+"cls": "berbukit"
+},
+{
+"name": "Ngadirgo",
+"kec": "Mijen",
+"elevM": 204,
+"slopeDeg": 6.1,
+"cls": "berbukit"
+},
+{
+"name": "Wonoplumbon",
+"kec": "Mijen",
+"elevM": 151,
+"slopeDeg": 7.8,
+"cls": "berbukit"
+},
+{
+"name": "Wates",
+"kec": "Ngaliyan",
+"elevM": 168,
+"slopeDeg": 5.3,
+"cls": "berbukit"
+},
+{
+"name": "Podorejo",
+"kec": "Ngaliyan",
+"elevM": 138,
+"slopeDeg": 6.8,
+"cls": "berbukit"
+},
+{
+"name": "Rowosari",
+"kec": "Tembalang",
+"elevM": 46,
+"slopeDeg": 4.6,
+"cls": "datar"
+},
+{
+"name": "Gondoriyo",
+"kec": "Ngaliyan",
+"elevM": 103,
+"slopeDeg": 7.9,
+"cls": "berbukit"
+},
+{
+"name": "Wonosari",
+"kec": "Ngaliyan",
+"elevM": 28,
+"slopeDeg": 6.6,
+"cls": "datar"
+},
+{
+"name": "Kalipancur",
+"kec": "Ngaliyan",
+"elevM": 61,
+"slopeDeg": 6.4,
+"cls": "berbukit"
+},
+{
+"name": "Pesantren",
+"kec": "Mijen",
+"elevM": 197,
+"slopeDeg": 4.8,
+"cls": "datar"
+},
+{
+"name": "Kedungpane",
+"kec": "Mijen",
+"elevM": 180,
+"slopeDeg": 8.1,
+"cls": "berbukit"
+},
+{
+"name": "Srondol Wetan",
+"kec": "Banyumanik",
+"elevM": 225,
+"slopeDeg": 2.6,
+"cls": "datar"
+},
+{
+"name": "Srondol Kulon",
+"kec": "Banyumanik",
+"elevM": 218,
+"slopeDeg": 9.3,
+"cls": "berbukit"
+},
+{
+"name": "Tinjomoyo",
+"kec": "Banyumanik",
+"elevM": 117,
+"slopeDeg": 9.8,
+"cls": "berbukit"
+},
+{
+"name": "Sumurboto",
+"kec": "Banyumanik",
+"elevM": 222,
+"slopeDeg": 3.4,
+"cls": "datar"
+},
+{
+"name": "Ngesrep",
+"kec": "Banyumanik",
+"elevM": 165,
+"slopeDeg": 8.1,
+"cls": "berbukit"
+}
+]

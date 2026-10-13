@@ -61,6 +61,8 @@ export function useLocationDetails(): LocationDetails {
       model: ds.data.model,
       kelStat: findAreaStat(ds.data.kelurahan, admin.kel, admin.kec),
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
+      kel: admin.kel,
+      kec: admin.kec,
       area,
       campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
       mainRoad: clicked && roads.roads ? namedMainRoadsWithin(clicked.lat, clicked.lng, roads.roads, ds.data.model.corridor?.maxRoadM ?? 60) : null,

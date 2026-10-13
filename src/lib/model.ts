@@ -140,6 +140,8 @@ export interface PriceModel {
     };
     note: string;
   };
+  /** penetapan harga berbasis kelurahan: pembanding & prior hanya dari kelurahan yang sama; fallback kecamatan → kota */
+  kelurahanPricing?: { mKel: number; mKec: number; minKel: number; localStrength?: number; weakLocalStrength?: number; note: string };
   /** prior wilayah halus (median berbobot jarak) menggantikan median kelurahan */
   smoothPrior?: { bwM: number; maxM: number; minN: number; note: string };
   commercialFactor: number;
@@ -231,6 +233,28 @@ export interface AreaStat {
   sources: Record<string, number>;
 }
 
+/** zona harga per kelurahan (semua poligon) — lapisan peta & tabel Data zona */
+export interface KelurahanZoneStat {
+  name: string;
+  kec: string;
+  /** median kelurahan bertingkat (bidang acuan, jalan lingkungan) */
+  value: number;
+  kelMedian: number | null;
+  kecValue: number;
+  low: number;
+  high: number;
+  /** kuartil iklan (≥ 3 iklan) atau rentang model */
+  rangeKind: "kuartil" | "model";
+  n: number;
+  nExact: number;
+  nKec: number;
+  level: "kelurahan" | "kelurahan+kecamatan" | "kecamatan" | "kota";
+  confidence: "tinggi" | "sedang" | "rendah";
+  terrain: "berbukit" | "datar" | null;
+  elevM: number | null;
+  slopeDeg: number | null;
+}
+
 export interface Dataset {
   meta: {
     generatedAt: string;
@@ -250,6 +274,7 @@ export interface Dataset {
   /** poligon kampus (OSM, ≥ 2 ha) untuk faktor kedekatan kampus; cincin [lat, lng] */
   campuses?: { name: string; areaHa: number; rings: number[][][] }[];
   kelurahan: AreaStat[];
+  zones?: KelurahanZoneStat[];
   kecamatan: AreaStat[];
   model: PriceModel;
 }

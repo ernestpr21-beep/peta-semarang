@@ -12,7 +12,7 @@ const PUB = path.resolve(import.meta.dirname, "../public/data");
 type Ev = { id: string; lat: number; lng: number; area: number; ppm: number; date: string; src: string; kel: string; kec: string; outlier: boolean; txtTier: string; corr: string | null; corrHow: string | null; proj: [number, number] | null; group: string[] };
 it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
   const ev = JSON.parse(fs.readFileSync(process.env.VAL_EVAL as string, "utf8")) as Ev[];
-  const variants = JSON.parse(process.env.VAL_VARIANTS as string) as { name: string; dataset: string; k?: number; bwM?: number; noCorridor?: boolean }[];
+  const variants = JSON.parse(process.env.VAL_VARIANTS as string) as { name: string; dataset: string; k?: number; bwM?: number; noCorridor?: boolean; corrScope?: "kel" | "kec"; kp?: Partial<NonNullable<PriceModel["kelurahanPricing"]>>; noKel?: boolean }[];
   const kel = JSON.parse(fs.readFileSync(path.join(PUB, "kelurahan.geojson"), "utf8")) as GeoCollection<{ name: string; kecamatan: string }>;
   const tiles = new Map<string, Road[]>();
   const roadsAround = (lat: number, lng: number) => {
@@ -47,6 +47,12 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
     return { atRoad, tier: acc.tier, near: namedMainRoadsWithin(e.lat, e.lng, rd, 60), nearest: u ? [{ name: u.name, distanceM: u.distanceM }] : [], kelName: k?.name ?? null, kecName: k?.kecamatan ?? null,
       campus: null as ReturnType<typeof nearestCampus>, fold: fold(e.lat, e.lng) };
   });
+  const admCache = new Map<string, [string | null, string | null]>();
+  const ptAdm = (lat: number, lng: number) => {
+    const k = `${lat},${lng}`;
+    if (!admCache.has(k)) { const p = findFeature(lat, lng, kel)?.properties; admCache.set(k, [p?.name ?? null, p?.kecamatan ?? null]); }
+    return admCache.get(k)!;
+  };
   const result: Record<string, unknown> = {};
   for (const v of variants) {
     const ds = JSON.parse(fs.readFileSync(v.dataset, "utf8")) as Dataset;
@@ -62,27 +68,29 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
         if (m0.corridor && !v.noCorridor) {
           const roads: NonNullable<PriceModel["corridor"]>["roads"] = {};
           for (const [k, r] of Object.entries(m0.corridor.roads)) {
-            const keep = r.pts.map((p, j) => !g.has(r.ids?.[j] ?? "") && (mode === "loo" || fold(p[0], p[1]) !== f.fold));
+            const keep = r.pts.map((p, j) => !g.has(r.ids?.[j] ?? "") && (mode === "loo" || fold(p[0], p[1]) !== f.fold) && (!v.corrScope || ptAdm(p[0], p[1])[v.corrScope === "kel" ? 0 : 1] === (v.corrScope === "kel" ? f.kelName : f.kecName)));
             const pts = r.pts.filter((_, j) => keep[j]);
             if (pts.length) roads[k] = { ...r, pts };
           }
           model = { ...m0, corridor: { ...m0.corridor, roads, k: v.k ?? m0.corridor.k, bwM: v.bwM ?? m0.corridor.bwM } };
         } else if (v.noCorridor) model = { ...m0, corridor: undefined };
+        if (model.kelurahanPricing && v.kp) model = { ...model, kelurahanPricing: { ...model.kelurahanPricing, ...v.kp } };
+        if (v.noKel) model = { ...model, kelurahanPricing: undefined };
         if (!f.campus) f.campus = nearestCampus(e.lat, e.lng, ds.campuses);
-        const r = estimatePrice({ lat: e.lat, lng: e.lng, insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName),
+        const r = estimatePrice({ lat: e.lat, lng: e.lng, insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName,
           area: e.area, campus: f.campus, mainRoad: model.corridor?.blend ? f.near : f.nearest }) as PriceEstimateResult;
         if (!r.available) return null;
         const y = Math.log(e.ppm * Math.exp(m0.trendPerYear * months(e.date)) * (m0.sourceAdj?.[e.src as "lamudi" | "pinhome"] ?? 1));
         const sh = r.autoTiers[f.tier];
         let eRoadAuto: number | null = null, eRoadMan: number | null = null;
         if (f.atRoad && e.proj) {
-          const r2 = estimatePrice({ lat: e.proj[0], lng: e.proj[1], insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName),
+          const r2 = estimatePrice({ lat: e.proj[0], lng: e.proj[1], insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName,
             area: e.area, campus: f.campus, mainRoad: model.corridor?.blend ? f.atRoad.near : f.atRoad.nearest }) as PriceEstimateResult;
           eRoadAuto = Math.log(r2.autoTiers[f.atRoad.tier].point) - y;
           eRoadMan = Math.log(r2.tiers.utama.point) - y;
         }
         return { eRoadAuto, eRoadMan, id: e.id, eShown: Math.log(sh.point) - y, cov: y >= Math.log(sh.low) && y <= Math.log(sh.high), eManU: Math.log(r.tiers.utama.point) - y, eAutoU: Math.log(r.autoTiers.utama.point) - y,
-          corr: r.corridor?.factor ?? 1, tier: f.tier };
+          corr: r.corridor?.factor ?? 1, tier: f.tier, zl: r.zone?.level ?? null };
       });
       result[`${v.name}|${mode}`] = rows;
     }

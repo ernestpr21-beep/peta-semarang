@@ -36,6 +36,8 @@ export interface PriceEstimateResult {
   /** bobot prior kelurahan/kecamatan dalam % */
   priorShare: number;
   priorLevel: "sekitar" | "kelurahan" | "kecamatan" | "kota";
+  /** penetapan harga berbasis kelurahan (model ≥ 2026-10-7): tingkat fallback & jumlah iklan */
+  zone: KelurahanZone | null;
   priorName: string;
   priorMedian: number;
   localMedian: number | null;
@@ -54,6 +56,67 @@ export interface PriceEstimateResult {
   campus: { name: string; distanceM: number } | null;
   dateMin: string;
   dateMax: string;
+}
+
+export type ZoneLevel = "kelurahan" | "kelurahan+kecamatan" | "kecamatan" | "kota";
+export interface KelurahanZone {
+  level: ZoneLevel;
+  kel: string | null;
+  kec: string | null;
+  /** iklan di kelurahan ini (berlokasi titik/kelurahan) */
+  nKel: number;
+  effKel: number;
+  /** iklan di kecamatan (termasuk yang hanya diketahui kecamatannya) */
+  nKec: number;
+  kelMedian: number | null;
+  kecMedian: number | null;
+  /** median kecamatan setelah disusutkan ke kota */
+  kecValue: number;
+  /** median kelurahan setelah disusutkan ke kecamatan (= prior & nilai peta) */
+  value: number;
+}
+
+const _nn = new WeakMap<Comparable, [string, string]>();
+function compNames(c: Comparable): [string, string] {
+  let v = _nn.get(c);
+  if (!v) {
+    v = [c.kel ? normalizeName(c.kel) : "", normalizeName(c.kec ?? "")];
+    _nn.set(c, v);
+  }
+  return v;
+}
+export function sameKelurahan(c: Comparable, kel: string | null, kec: string | null) {
+  if (!kel) return false;
+  const [a, b] = compNames(c);
+  return a === normalizeName(kel) && (!kec || !b || b === normalizeName(kec));
+}
+
+/** Median kelurahan bertingkat: kelurahan → (susut) kecamatan → (susut) kota. Dihitung dari pembanding yang diberikan
+ *  (sehingga validasi leave-one-out/blok spasial ikut mengeluarkan iklan uji dari median). */
+export function kelurahanZone(model: PriceModel, comps: Comparable[], kel: string | null, kec: string | null): KelurahanZone {
+  const kp = model.kelurahanPricing!;
+  const city = Math.log(model.cityMedianPn);
+  const nkec = kec ? normalizeName(kec) : null;
+  const kc = nkec ? comps.filter((c) => compNames(c)[1] === nkec) : [];
+  const kl = kel ? comps.filter((c) => locWeight(c) > 0 && sameKelurahan(c, kel, kec)) : [];
+  const kecMed = kc.length ? weightedQuantile(kc.map((c) => Math.log(c.pn)), kc.map(() => 1), 0.5) : null;
+  const kecV = kecMed == null ? city : (kc.length * kecMed + kp.mKec * city) / (kc.length + kp.mKec);
+  const eff = kl.reduce((s, c) => s + locWeight(c), 0);
+  const kelMed = kl.length ? weightedQuantile(kl.map((c) => Math.log(c.pn)), kl.map(locWeight), 0.5) : null;
+  const v = kelMed == null ? kecV : (eff * kelMed + kp.mKel * kecV) / (eff + kp.mKel);
+  const level: ZoneLevel = kl.length && eff >= kp.minKel ? "kelurahan" : kl.length ? "kelurahan+kecamatan" : kc.length ? "kecamatan" : "kota";
+  return {
+    level,
+    kel,
+    kec,
+    nKel: kl.length,
+    effKel: eff,
+    nKec: kc.length,
+    kelMedian: kelMed == null ? null : Math.exp(kelMed),
+    kecMedian: kecMed == null ? null : Math.exp(kecMed),
+    kecValue: Math.exp(kecV),
+    value: Math.exp(v),
+  };
 }
 
 export interface CorridorPremium {
@@ -227,6 +290,9 @@ export function estimatePrice(opts: {
   model: PriceModel;
   kelStat: AreaStat | null;
   kecStat: AreaStat | null;
+  /** nama kelurahan & kecamatan titik (point-in-polygon) — dipakai bila model berbasis kelurahan */
+  kel?: string | null;
+  kec?: string | null;
   area?: number;
   /** kampus terdekat (jarak ke poligon); dipakai untuk faktor kedekatan kampus */
   campus?: { name: string; distanceM: number } | null;
@@ -239,7 +305,11 @@ export function estimatePrice(opts: {
 
   // 1. Jarak ke semua pembanding (iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai)
   const MIN_EFF = model.minEffComparables ?? MIN_EFF_DEFAULT;
-  const all = comps.filter((c) => locWeight(c) > 0).map((c) => ({ c, d: haversineMeters(lat, lng, c.lat, c.lng) }));
+  const kp = model.kelurahanPricing;
+  const kelName = opts.kel ?? opts.kelStat?.name ?? null;
+  const kecName = opts.kec ?? opts.kecStat?.name ?? null;
+  // model berbasis kelurahan: pembanding HANYA dari kelurahan yang sama (tidak meminjam dari kelurahan tetangga)
+  const all = comps.filter((c) => locWeight(c) > 0 && (!kp || sameKelurahan(c, kelName, kecName))).map((c) => ({ c, d: haversineMeters(lat, lng, c.lat, c.lng) }));
   all.sort((a, b) => a.d - b.d);
 
   // 2. Radius adaptif: perbesar sampai jumlah pembanding efektif cukup
@@ -266,9 +336,14 @@ export function estimatePrice(opts: {
   let priorLevel: PriceEstimateResult["priorLevel"] = "kota";
   let priorName = "Kota Semarang";
   let priorMedian = model.cityMedianPn;
-  const sp = model.smoothPrior;
+  const sp = kp ? undefined : model.smoothPrior;
   const spComps = sp ? all.filter((x) => x.d <= sp.maxM) : [];
-  if (sp && spComps.length >= sp.minN) {
+  const zone = kp ? kelurahanZone(model, comps, kelName, kecName) : null;
+  if (zone) {
+    priorLevel = zone.level === "kota" ? "kota" : zone.level === "kecamatan" ? "kecamatan" : "kelurahan";
+    priorName = zone.level === "kecamatan" || zone.level === "kota" ? (zone.level === "kota" ? "Kota Semarang" : zone.kec ?? "") : zone.kel ?? "";
+    priorMedian = zone.value;
+  } else if (sp && spComps.length >= sp.minN) {
     // prior halus: median berbobot jarak (Gauss) — tidak melompat di batas kelurahan
     priorLevel = "sekitar";
     priorName = `pembanding ≤ ${sp.maxM / 1000} km`;
@@ -310,9 +385,11 @@ export function estimatePrice(opts: {
   }
 
   // 5. Penyusutan (shrinkage) ke prior wilayah
-  const mu = muLocal == null ? muPrior : (nEff * muLocal + PRIOR_STRENGTH * muPrior) / (nEff + PRIOR_STRENGTH);
-  const priorShare = muLocal == null ? 1 : PRIOR_STRENGTH / (nEff + PRIOR_STRENGTH);
-  const se = sLocal / Math.sqrt(Math.max(1, nEff + PRIOR_STRENGTH * 0.5));
+  // kelurahan dengan data tipis: median lokal (sedikit iklan) tidak boleh mengalahkan median zona yang sudah disusutkan
+  const PS = zone && zone.level !== "kelurahan" && kp?.weakLocalStrength ? Math.max(kp.weakLocalStrength, kp.localStrength ?? PRIOR_STRENGTH) : (kp?.localStrength ?? PRIOR_STRENGTH);
+  const mu = muLocal == null ? muPrior : (nEff * muLocal + PS * muPrior) / (nEff + PS);
+  const priorShare = muLocal == null ? 1 : PS / (nEff + PS);
+  const se = sLocal / Math.sqrt(Math.max(1, nEff + PS * 0.5));
   const sigma = Math.sqrt(sLocal * sLocal + se * se);
 
   const area = opts.area ?? model.refArea;
@@ -373,7 +450,14 @@ export function estimatePrice(opts: {
 
   let confidence: PriceEstimateResult["confidence"] = "rendah";
   let confidenceReason = "";
-  if (nEff >= 8 && medianDistanceM <= 1000 && sLocal <= 0.55) {
+  if (zone && zone.level !== "kelurahan") {
+    confidenceReason =
+      zone.level === "kelurahan+kecamatan"
+        ? `hanya ${zone.nKel} iklan di Kel. ${zone.kel}; disusutkan ke median Kec. ${zone.kec}`
+        : zone.level === "kecamatan"
+          ? `belum ada iklan di ${zone.kel ? "Kel. " + zone.kel : "kelurahan ini"}; memakai median Kec. ${zone.kec}`
+          : "tidak ada iklan di kelurahan maupun kecamatan; memakai median kota";
+  } else if (nEff >= 8 && medianDistanceM <= 1000 && sLocal <= 0.55) {
     confidence = "tinggi";
     confidenceReason = `${used.length} pembanding, median jarak ${Math.round(medianDistanceM)} m`;
   } else if (nEff >= 4 && medianDistanceM <= 2000) {
@@ -402,6 +486,7 @@ export function estimatePrice(opts: {
     medianDistanceM,
     priorShare,
     priorLevel,
+    zone,
     priorName,
     priorMedian,
     localMedian: muLocal == null ? null : Math.exp(muLocal),

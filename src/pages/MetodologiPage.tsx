@@ -485,11 +485,24 @@ export function MetodologiPage() {
 
       <h2>3. Estimasi di titik yang diklik</h2>
       <ol>
-        <li>Cari iklan pembanding terdekat; radius diperbesar bertahap (400 m → 3 km) sampai setara ≥ {model.minEffComparables ?? 8} pembanding (iklan berlokasi perkiraan setingkat kelurahan dihitung setengah; iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai). Maksimal 30 pembanding.</li>
+        {model.kelurahanPricing ? (
+          <li>
+            <b>Hanya iklan dari kelurahan yang sama</b> dengan titik yang diklik (point-in-polygon pada batas kelurahan) yang dipakai — tidak ada pembanding yang dipinjam dari kelurahan tetangga.
+            Lihat <a href="#per-kelurahan">bagian 3a</a>.
+          </li>
+        ) : null}
+        <li>Cari iklan pembanding terdekat{model.kelurahanPricing ? " di dalam kelurahan itu" : ""}; radius diperbesar bertahap (400 m → 3 km) sampai setara ≥ {model.minEffComparables ?? 8} pembanding (iklan berlokasi perkiraan setingkat kelurahan dihitung setengah; iklan yang lokasinya hanya diketahui sampai kecamatan tidak dipakai). Maksimal 30 pembanding.</li>
         <li>Bobot tiap pembanding: kernel jarak (makin dekat makin berat), ketepatan lokasi, dan umur iklan (waktu paruh {model.recencyHalfLifeYears} tahun).</li>
         <li>
           Median terboboti dari harga ternormalisasi → harga lokal. Lalu "disusutkan" ke median wilayah dengan bobot setara 3 pembanding — makin sedikit data lokal, makin besar peran median wilayah.
-          {model.smoothPrior ? (
+          {model.kelurahanPricing ? (
+            <>
+              {" "}
+              Sejak model 2026-10-7, median wilayah = <b>median kelurahan bertingkat</b>: median harga ternormalisasi iklan di kelurahan itu, disusutkan ke median kecamatan setara{" "}
+              {model.kelurahanPricing.mKel} iklan; median kecamatan disusutkan ke median kota setara {model.kelurahanPricing.mKec} iklan. Bila kelurahan punya &lt; {model.kelurahanPricing.minKel} iklan,
+              median lokal disusutkan lebih kuat (setara {model.kelurahanPricing.weakLocalStrength ?? 3} iklan).
+            </>
+          ) : model.smoothPrior ? (
             <>
               {" "}
               Sejak model {model.version}, median wilayah adalah <b>median berbobot jarak</b> (Gauss, lebar {model.smoothPrior.bwM.toLocaleString("id-ID")} m) dari pembanding dalam{" "}
@@ -515,6 +528,8 @@ export function MetodologiPage() {
         </li>
         <li>Tingkat keyakinan: tinggi (≥ 8 pembanding efektif, median jarak ≤ 1 km, sebaran wajar), sedang (≥ 4 dalam 2 km), selain itu rendah.</li>
       </ol>
+
+      {model.kelurahanPricing ? <KelurahanSection /> : null}
 
       <h2 id="akses">4. Ada akses jalan vs tanpa akses</h2>
       <p>Empat kelas akses dipakai. Faktor relatif terhadap jalan lingkungan:</p>
@@ -786,6 +801,77 @@ function CorridorSection({ model }: { model: PriceModel }) {
       <p className="text-fg-muted">
         Premi pusat kota untuk jalan utama hasil deteksi kini dipilih dengan kriteria bias median terkecil (sebelumnya galat absolut median, yang kurvanya datar pada ±43 iklan sehingga pilihannya melompat-lompat bila
         data sedikit berubah).
+      </p>
+    </>
+  );
+}
+
+function KelurahanSection() {
+  const rows: [string, string, string, string, string][] = [
+    ["Keseluruhan (1.871 iklan berpin tepat)", "34,1%", "35,6%", "34,3%", "37,4%"],
+    ["… termasuk iklan bertanda pencilan (1.958)", "36,1%", "37,4%", "36,4%", "40,0%"],
+    ["Kelurahan berbukit (1.193)", "34,1%", "35,7%", "34,1%", "37,3%"],
+    ["Kelurahan datar/padat (678)", "34,2%", "34,9%", "35,1%", "38,3%"],
+    ["Iklan di batas berbukit ↔ datar (349)", "37,9%", "40,1%", "39,5%", "44,2%"],
+    ["Kelurahan dengan 15+ iklan (1.530)", "32,7%", "33,0%", "32,7%", "35,2%"],
+    ["Kelurahan dengan 5–14 iklan (280)", "41,1%", "44,7%", "41,2%", "46,6%"],
+    ["Kelurahan dengan 1–4 iklan (61)", "63,3%", "73,4%", "68,7%", "74,1%"],
+    ["Muka jalan arteri, dinilai di ruas jalan (48)", "68,6%", "74,6%", "75,4%", "89,4%"],
+  ];
+  return (
+    <>
+      <h3 id="per-kelurahan">3a. Harga per kelurahan (model 2026-10-7)</h3>
+      <p>
+        Masukan pengguna: banyak estimasi salah karena kelurahan perbukitan/pinggiran tercampur dengan kampung padat di sebelahnya. Model sebelumnya (2026-10-6) memakai pembanding terdekat lintas batas
+        kelurahan dan median wilayah berbobot jarak (lebar 1,5 km), sehingga harga bisa “merembes” melewati batas. Sejak 2026-10-7:
+      </p>
+      <ul>
+        <li>Pembanding dan median wilayah hanya dari kelurahan titik itu. Di dalam kelurahan, pembanding tetap diberi bobot jarak.</li>
+        <li>
+          Bila data kelurahan sedikit, estimasi <b>disusutkan bertingkat</b> ke median kecamatan, lalu kota — bukan meminjam iklan kelurahan tetangga. Panel menampilkan tingkat yang dipakai
+          (kelurahan / kelurahan + kecamatan / kecamatan / kota) dan jumlah iklannya.
+        </li>
+        <li>Lapisan utama peta = choropleth median kelurahan bertingkat itu (bidang acuan 150 m², jalan lingkungan); kelurahan berdata tipis diarsir putus-putus. Tabel lengkap 177 kelurahan ada di halaman Data zona.</li>
+        <li>
+          Faktor akses, luas, kampus dan pusat kota tetap: semuanya diestimasi dengan efek tetap kelurahan (perbandingan di dalam kelurahan), dan faktor akses hasil deteksi OSM dikalibrasi ulang dengan
+          estimator baru (bias per tier ≈ 0). Premi koridor arteri tetap memakai iklan muka jalan di sepanjang ruas yang sama (dibatasi: hanya ≤ 60 m dari ruas bernama, hanya untuk tier jalan utama,
+          bobot jarak 1,5 km), karena membatasinya ke satu kelurahan menghapus sebagian besar manfaatnya (galat iklan muka jalan di ruas 75% → 87% leave-one-out).
+        </li>
+      </ul>
+      <p>
+        <b>Validasi jujur</b> (target sama, galat absolut median harga tampil; leave-one-out &amp; validasi silang blok spasial 2 km, 5 lipatan):
+      </p>
+      <div className="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Himpunan uji</th>
+              <th className="text-right">LOO 10-6</th>
+              <th className="text-right">LOO 10-7</th>
+              <th className="text-right">Blok 10-6</th>
+              <th className="text-right">Blok 10-7</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r[0]}>
+                <td>{r[0]}</td>
+                {r.slice(1).map((v, i) => (
+                  <td key={i} className="num text-right">
+                    {v}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-fg-muted">
+        Hasilnya: pembatasan per kelurahan <b>sedikit menurunkan akurasi rata-rata</b> (leave-one-out +1,5 poin, blok spasial +3,1 poin), terutama di kelurahan berdata tipis dan di pusat kota (Semarang
+        Selatan/Timur), dan data iklan tidak menunjukkan bahwa kelurahan berbukit sebelumnya dinilai lebih buruk daripada kelurahan datar. Bias median tetap ≈ 0 di semua kelompok harga
+        (kuintil termahal: −0,07 → −0,03 log). Struktur ini dipakai karena sesuai cara pengguna membaca peta (satu harga acuan per kelurahan, tanpa rembesan lintas batas) — dengan konsekuensi yang
+        disebut di atas. Kelurahan bertanda “kelurahan + kecamatan” atau “kecamatan” sebaiknya dibaca sebagai perkiraan kasar. Medan: DEM Copernicus 30 m, berbukit = lereng rata-rata ≥ 5° dan elevasi
+        median ≥ 40 m (61 dari 177 kelurahan).
       </p>
     </>
   );

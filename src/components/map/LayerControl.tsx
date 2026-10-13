@@ -21,6 +21,20 @@ export function LayerControl() {
   const [open, setOpen] = useState(false);
 
   return (
+    <>
+    {showPrice && !open ? (
+      <div className="pointer-events-none absolute bottom-24 right-3 z-[500] rounded-md border border-border bg-surface/90 px-2 py-1.5 text-[10px] shadow-sm backdrop-blur-sm md:bottom-8 md:right-4">
+        <p className="mb-0.5 font-medium text-fg">Median Rp/m² per kelurahan</p>
+        <ul className="space-y-0.5">
+          {PRICE_LEGEND.map((l) => (
+            <li key={l.label} className="flex items-center gap-1.5 text-fg-muted">
+              <span className="h-2.5 w-3.5 rounded-sm" style={{ background: l.color, opacity: 0.8 }} />
+              {l.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
     <div className="pointer-events-auto absolute right-3 top-3 z-[600] flex flex-col items-end gap-1.5 md:right-4 md:top-4">
       <div className="flex items-center gap-1 rounded-lg border border-border bg-surface/95 p-1 shadow-md backdrop-blur-sm">
         <div className="hidden items-center gap-1 sm:flex">
@@ -70,7 +84,7 @@ export function LayerControl() {
             <input type="checkbox" className="mt-0.5 accent-[var(--primary)]" checked={showPrice} onChange={(e) => setShowPrice(e.target.checked)} />
             <span>
               <span className="font-medium text-fg">Median harga per kelurahan</span>
-              <span className="block text-fg-muted">Bidang acuan: 150 m², akses jalan lingkungan.</span>
+              <span className="block text-fg-muted">Lapisan utama. Bidang acuan 150 m², akses jalan lingkungan. Arsir putus-putus = data kelurahan sedikit (disusutkan ke kecamatan).</span>
             </span>
           </label>
           <div>
@@ -87,5 +101,6 @@ export function LayerControl() {
         </div>
       ) : null}
     </div>
+    </>
   );
 }

@@ -36,6 +36,8 @@ export function estimateAt(lat: number, lng: number, area = 150) {
     model: ds.model,
     kelStat: findAreaStat(ds.kelurahan, k?.name ?? null, k?.kecamatan),
     kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null),
+    kel: k?.name ?? null,
+    kec: k?.kecamatan ?? null,
     area,
     campus: nearestCampus(lat, lng, ds.campuses),
   });
@@ -184,17 +186,43 @@ describe("model 2026-10-4 (prototipe audit): akses hasil deteksi OSM terkalibras
     expect(r.tiers.tanpa.point).toBeLessThan(r.tiers.lingkungan.point * 0.6);
     expect(r.autoTiers.tanpa.point).toBeGreaterThan(r.tiers.tanpa.point * 1.5);
   });
-  it("prior halus: tidak ada lompatan > 15% saat melintasi batas kelurahan (titik berjarak 60 m)", () => {
-    // Jl. Pandanaran (Pekunden ↔ Randusari) dan Tembalang ↔ Bulusan
+  it("model berbasis kelurahan: harga boleh berbeda di batas kelurahan, tetapi tetap halus di dalam satu kelurahan", () => {
+    // sejak 2026-10-7 prior halus lintas batas diganti median kelurahan (permintaan pengguna: perbukitan tidak dicampur kampung padat)
     for (const [lat, lng, dLat, dLng] of [
       [-6.9877, 110.4145, 0, 0.00055],
       [-7.0556, 110.4405, 0.00055, 0],
     ]) {
-      const a = estimateAt(lat, lng).r as PriceEstimateResult;
-      const b = estimateAt(lat + dLat, lng + dLng).r as PriceEstimateResult;
-      expect(a.priorLevel).toBe("sekitar");
-      expect(Math.abs(Math.log(a.tiers.lingkungan.point / b.tiers.lingkungan.point))).toBeLessThan(Math.log(1.15));
+      const a = estimateAt(lat, lng);
+      const b = estimateAt(lat + dLat, lng + dLng);
+      const ra = a.r as PriceEstimateResult;
+      expect(ra.zone).not.toBeNull();
+      expect(ra.used.every((u) => u.c.kel === a.k?.name)).toBe(true);
+      if (a.k?.name === b.k?.name) expect(Math.abs(Math.log(ra.tiers.lingkungan.point / (b.r as PriceEstimateResult).tiers.lingkungan.point))).toBeLessThan(Math.log(1.15));
     }
+  });
+});
+
+describe("model 2026-10-7: penetapan harga per kelurahan", () => {
+  it("zona untuk semua 177 kelurahan, nilai peta = prior estimator", () => {
+    expect(ds.zones?.length).toBe(177);
+    const z = ds.zones!.find((x) => x.name === "Sekaran")!;
+    const r = estimateAt(-7.0517, 110.3936).r as PriceEstimateResult;
+    expect(r.zone?.kel).toBe("Sekaran");
+    expect(Math.abs(r.zone!.value / z.value - 1)).toBeLessThan(0.01);
+    expect(r.priorMedian).toBeCloseTo(r.zone!.value, -2);
+  });
+  it("pembanding hanya dari kelurahan yang sama; kelurahan tanpa iklan memakai median kecamatan", () => {
+    const a = estimateAt(-7.0517, 110.3936);
+    const r = a.r as PriceEstimateResult;
+    expect(r.used.length).toBeGreaterThan(0);
+    expect(r.used.every((u) => u.c.kel === "Sekaran")).toBe(true);
+    const empty = ds.zones!.find((x) => x.n === 0)!;
+    expect(empty.level).toBe("kecamatan");
+    const p = estimateAt(-6.9737, 110.4289); // Purwodinatan (belum ada iklan)
+    const rp = p.r as PriceEstimateResult;
+    expect(rp.zone?.level).toBe("kecamatan");
+    expect(rp.used.length).toBe(0);
+    expect(rp.confidence).toBe("rendah");
   });
 });
 
@@ -214,7 +242,8 @@ describe("model 2026-10-5: premi koridor jalan arteri (audit Jl. Majapahit)", ()
     const r1 = estimatePrice({ ...base, mainRoad: { name: "Jalan Majapahit", distanceM: 10 } }) as PriceEstimateResult;
     expect(r1.corridor?.key).toBe("majapahit");
     expect(r1.corridor!.factor).toBeGreaterThan(1.5);
-    expect(r1.autoTiers.utama.point).toBeGreaterThan(7e6);
+    // 2026-10-7: harga dasar kini hanya dari kelurahan titik (lebih rendah dari v6), premi koridor tetap ≈ ×2
+    expect(r1.autoTiers.utama.point).toBeGreaterThan(5.5e6);
     expect(r1.tiers.lingkungan.point).toBe(r0.tiers.lingkungan.point);
     expect(r1.autoTiers.gang.point).toBe(r0.autoTiers.gang.point);
     // jauh dari ruas (> maxRoadM) atau ruas tanpa bukti → tanpa premi

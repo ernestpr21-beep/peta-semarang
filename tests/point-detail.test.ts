@@ -27,11 +27,11 @@ it.skipIf(!process.env.DETAIL_OUT)("rincian titik", () => {
     const u = acc.nearest.utama;
     const near = process.env.DETAIL_NEAREST_ONLY ? (u ? [{ name: u.name, distanceM: u.distanceM }] : []) : namedMainRoadsWithin(lat, lng, rd, ds.model.corridor?.maxRoadM ?? 60);
     const r = estimatePrice({ lat, lng, insideCity: true, comps: ds.comparables, model: ds.model, kelStat: findAreaStat(ds.kelurahan, k?.name ?? null, k?.kecamatan),
-      kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null), area: area ?? 150, campus: nearestCampus(lat, lng, ds.campuses),
+      kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null), kel: k?.name ?? null, kec: k?.kecamatan ?? null, area: area ?? 150, campus: nearestCampus(lat, lng, ds.campuses),
       mainRoad: near }) as PriceEstimateResult;
     return { name, lat, lng, kel: k?.name, kec: k?.kecamatan, detected: acc.tier, reason: acc.reason, nearestUtama: acc.nearest.utama,
       shown: r.autoTiers[acc.tier], tiers: r.tiers, autoFactors: r.autoFactors, cbdFactor: r.cbdFactor, corridor: r.corridor, campusFactor: r.campusFactor, basePoint: r.basePoint,
-      localMedian: r.localMedian, priorMedian: r.priorMedian, priorShare: r.priorShare, nUsed: r.nUsed, radiusM: r.radiusM,
+      zone: r.zone, confidence: r.confidence, localMedian: r.localMedian, priorMedian: r.priorMedian, priorShare: r.priorShare, nUsed: r.nUsed, radiusM: r.radiusM,
       used: r.used.map((u) => ({ id: u.c.id, d: Math.round(u.distanceM), w: +u.weight.toFixed(3), ppm: u.c.ppm, pn: u.c.pn, area: u.c.area, tier: u.c.tier, exact: u.c.exact, loc: u.c.loc, kel: u.c.kel, date: u.c.date, title: u.c.title })) };
   });
   fs.writeFileSync(process.env.DETAIL_OUT as string, JSON.stringify(out, null, 1));

@@ -200,6 +200,21 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
       {/* Dasar perhitungan */}
       <div className="rounded-lg border border-border p-2.5 text-xs">
         <p className="leading-relaxed text-fg">
+          {price.zone ? (
+            <span className="mb-1 block">
+              Wilayah harga: <b>Kel. {price.zone.kel ?? "—"}</b>, Kec. {price.zone.kec ?? "—"} · tingkat{" "}
+              <b>
+                {price.zone.level === "kelurahan"
+                  ? `kelurahan (${price.zone.nKel} iklan)`
+                  : price.zone.level === "kelurahan+kecamatan"
+                    ? `kelurahan ${price.zone.nKel} iklan + median kecamatan (${price.zone.nKec} iklan)`
+                    : price.zone.level === "kecamatan"
+                      ? `kecamatan (${price.zone.nKec} iklan; kelurahan ini belum punya iklan)`
+                      : "kota (belum ada iklan di kelurahan/kecamatan)"}
+              </b>
+              . Pembanding hanya dari kelurahan yang sama.
+            </span>
+          ) : null}
           Dihitung dari <b>{price.nUsed} iklan pembanding</b> dalam radius {formatDistance(price.radiusM)} (terdekat {formatDistance(price.nearestM)}, median jarak{" "}
           {formatDistance(price.medianDistanceM)}; {price.nExact} berkoordinat tepat){price.dateMin ? `, iklan ${formatMonth(price.dateMin)}–${formatMonth(price.dateMax)}` : ""}.
         </p>
@@ -218,7 +233,11 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
                 <td className="text-fg-muted">
                   {price.priorLevel === "sekitar"
                     ? `Median wilayah sekitar (berbobot jarak, ${price.priorName})`
-                    : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`}{" "}
+                    : price.zone
+                      ? price.zone.level === "kelurahan" || price.zone.level === "kelurahan+kecamatan"
+                        ? `Median kelurahan ${price.zone.kel} (n=${price.zone.nKel}, disusutkan ke kecamatan)`
+                        : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`
+                      : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`}{" "}
                   (bobot {Math.round(price.priorShare * 100)}%)
                 </td>
                 <td>{formatRupiahShort(price.priorMedian)}</td>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Download } from "lucide-react";
 import { useDataset } from "@/lib/data";
-import type { AreaStat, Comparable } from "@/lib/model";
+import type { AreaStat, Comparable, KelurahanZoneStat } from "@/lib/model";
 import { cn, formatMonth, formatRupiahRange, formatRupiahShort } from "@/lib/utils";
 import { Button, Skeleton } from "@/components/ui/primitives";
 import { PageShell } from "./PageShell";
@@ -59,9 +59,80 @@ function StatTable({ rows, showKec }: { rows: AreaStat[]; showKec: boolean }) {
   );
 }
 
+const LEVEL_LABEL: Record<KelurahanZoneStat["level"], string> = {
+  kelurahan: "kelurahan",
+  "kelurahan+kecamatan": "kelurahan + kecamatan",
+  kecamatan: "kecamatan",
+  kota: "kota",
+};
+type SortKey = "name" | "kec" | "value" | "low" | "high" | "n" | "level" | "terrain";
+
+function ZoneTable({ rows }: { rows: KelurahanZoneStat[] }) {
+  const [sort, setSort] = useState<{ k: SortKey; desc: boolean }>({ k: "value", desc: true });
+  const sorted = useMemo(() => {
+    const out = [...rows];
+    const val = (z: KelurahanZoneStat) => (sort.k === "terrain" ? (z.terrain ?? "") : sort.k === "level" ? ["kelurahan", "kelurahan+kecamatan", "kecamatan", "kota"].indexOf(z.level) : z[sort.k]);
+    out.sort((a, b) => {
+      const x = val(a), y = val(b);
+      const c = typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), "id");
+      return sort.desc ? -c : c;
+    });
+    return out;
+  }, [rows, sort]);
+  const H = ({ k, children, right }: { k: SortKey; children: React.ReactNode; right?: boolean }) => (
+    <th className={cn(right && "text-right")}>
+      <button type="button" className="font-semibold hover:text-primary" onClick={() => setSort((s) => ({ k, desc: s.k === k ? !s.desc : k !== "name" && k !== "kec" }))}>
+        {children}
+        {sort.k === k ? (sort.desc ? " ↓" : " ↑") : ""}
+      </button>
+    </th>
+  );
+  return (
+    <div className="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <H k="name">Kelurahan</H>
+            <H k="kec">Kecamatan</H>
+            <H k="value" right>
+              Median*
+            </H>
+            <H k="low" right>
+              Rentang**
+            </H>
+            <H k="n" right>
+              Iklan
+            </H>
+            <H k="level">Tingkat data</H>
+            <H k="terrain">Medan</H>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((z) => (
+            <tr key={`${z.name}-${z.kec}`}>
+              <td>{z.name}</td>
+              <td className="text-fg-muted">{z.kec}</td>
+              <td className="num text-right">{formatRupiahShort(z.value)}</td>
+              <td className={cn("num text-right text-fg-muted", z.rangeKind === "model" && "italic")}>{formatRupiahRange(z.low, z.high)}</td>
+              <td className={cn("num text-right", z.n < 5 && "text-warn")}>
+                {z.n}
+                {z.nExact < z.n ? <span className="text-fg-subtle"> ({z.nExact} tepat)</span> : null}
+              </td>
+              <td className={cn("whitespace-nowrap", z.level !== "kelurahan" && "text-warn")}>
+                {LEVEL_LABEL[z.level]} · {z.confidence}
+              </td>
+              <td className="whitespace-nowrap text-fg-muted">{z.terrain ? `${z.terrain} (${z.slopeDeg}°, ${z.elevM} m)` : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function DataZonaPage() {
   const ds = useDataset();
-  const [level, setLevel] = useState<"kecamatan" | "kelurahan">("kecamatan");
+  const [level, setLevel] = useState<"kecamatan" | "kelurahan">("kelurahan");
   const [q, setQ] = useState("");
   const rows = useMemo(() => {
     if (!ds.data) return [];
@@ -69,6 +140,12 @@ export function DataZonaPage() {
     const s = q.trim().toLowerCase();
     return s ? list.filter((r) => r.name.toLowerCase().includes(s) || r.kec.toLowerCase().includes(s)) : list;
   }, [ds.data, level, q]);
+  const zoneRows = useMemo(() => {
+    const zs = ds.data?.zones ?? [];
+    const s = q.trim().toLowerCase();
+    return s ? zs.filter((r) => r.name.toLowerCase().includes(s) || r.kec.toLowerCase().includes(s)) : zs;
+  }, [ds.data, q]);
+  const useZones = level === "kelurahan" && Boolean(ds.data?.zones?.length);
 
   if (!ds.data)
     return (
@@ -116,7 +193,12 @@ export function DataZonaPage() {
           variant="outline"
           size="sm"
           onClick={() =>
-            downloadCsv(`harga-${level}-semarang.csv`, [
+            useZones
+              ? downloadCsv("harga-kelurahan-semarang.csv", [
+                  ["kelurahan", "kecamatan", "median_rp_m2", "median_kelurahan_mentah", "median_kecamatan_tersusut", "rentang_bawah", "rentang_atas", "jenis_rentang", "n_iklan", "n_lokasi_tepat", "n_iklan_kecamatan", "tingkat_data", "keyakinan", "medan", "elevasi_m", "lereng_derajat"],
+                  ...zoneRows.map((z) => [z.name, z.kec, z.value, z.kelMedian, z.kecValue, z.low, z.high, z.rangeKind, z.n, z.nExact, z.nKec, z.level, z.confidence, z.terrain, z.elevM, z.slopeDeg]),
+                ])
+              : downloadCsv(`harga-${level}-semarang.csv`, [
               ["wilayah", "kecamatan", "n_iklan", "n_lokasi_tepat", "median_ternormalisasi", "p25", "p75", "median_penawaran_asli", "periode_awal", "periode_akhir"],
               ...rows.map((s) => [s.name, s.kec, s.n, s.nExact, s.median, s.p25, s.p75, s.medianRaw, s.dateMin, s.dateMax]),
             ])
@@ -128,11 +210,23 @@ export function DataZonaPage() {
           <Download className="size-3.5" /> CSV semua iklan ({comparables.length})
         </Button>
       </div>
-      <StatTable rows={rows} showKec={level === "kelurahan"} />
+      {useZones ? (
+        <>
+          <ZoneTable rows={zoneRows} />
+          <p className="text-fg-muted">
+            Semua {ds.data.zones?.length} kelurahan. *Median = nilai lapisan peta: median harga ternormalisasi iklan di kelurahan itu (bidang acuan {meta.refArea} m², akses jalan lingkungan), disusutkan ke
+            median kecamatan setara {ds.data.model.kelurahanPricing?.mKel ?? 8} iklan — makin banyak iklan, makin dekat ke median kelurahan sendiri. Tingkat data: <b>kelurahan</b> = cukup iklan
+            sendiri; <b>kelurahan + kecamatan</b> = 1–4 iklan, banyak bertumpu pada kecamatan; <b>kecamatan</b> = belum ada iklan sama sekali. **Rentang = kuartil 25–75% iklan bila ≥ 3 iklan; miring =
+            rentang model (sedikit data). Medan dari DEM Copernicus 30 m (berbukit = lereng rata-rata ≥ 5° dan elevasi ≥ 40 m).
+          </p>
+        </>
+      ) : (
+        <StatTable rows={rows} showKec={level === "kelurahan"} />
+      )}
       <p className="text-fg-muted">
         *Median &amp; kuartil <b>ternormalisasi</b>: harga per m² untuk bidang acuan {meta.refArea} m², akses jalan lingkungan, setelah koreksi selisih antarportal dan waktu. Kolom "median penawaran asli" = harga/m²
-        apa adanya. Angka oranye = kurang dari 5 iklan (kurang andal). {meta.kelurahanTotal - meta.kelurahanCovered} kelurahan belum punya iklan sama sekali — estimasi di sana bertumpu pada pembanding dari kelurahan
-        tetangga.
+        apa adanya. Angka oranye = kurang dari 5 iklan (kurang andal). {meta.kelurahanTotal - meta.kelurahanCovered} kelurahan belum punya iklan sama sekali — estimasi di sana memakai median kecamatannya (tidak meminjam
+        pembanding dari kelurahan tetangga).
       </p>
       <h2>Sumber</h2>
       <ul>
