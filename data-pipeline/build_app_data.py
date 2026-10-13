@@ -323,7 +323,23 @@ def kel_zone(kel, kec, excl=None):
     v = kecv if kelm is None else (eff * kelm + KEL_M * kecv) / (eff + KEL_M)
     lvl = 'kelurahan' if kl and eff >= MIN_KEL else 'kelurahan+kecamatan' if kl else 'kecamatan' if kc else 'kota'
     return {'value': v, 'kecValue': kecv, 'kelMedian': kelm, 'kecMedian': kecm, 'nKel': len(kl), 'effKel': eff, 'nKec': len(kc), 'level': lvl}
+# ---------- model berbasis fitur wilayah (2026-10-8): mu = F(fitur) + offset kecamatan + offset kelurahan ----------
+# dihitung di features/feature_model.py (butuh scikit-learn); di sini hanya dibaca. F luar-lipatan untuk iklan model.
+_fp = os.path.join(OUT, 'feature_preds.csv')
+FEATURE_PRICING = os.environ.get('FEATURE_PRICING', '1') == '1' and os.path.exists(_fp)
+FEAT = {}; FEAT_ALL = {}; FZ = {}
+if FEATURE_PRICING:
+    FEAT = {r['id']: float(r['mu']) for r in csv.DictReader(open(_fp))}
+    FEAT_ALL = {r['id']: float(r['mu']) for r in csv.DictReader(open(os.path.join(OUT, 'feature_preds_all.csv')))}
+    _fm = json.load(open(os.path.join(OUT, 'feature_model.json')))
+    FZ = {(z['name'], z['kec']): z for z in _fm['zones']}; FEFF = _fm['effects']
 def predict(r0, pool):
+    if FEATURE_PRICING:
+        rid = f"{r0['source']}:{r0['source_id']}"
+        mu = FEAT.get(rid, FEAT_ALL.get(rid))
+        z = FZ.get((r0['kelurahan'], r0['kecamatan']))
+        sig = z['sdLog'] if z else FEFF['cityResidSd']
+        if mu is not None: return mu, (z['effKel'] if z else 0), math.sqrt(sig * sig + (sig / math.sqrt(max(1, (z['effKel'] if z else 0) + 5))) ** 2)
     if KEL_PRICING:
         pool = [c for c in kk_by.get((r0['kelurahan'], r0['kecamatan']), []) if c is not r0] if r0['kelurahan'] else []
     al = sorted(((hav(r0['lat'], r0['lng'], c['lat'], c['lng']), c) for c in pool if c is not r0), key=lambda x: x[0])
@@ -503,7 +519,7 @@ for r in csv.DictReader(open(os.path.join(OUT, 'listings_all.csv'))):
     if not k: continue
     i = f"{r['source']}:{r['source_id']}"; m = _rows_by_id.get(i)
     if m is None:  # iklan outlier: fitur dihitung seperti pipeline
-        m = {'lat': lat, 'lng': lng, 'kelurahan': r['kelurahan'], 'kecamatan': r['kecamatan'], 'exact': int(r['exact']), 'area_m2': float(r['area_m2']), 'ppm': float(r['ppm']), 'source': r['source']}
+        m = {'lat': lat, 'lng': lng, 'kelurahan': r['kelurahan'], 'kecamatan': r['kecamatan'], 'exact': int(r['exact']), 'area_m2': float(r['area_m2']), 'ppm': float(r['ppm']), 'source': r['source'], 'source_id': r['source_id']}
         p_ = math.pi / 180; _x = math.sin((CBD_CENTER[0] - lat) * p_ / 2) ** 2 + math.cos(lat * p_) * math.cos(CBD_CENTER[0] * p_) * math.sin((CBD_CENTER[1] - lng) * p_ / 2) ** 2
         m['d_cbd'] = 2 * 6371008.8 * math.asin(math.sqrt(_x)); m['d_campus'] = campus_dist_m(lat, lng)
         d = r['date'][:7] if r['date'] else AS_OF; y, mo = map(int, d.split('-')); ya, ma = map(int, AS_OF.split('-')); m['age_y'] = max(0, ((ya - y) * 12 + (ma - mo)) / 12)
@@ -606,7 +622,7 @@ for r in rows:
         'src': r['source'], 'kel': r['kelurahan'] or None, 'kec': r['kecamatan'], 'exact': bool(r['exact']), 'loc': {'titik': 'titik', 'kelurahan': 'kel', 'kecamatan': 'kec'}[r['loc_level']], 'url': r['url'], 'title': (r['title'] or '')[:90],
     })
 model = {
-    'version': f'{AS_OF}-7' if KEL_PRICING else f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
+    'version': f'{AS_OF}-8' if FEATURE_PRICING else f'{AS_OF}-7' if KEL_PRICING else f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
                   'levelCenter': round(math.exp(SIZE_Z0)), 'zMin': round(SIZE_ZLO, 3), 'zMax': round(SIZE_ZHI, 3),
                   'note': 'Faktor luas = exp(coef(luas) + slope(luas) · z), z = log(median harga/m² mentah kelurahan / levelCenter) dibatasi [zMin, zMax]; coef & slope diinterpolasi linear terhadap log luas antara simpul (median luas tiap kelas), di luar simpul terujung tetap. Menggantikan elastisitas log-linear tunggal.'},
@@ -622,6 +638,9 @@ model = {
     'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
                  'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
     'autoAccess': auto_access, 'corridor': corridor_model,
+    **({'featurePricing': {'mKec': FEFF['mKec'], 'mKel': FEFF['mKel'], 'cityResidSd': FEFF['cityResidSd'], 'alpha': FEFF['alpha'], 'nTrain': FEFF['n'],
+                           'groups': FEFF['groups'], 'features': FEFF['features'],
+                           'note': 'Harga dasar = exp(F(fitur wilayah) + offset kecamatan + offset kelurahan). F: regresi ridge spline (GAM) log harga ternormalisasi pada fitur wilayah (OSM, WorldCover, DEM), dilatih dari semua iklan kota. Offset = median residu luar-lipatan, disusutkan setara mKec / mKel iklan. Iklan pembanding tidak dipakai untuk harga.'}} if FEATURE_PRICING else {}),
     **({'kelurahanPricing': {'mKel': KEL_M, 'mKec': KEC_M, 'minKel': MIN_KEL, 'localStrength': 3, 'weakLocalStrength': WEAK_PS, 'note': 'Pembanding & prior hanya dari kelurahan titik (point-in-polygon). Prior = median kelurahan (berbobot lokasi) disusutkan ke median kecamatan setara mKel iklan; median kecamatan disusutkan ke median kota setara mKec iklan. Tingkat "kelurahan" bila bobot iklan ≥ minKel; di bawahnya median lokal disusutkan ke prior setara weakLocalStrength iklan (bukan localStrength).'}} if KEL_PRICING else {}),
     'smoothPrior': {'bwM': SMOOTH_PRIOR_BW, 'maxM': 3 * SMOOTH_PRIOR_BW, 'minN': 3, 'note': 'Prior = median berbobot Gauss(jarak/bwM) × bobot lokasi dari pembanding ≤ maxM; bila < minN pembanding, median kelurahan/kecamatan/kota.'},
     'tiers': tiers, 'cityMedianPn': round(city_med), 'citySpreadLog': round(city_spread, 4),
@@ -645,6 +664,14 @@ for f in json.load(open(os.path.join(PUB, 'kelurahan.geojson')))['features']:
         p25, p75 = math.exp(z['value'] - 0.674 * city_spread), math.exp(z['value'] + 0.674 * city_spread); rk = 'model'
     conf = 'tinggi' if z['level'] == 'kelurahan' and z['nKel'] >= 10 else 'sedang' if z['level'] == 'kelurahan' else 'rendah'
     t = terrain.get((nm, kc), {})
+    if FEATURE_PRICING:
+        fz = FZ[(nm, kc)]; val = fz['F'] + fz['kecOff'] + fz['kelOff']
+        lvl = 'kelurahan' if fz['n'] >= MIN_KEL else 'kelurahan+kecamatan' if fz['n'] else 'kecamatan'
+        zones.append({'name': nm, 'kec': kc, 'value': round(math.exp(val)), 'kelMedian': round(math.exp(z['kelMedian'])) if z['kelMedian'] is not None else None, 'kecValue': round(math.exp(z['kecValue'])),
+                      'low': round(math.exp(val - 0.674 * fz['sdLog'])), 'high': round(math.exp(val + 0.674 * fz['sdLog'])), 'rangeKind': 'model', 'n': fz['n'], 'nExact': sum(x['exact'] for x in kl), 'nKec': z['nKec'],
+                      'level': lvl, 'confidence': 'tinggi' if fz['n'] >= 10 else 'sedang', 'terrain': t.get('cls'), 'elevM': t.get('elevM'), 'slopeDeg': t.get('slopeDeg'),
+                      'featureValue': round(math.exp(fz['F'])), 'kecOff': fz['kecOff'], 'kelOff': fz['kelOff'], 'effKel': fz['effKel'], 'sdLog': fz['sdLog'], 'contrib': fz['contrib']})
+        continue
     zones.append({'name': nm, 'kec': kc, 'value': round(math.exp(z['value'])), 'kelMedian': round(math.exp(z['kelMedian'])) if z['kelMedian'] is not None else None,
                   'kecValue': round(math.exp(z['kecValue'])), 'low': round(p25), 'high': round(p75), 'rangeKind': rk, 'n': z['nKel'], 'nExact': sum(x['exact'] for x in kl),
                   'nKec': z['nKec'], 'level': z['level'], 'confidence': conf, 'terrain': t.get('cls'), 'elevM': t.get('elevM'), 'slopeDeg': t.get('slopeDeg')})

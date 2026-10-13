@@ -8,3 +8,5 @@ data-pipeline/.cache
 data-raw/pinhome/
 data-raw/lamudi/
 __pycache__/
+data-raw/osm/features/bld_*.json.gz
+data-pipeline/features/__pycache__/

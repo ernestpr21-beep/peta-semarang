@@ -24,7 +24,7 @@ sets = {
 }
 out = {}
 names = sorted({k.split('|')[0] for k in R}, key=lambda x: list(R).index(x + '|loo'))
-for mode in ('loo', 'cv'):
+for mode in ('loo', 'cv', 'lko'):
     print(f'\n===== {mode}')
     for sname, f in sets.items():
         print(' ', sname)

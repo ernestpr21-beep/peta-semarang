@@ -1,5 +1,5 @@
 {
- "version": "2026-10-7",
+ "version": "2026-10-8",
  "minEffComparables": 10,
  "locLevels": {
   "titik": 1871,
@@ -206,65 +206,65 @@
    {
     "minM2": 0,
     "maxM2": 100,
-    "scale": 0.892,
-    "scaleRaw": 0.847,
+    "scale": 0.895,
+    "scaleRaw": 0.851,
     "n": 236
    },
    {
     "minM2": 100,
     "maxM2": 175,
-    "scale": 0.935,
-    "scaleRaw": 0.927,
+    "scale": 0.953,
+    "scaleRaw": 0.947,
     "n": 883
    },
    {
     "minM2": 175,
     "maxM2": 500,
-    "scale": 1.078,
-    "scaleRaw": 1.085,
+    "scale": 1.079,
+    "scaleRaw": 1.086,
     "n": 1090
    },
    {
     "minM2": 500,
     "maxM2": 1500,
-    "scale": 1.151,
-    "scaleRaw": 1.182,
+    "scale": 1.072,
+    "scaleRaw": 1.087,
     "n": 476
    },
    {
     "minM2": 1500,
     "maxM2": null,
-    "scale": 1.482,
-    "scaleRaw": 1.623,
+    "scale": 1.394,
+    "scaleRaw": 1.509,
     "n": 344
    }
   ],
   "calibration": {
    "crossFitCoverage50": [
     {
-     "withScale": 47.3,
-     "without": 46.1,
+     "withScale": 46.3,
+     "without": 46.4,
      "n": 1532
     },
     {
-     "withScale": 51.7,
-     "without": 48.3,
+     "withScale": 52.5,
+     "without": 49.4,
      "n": 1497
     }
    ],
    "coverageByClassWithout": [
     56.4,
-    53.0,
-    46.2,
-    44.7,
-    32.3
+    52.4,
+    47.2,
+    47.3,
+    33.7
    ],
    "coverageByClassWith": [
-    52.5,
-    50.8,
-    50.2,
+    51.3,
     49.8,
-    48.5
+    49.7,
+    50.2,
+    46.8
    ]
   },
   "note": "Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1."
@@ -280,16 +280,16 @@
   },
   "gangCheck": {
    "n": 25,
-   "q25LogVsLingPoint": -0.454,
-   "medianLogVsLingPoint": -0.301,
-   "q75LogVsLingPoint": 0.031,
+   "q25LogVsLingPoint": -0.508,
+   "medianLogVsLingPoint": -0.252,
+   "q75LogVsLingPoint": 0.248,
    "shareAboveLingPoint": 36.0,
    "withoutCap": {
-    "coverage50": 52.0,
-    "aboveHigh": 24.0
+    "coverage50": 48.0,
+    "aboveHigh": 32.0
    },
    "withCap": {
-    "coverage50": 40.0,
+    "coverage50": 44.0,
     "aboveHigh": 36.0
    },
    "capMult": 1.0
@@ -298,10 +298,10 @@
  },
  "autoAccess": {
   "factors": {
-   "utama": 1.059,
-   "lingkungan": 1.055,
-   "gang": 1.055,
-   "tanpa": 1.012
+   "utama": 1.056,
+   "lingkungan": 1.056,
+   "gang": 1.056,
+   "tanpa": 1.015
   },
   "cbdScale": 1.0,
   "sdLog": 0.1,
@@ -312,36 +312,36 @@
    "tanpa": 300
   },
   "medianRaw": {
-   "utama": 1.062,
-   "lingkungan": 1.045,
-   "gang": 1.087,
-   "tanpa": 1.009
+   "utama": 1.022,
+   "lingkungan": 1.06,
+   "gang": 1.067,
+   "tanpa": 1.013
   },
   "validation": {
    "before": {
     "n": 1871,
-    "medianAbsErrPct": 41.8,
-    "biasLog": -0.141,
-    "within25pct": 33.2,
-    "coverage50pct": 43.3,
+    "medianAbsErrPct": 41.9,
+    "biasLog": -0.158,
+    "within25pct": 33.4,
+    "coverage50pct": 44.0,
     "biasByDetectedTier": {
-     "utama": 0.119,
-     "lingkungan": -0.044,
-     "gang": -0.283,
-     "tanpa": -0.607
+     "utama": 0.15,
+     "lingkungan": -0.059,
+     "gang": -0.265,
+     "tanpa": -0.611
     }
    },
    "after": {
     "n": 1871,
-    "medianAbsErrPct": 35.5,
-    "biasLog": 0.004,
-    "within25pct": 38.7,
-    "coverage50pct": 50.6,
+    "medianAbsErrPct": 36.6,
+    "biasLog": 0.001,
+    "within25pct": 37.5,
+    "coverage50pct": 50.7,
     "biasByDetectedTier": {
-     "utama": 0.014,
-     "lingkungan": 0.01,
-     "gang": -0.029,
-     "tanpa": 0.003
+     "utama": 0.042,
+     "lingkungan": -0.005,
+     "gang": -0.011,
+     "tanpa": 0.002
     }
    },
    "note": "leave-one-out, iklan berpin tepat; harga di titik iklan memakai tier hasil deteksi OSM (yang tampil saat pengguna mengklik titik itu). bias + = estimasi di atas harga iklan."
@@ -365,7 +365,7 @@
      [
       -6.99238,
       110.42764,
-      0.822
+      0.921
      ]
     ],
     "ids": [
@@ -382,17 +382,17 @@
      [
       -6.97264,
       110.4342,
-      0.974
+      0.998
      ],
      [
       -6.97215,
       110.4341,
-      -0.718
+      -0.837
      ],
      [
       -6.97264,
       110.4342,
-      -0.529
+      -0.785
      ]
     ],
     "ids": [
@@ -413,17 +413,17 @@
      [
       -7.01823,
       110.42667,
-      0.634
+      1.035
      ],
      [
       -7.01312,
       110.43163,
-      1.609
+      1.709
      ],
      [
       -7.00981,
       110.43192,
-      0.214
+      0.77
      ]
     ],
     "ids": [
@@ -444,7 +444,7 @@
      [
       -6.98702,
       110.44809,
-      -0.741
+      -0.5
      ]
     ],
     "ids": [
@@ -461,17 +461,17 @@
      [
       -6.99534,
       110.36674,
-      0.213
+      0.233
      ],
      [
       -6.99734,
       110.36611,
-      0.347
+      0.333
      ],
      [
       -7.00026,
       110.36662,
-      -0.693
+      -0.974
      ]
     ],
     "ids": [
@@ -509,7 +509,7 @@
      [
       -6.9698,
       110.4228,
-      1.596
+      0.788
      ]
     ],
     "ids": [
@@ -526,7 +526,7 @@
      [
       -6.97256,
       110.30894,
-      -1.254
+      -1.103
      ]
     ],
     "ids": [
@@ -543,7 +543,7 @@
      [
       -6.99877,
       110.4336,
-      0.075
+      -0.217
      ]
     ],
     "ids": [
@@ -560,7 +560,7 @@
      [
       -6.97307,
       110.40049,
-      -0.182
+      -0.243
      ]
     ],
     "ids": [
@@ -577,47 +577,47 @@
      [
       -7.00892,
       110.46512,
-      -0.238
+      0.529
      ],
      [
       -7.00565,
       110.45423,
-      1.626
+      1.385
      ],
      [
       -7.00791,
       110.4619,
-      0.253
+      -0.009
      ],
      [
       -7.00901,
       110.46546,
-      0.969
+      1.453
      ],
      [
       -7.01028,
       110.46984,
-      1.005
+      1.596
      ],
      [
       -7.00729,
       110.45977,
-      0.88
+      0.97
      ],
      [
       -7.01405,
       110.48038,
-      2.171
+      2.083
      ],
      [
       -7.01152,
       110.47448,
-      1.99
+      1.667
      ],
      [
       -6.99866,
       110.44225,
-      0.522
+      0.521
      ]
     ],
     "ids": [
@@ -650,7 +650,7 @@
      [
       -6.98405,
       110.40831,
-      1.23
+      0.784
      ]
     ],
     "ids": [
@@ -667,7 +667,7 @@
      [
       -6.97988,
       110.4314,
-      0.326
+      0.726
      ]
     ],
     "ids": [
@@ -684,32 +684,32 @@
      [
       -7.07857,
       110.41149,
-      0.88
+      0.97
      ],
      [
       -7.07469,
       110.41119,
-      0.67
+      0.854
      ],
      [
       -7.07546,
       110.4113,
-      0.827
+      0.679
      ],
      [
       -7.1015,
       110.40907,
-      2.03
+      1.949
      ],
      [
       -7.10264,
       110.40907,
-      1.948
+      1.81
      ],
      [
       -7.08455,
       110.40975,
-      0.697
+      0.765
      ]
     ],
     "ids": [
@@ -736,17 +736,17 @@
      [
       -7.04993,
       110.32068,
-      -0.629
+      -0.767
      ],
      [
       -7.0286,
       110.33463,
-      0.602
+      0.751
      ],
      [
       -7.05959,
       110.31256,
-      0.26
+      0.008
      ]
     ],
     "ids": [
@@ -767,12 +767,12 @@
      [
       -7.08575,
       110.31055,
-      0.517
+      0.316
      ],
      [
       -7.09578,
       110.33631,
-      -0.095
+      0.569
      ]
     ],
     "ids": [
@@ -791,7 +791,7 @@
      [
       -7.09111,
       110.35617,
-      -0.363
+      -0.316
      ]
     ],
     "ids": [
@@ -808,7 +808,7 @@
      [
       -7.02455,
       110.33509,
-      1.937
+      1.492
      ]
     ],
     "ids": [
@@ -825,7 +825,7 @@
      [
       -7.0586,
       110.41448,
-      1.844
+      1.611
      ]
     ],
     "ids": [
@@ -842,22 +842,22 @@
      [
       -6.99807,
       110.46402,
-      1.0
+      1.059
      ],
      [
       -6.99934,
       110.46535,
-      1.064
+      0.991
      ],
      [
       -6.99932,
       110.46522,
-      0.824
+      0.784
      ],
      [
       -6.98787,
       110.45588,
-      0.678
+      0.829
      ]
     ],
     "ids": [
@@ -880,7 +880,7 @@
      [
       -7.00243,
       110.42505,
-      0.472
+      0.737
      ]
     ],
     "ids": [
@@ -897,12 +897,12 @@
      [
       -7.02911,
       110.41849,
-      0.038
+      -0.091
      ],
      [
       -7.02793,
       110.41839,
-      -0.074
+      -0.066
      ]
     ],
     "ids": [
@@ -919,86 +919,457 @@
    "frontage": {
     "manualBefore": {
      "n": 48,
-     "medianAbsErrPct": 100.4,
-     "biasLog": -0.645
+     "medianAbsErrPct": 119.2,
+     "biasLog": -0.758
     },
     "manualAfter": {
      "n": 48,
-     "medianAbsErrPct": 66.1,
-     "biasLog": -0.246
+     "medianAbsErrPct": 71.2,
+     "biasLog": -0.255
     },
     "autoBefore": {
      "n": 48,
-     "medianAbsErrPct": 115.4,
-     "biasLog": -0.749
+     "medianAbsErrPct": 140.0,
+     "biasLog": -0.866
     },
     "autoAfter": {
      "n": 48,
-     "medianAbsErrPct": 78.4,
-     "biasLog": -0.351
+     "medianAbsErrPct": 86.1,
+     "biasLog": -0.362
     },
     "autoNonOutlierBefore": {
      "n": 37,
-     "medianAbsErrPct": 86.2,
-     "biasLog": -0.451
+     "medianAbsErrPct": 119.7,
+     "biasLog": -0.677
     },
     "autoNonOutlierAfter": {
      "n": 37,
-     "medianAbsErrPct": 61.7,
-     "biasLog": -0.188
+     "medianAbsErrPct": 64.4,
+     "biasLog": -0.24
     },
     "autoTextBefore": {
      "n": 31,
-     "medianAbsErrPct": 153.1,
-     "biasLog": -0.929
+     "medianAbsErrPct": 179.8,
+     "biasLog": -1.029
     },
     "autoTextAfter": {
      "n": 31,
-     "medianAbsErrPct": 69.1,
-     "biasLog": -0.356
+     "medianAbsErrPct": 84.7,
+     "biasLog": -0.572
     },
     "autoPinBefore": {
      "n": 17,
-     "medianAbsErrPct": 84.7,
-     "biasLog": -0.431
+     "medianAbsErrPct": 130.3,
+     "biasLog": -0.629
     },
     "autoPinAfter": {
      "n": 17,
-     "medianAbsErrPct": 78.9,
-     "biasLog": -0.188
+     "medianAbsErrPct": 94.0,
+     "biasLog": -0.197
     }
    },
    "display": {
     "before": {
      "n": 1871,
-     "medianAbsErrPct": 35.5,
-     "biasLog": 0.004,
-     "within25pct": 38.7,
-     "coverage50pct": 50.6,
+     "medianAbsErrPct": 36.6,
+     "biasLog": 0.001,
+     "within25pct": 37.5,
+     "coverage50pct": 50.7,
      "biasByDetectedTier": {
-      "utama": 0.014,
-      "lingkungan": 0.01,
-      "gang": -0.029,
-      "tanpa": 0.003
+      "utama": 0.042,
+      "lingkungan": -0.005,
+      "gang": -0.011,
+      "tanpa": 0.002
      }
     },
     "after": {
      "n": 1871,
-     "medianAbsErrPct": 35.6,
-     "biasLog": 0.004,
-     "within25pct": 38.7,
-     "coverage50pct": 50.4,
+     "medianAbsErrPct": 36.5,
+     "biasLog": 0.001,
+     "within25pct": 37.5,
+     "coverage50pct": 50.8,
      "biasByDetectedTier": {
-      "utama": 0.033,
-      "lingkungan": 0.01,
-      "gang": -0.029,
-      "tanpa": 0.003
+      "utama": 0.045,
+      "lingkungan": -0.005,
+      "gang": -0.011,
+      "tanpa": 0.002
      }
     },
     "nWithPremium": 34
    }
   },
   "note": "Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama."
+ },
+ "featurePricing": {
+  "mKec": 10,
+  "mKel": 40,
+  "cityResidSd": 0.449,
+  "alpha": 4.6415888336127775,
+  "nTrain": 3029,
+  "groups": [
+   {
+    "key": "padat",
+    "pos": "kepadatan bangunan tinggi",
+    "neg": "kepadatan bangunan rendah",
+    "p10Pct": -26.7,
+    "p90Pct": 32.7
+   },
+   {
+    "key": "pusat",
+    "pos": "dekat pusat kota",
+    "neg": "jauh dari pusat kota",
+    "p10Pct": -8.7,
+    "p90Pct": 6.8
+   },
+   {
+    "key": "jalan",
+    "pos": "dekat jalan besar/tol",
+    "neg": "jauh dari jalan besar/tol",
+    "p10Pct": -14.0,
+    "p90Pct": 17.5
+   },
+   {
+    "key": "belanja",
+    "pos": "dekat toko/pasar/mal",
+    "neg": "jauh dari toko/pasar/mal",
+    "p10Pct": -23.3,
+    "p90Pct": 22.6
+   },
+   {
+    "key": "fasilitas",
+    "pos": "banyak sekolah & faskes",
+    "neg": "sedikit sekolah & faskes",
+    "p10Pct": -6.9,
+    "p90Pct": 8.1
+   },
+   {
+    "key": "lereng",
+    "pos": "lereng landai",
+    "neg": "lereng curam",
+    "p10Pct": -10.6,
+    "p90Pct": 12.2
+   },
+   {
+    "key": "tinggi",
+    "pos": "lebih tinggi dari dataran pantai",
+    "neg": "dataran rendah",
+    "p10Pct": -20.1,
+    "p90Pct": 25.4
+   },
+   {
+    "key": "rob",
+    "pos": "jauh dari pesisir/rob",
+    "neg": "rawan rob / pesisir",
+    "p10Pct": -1.8,
+    "p90Pct": 1.5
+   },
+   {
+    "key": "sungai",
+    "pos": "posisi terhadap sungai",
+    "neg": "posisi terhadap sungai",
+    "p10Pct": -2.9,
+    "p90Pct": 2.9
+   },
+   {
+    "key": "industri",
+    "pos": "kawasan industri sekitar",
+    "neg": "kawasan industri sekitar",
+    "p10Pct": -0.4,
+    "p90Pct": 2.5
+   },
+   {
+    "key": "hijau",
+    "pos": "ada lahan hijau sekitar",
+    "neg": "dominan sawah/kebun/hutan",
+    "p10Pct": -10.5,
+    "p90Pct": 12.1
+   }
+  ],
+  "features": [
+   {
+    "feature": "bld_250",
+    "p10": 1.312,
+    "p90": 39.672,
+    "effectPct": -13.1
+   },
+   {
+    "feature": "built_1000",
+    "p10": 0.115,
+    "p90": 0.838,
+    "effectPct": 14.8
+   },
+   {
+    "feature": "built_250",
+    "p10": 0.03,
+    "p90": 0.924,
+    "effectPct": -3.3
+   },
+   {
+    "feature": "built_2500",
+    "p10": 0.131,
+    "p90": 0.764,
+    "effectPct": 50.2
+   },
+   {
+    "feature": "comlu_500",
+    "p10": -0.0,
+    "p90": 0.0,
+    "effectPct": 0.0
+   },
+   {
+    "feature": "crop_500",
+    "p10": 0.0,
+    "p90": 0.065,
+    "effectPct": 3.3
+   },
+   {
+    "feature": "d_art",
+    "p10": 190.394,
+    "p90": 3570.399,
+    "effectPct": -14.8
+   },
+   {
+    "feature": "d_cbd",
+    "p10": 3347.472,
+    "p90": 11983.554,
+    "effectPct": -14.5
+   },
+   {
+    "feature": "d_coast",
+    "p10": 4048.472,
+    "p90": 14000.611,
+    "effectPct": -0.9
+   },
+   {
+    "feature": "d_drive",
+    "p10": 0.0,
+    "p90": 100.0,
+    "effectPct": -2.9
+   },
+   {
+    "feature": "d_mall",
+    "p10": 938.948,
+    "p90": 4810.522,
+    "effectPct": -5.2
+   },
+   {
+    "feature": "d_market",
+    "p10": 450.694,
+    "p90": 2601.874,
+    "effectPct": 12.9
+   },
+   {
+    "feature": "d_river",
+    "p10": 190.394,
+    "p90": 1565.327,
+    "effectPct": -5.7
+   },
+   {
+    "feature": "d_sec",
+    "p10": 50.0,
+    "p90": 989.002,
+    "effectPct": -4.9
+   },
+   {
+    "feature": "d_toll",
+    "p10": 706.841,
+    "p90": 5718.369,
+    "effectPct": -20.2
+   },
+   {
+    "feature": "elev",
+    "p10": 7.908,
+    "p90": 258.956,
+    "effectPct": 22.3
+   },
+   {
+    "feature": "grass_500",
+    "p10": 0.004,
+    "p90": 0.103,
+    "effectPct": 11.2
+   },
+   {
+    "feature": "health_1500",
+    "p10": 3.006,
+    "p90": 28.051,
+    "effectPct": -9.5
+   },
+   {
+    "feature": "ind_500",
+    "p10": -0.0,
+    "p90": 0.0,
+    "effectPct": 0.0
+   },
+   {
+    "feature": "kec_bld_250",
+    "p10": 1.46,
+    "p90": 3.134,
+    "effectPct": 0.3
+   },
+   {
+    "feature": "kec_built_250",
+    "p10": 0.135,
+    "p90": 0.728,
+    "effectPct": 6.3
+   },
+   {
+    "feature": "kec_crop_500",
+    "p10": 0.014,
+    "p90": 0.044,
+    "effectPct": -4.0
+   },
+   {
+    "feature": "kec_elev",
+    "p10": 11.793,
+    "p90": 220.989,
+    "effectPct": -6.5
+   },
+   {
+    "feature": "kec_ind_500",
+    "p10": 0.0,
+    "p90": 0.022,
+    "effectPct": 3.5
+   },
+   {
+    "feature": "kec_poi_comm_1000",
+    "p10": 0.68,
+    "p90": 2.278,
+    "effectPct": 10.4
+   },
+   {
+    "feature": "kec_roaddens_500",
+    "p10": 0.221,
+    "p90": 0.593,
+    "effectPct": 9.1
+   },
+   {
+    "feature": "kec_rob_250",
+    "p10": -0.0,
+    "p90": 0.383,
+    "effectPct": 0.7
+   },
+   {
+    "feature": "kec_slope_250",
+    "p10": 1.049,
+    "p90": 7.536,
+    "effectPct": -5.8
+   },
+   {
+    "feature": "kec_tree_500",
+    "p10": 0.11,
+    "p90": 0.775,
+    "effectPct": -9.6
+   },
+   {
+    "feature": "kel_bld_250",
+    "p10": 1.294,
+    "p90": 3.404,
+    "effectPct": -13.1
+   },
+   {
+    "feature": "kel_built_250",
+    "p10": 0.111,
+    "p90": 0.843,
+    "effectPct": -3.4
+   },
+   {
+    "feature": "kel_crop_500",
+    "p10": 0.0,
+    "p90": 0.073,
+    "effectPct": 8.9
+   },
+   {
+    "feature": "kel_elev",
+    "p10": 8.596,
+    "p90": 251.726,
+    "effectPct": 8.1
+   },
+   {
+    "feature": "kel_ind_500",
+    "p10": -0.0,
+    "p90": 0.023,
+    "effectPct": -0.1
+   },
+   {
+    "feature": "kel_poi_comm_1000",
+    "p10": 0.453,
+    "p90": 3.057,
+    "effectPct": 18.7
+   },
+   {
+    "feature": "kel_roaddens_500",
+    "p10": 0.187,
+    "p90": 0.654,
+    "effectPct": -4.7
+   },
+   {
+    "feature": "kel_rob_250",
+    "p10": -0.0,
+    "p90": 0.003,
+    "effectPct": -0.0
+   },
+   {
+    "feature": "kel_slope_250",
+    "p10": 1.089,
+    "p90": 8.245,
+    "effectPct": 2.0
+   },
+   {
+    "feature": "kel_tree_500",
+    "p10": 0.093,
+    "p90": 0.778,
+    "effectPct": -4.7
+   },
+   {
+    "feature": "poi_comm_1000",
+    "p10": 0.0,
+    "p90": 23.007,
+    "effectPct": -1.5
+   },
+   {
+    "feature": "poi_comm_3000",
+    "p10": 11.003,
+    "p90": 148.046,
+    "effectPct": 24.1
+   },
+   {
+    "feature": "roaddens_500",
+    "p10": 0.184,
+    "p90": 0.693,
+    "effectPct": 27.9
+   },
+   {
+    "feature": "rob_250",
+    "p10": -0.0,
+    "p90": 0.0,
+    "effectPct": -0.0
+   },
+   {
+    "feature": "school_1000",
+    "p10": 6.002,
+    "p90": 44.014,
+    "effectPct": -0.4
+   },
+   {
+    "feature": "slope_250",
+    "p10": 0.919,
+    "p90": 9.542,
+    "effectPct": -6.4
+   },
+   {
+    "feature": "tree_500",
+    "p10": 0.087,
+    "p90": 0.823,
+    "effectPct": 10.9
+   },
+   {
+    "feature": "water_500",
+    "p10": -0.0,
+    "p90": 0.001,
+    "effectPct": 0.0
+   }
+  ],
+  "note": "Harga dasar = exp(F(fitur wilayah) + offset kecamatan + offset kelurahan). F: regresi ridge spline (GAM) log harga ternormalisasi pada fitur wilayah (OSM, WorldCover, DEM), dilatih dari semua iklan kota. Offset = median residu luar-lipatan, disusutkan setara mKec / mKel iklan. Iklan pembanding tidak dipakai untuk harga."
  },
  "kelurahanPricing": {
   "mKel": 8.0,
@@ -1304,21 +1675,21 @@
  },
  "validation": {
   "n": 1871,
-  "medianAbsErrPct_model": 35.1,
+  "medianAbsErrPct_model": 36.8,
   "medianAbsErrPct_kelurahanMedian": 35.1,
   "medianAbsErrPct_kecamatanMedian_raw": 49.9,
-  "within25pct_model": 38.7,
-  "coverage50pct": 50.0,
-  "biasLog": 0.008,
+  "within25pct_model": 38.1,
+  "coverage50pct": 48.5,
+  "biasLog": 0.007,
   "target": "iklan berpin tepat (loc_level=titik), leave-one-out",
   "allLocated": {
    "n": 3029,
-   "medianAbsErrPct_model": 33.7,
+   "medianAbsErrPct_model": 35.5,
    "medianAbsErrPct_kelurahanMedian": 34.2,
    "medianAbsErrPct_kecamatanMedian_raw": 50.0,
-   "within25pct_model": 40.1,
-   "coverage50pct": 50.3,
-   "biasLog": 0.003
+   "within25pct_model": 38.5,
+   "coverage50pct": 49.6,
+   "biasLog": -0.0
   },
   "nKecamatanOnly": 849
  }
