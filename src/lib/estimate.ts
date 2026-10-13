@@ -1,5 +1,5 @@
 import { haversineMeters } from "./geo";
-import type { AccessTier, AreaStat, Comparable, PriceModel } from "./model";
+import type { AccessTier, AreaStat, Comparable, KelurahanZoneStat, PriceModel } from "./model";
 import { TIER_ORDER } from "./model";
 import { normalizeName, roundSig } from "./utils";
 
@@ -38,6 +38,8 @@ export interface PriceEstimateResult {
   priorLevel: "sekitar" | "kelurahan" | "kecamatan" | "kota";
   /** penetapan harga berbasis kelurahan (model ≥ 2026-10-7): tingkat fallback & jumlah iklan */
   zone: KelurahanZone | null;
+  /** model fitur wilayah (2026-10-8): rincian kontribusi fitur & koreksi wilayah */
+  feature: FeatureBreakdown | null;
   priorName: string;
   priorMedian: number;
   localMedian: number | null;
@@ -56,6 +58,15 @@ export interface PriceEstimateResult {
   campus: { name: string; distanceM: number } | null;
   dateMin: string;
   dateMax: string;
+}
+
+export interface FeatureBreakdown {
+  /** harga dasar dari fitur saja (tanpa koreksi wilayah) */
+  featureValue: number;
+  kecPct: number;
+  kelPct: number;
+  nKel: number;
+  contributions: { key: string; label: string; pct: number }[];
 }
 
 export type ZoneLevel = "kelurahan" | "kelurahan+kecamatan" | "kecamatan" | "kota";
@@ -293,6 +304,12 @@ export function estimatePrice(opts: {
   /** nama kelurahan & kecamatan titik (point-in-polygon) — dipakai bila model berbasis kelurahan */
   kel?: string | null;
   kec?: string | null;
+  /** validasi: log harga dasar dari luar (mis. prediksi luar-lipatan model fitur) */
+  baseLogOverride?: number;
+  /** model fitur: nilai sel grid 150 m di titik (log F & kontribusi kelompok fitur, log) */
+  feature?: { f: number; c: number[] } | null;
+  /** statistik zona kelurahan titik (dataset.zones) */
+  zoneStat?: KelurahanZoneStat | null;
   area?: number;
   /** kampus terdekat (jarak ke poligon); dipakai untuk faktor kedekatan kampus */
   campus?: { name: string; distanceM: number } | null;
@@ -387,9 +404,30 @@ export function estimatePrice(opts: {
   // 5. Penyusutan (shrinkage) ke prior wilayah
   // kelurahan dengan data tipis: median lokal (sedikit iklan) tidak boleh mengalahkan median zona yang sudah disusutkan
   const PS = zone && zone.level !== "kelurahan" && kp?.weakLocalStrength ? Math.max(kp.weakLocalStrength, kp.localStrength ?? PRIOR_STRENGTH) : (kp?.localStrength ?? PRIOR_STRENGTH);
-  const mu = muLocal == null ? muPrior : (nEff * muLocal + PS * muPrior) / (nEff + PS);
-  const priorShare = muLocal == null ? 1 : PS / (nEff + PS);
-  const se = sLocal / Math.sqrt(Math.max(1, nEff + PS * 0.5));
+  // model fitur wilayah (2026-10-8): harga dasar dari karakteristik lokasi + koreksi kecamatan/kelurahan; pembanding hanya ditampilkan
+  const fp = model.featurePricing;
+  const zs = fp ? opts.zoneStat ?? null : null;
+  let feature: FeatureBreakdown | null = null;
+  let muFeat: number | null = null;
+  if (fp && zs) {
+    const fLog = opts.feature?.f ?? Math.log(zs.featureValue ?? zs.value);
+    muFeat = fLog + (zs.kecOff ?? 0) + (zs.kelOff ?? 0);
+    sLocal = zs.sdLog ?? fp.cityResidSd;
+    const contrib = opts.feature?.c ?? zs.contrib ?? [];
+    feature = {
+      featureValue: Math.exp(fLog),
+      kecPct: Math.exp(zs.kecOff ?? 0) - 1,
+      kelPct: Math.exp(zs.kelOff ?? 0) - 1,
+      nKel: zs.n,
+      contributions: fp.groups
+        .map((g, i) => ({ key: g.key, label: (contrib[i] ?? 0) >= 0 ? g.pos : g.neg, pct: Math.exp(contrib[i] ?? 0) - 1 }))
+        .filter((x) => Math.abs(x.pct) >= 0.02)
+        .sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct)),
+    };
+  }
+  const mu = opts.baseLogOverride ?? muFeat ?? (muLocal == null ? muPrior : (nEff * muLocal + PS * muPrior) / (nEff + PS));
+  const priorShare = muFeat != null ? 1 : muLocal == null ? 1 : PS / (nEff + PS);
+  const se = muFeat != null ? sLocal / Math.sqrt(Math.max(1, (zs?.effKel ?? 0) + 5)) : sLocal / Math.sqrt(Math.max(1, nEff + PS * 0.5));
   const sigma = Math.sqrt(sLocal * sLocal + se * se);
 
   const area = opts.area ?? model.refArea;
@@ -450,7 +488,13 @@ export function estimatePrice(opts: {
 
   let confidence: PriceEstimateResult["confidence"] = "rendah";
   let confidenceReason = "";
-  if (zone && zone.level !== "kelurahan") {
+  if (feature && zs) {
+    confidence = zs.n >= 10 ? "tinggi" : zs.n > 0 ? "sedang" : "rendah";
+    confidenceReason =
+      zs.n > 0
+        ? `model fitur wilayah + koreksi dari ${zs.n} iklan di Kel. ${zs.name}`
+        : `belum ada iklan di Kel. ${zs.name}; harga dari karakteristik wilayahnya (model fitur) + koreksi Kec. ${zs.kec}`;
+  } else if (zone && zone.level !== "kelurahan") {
     confidenceReason =
       zone.level === "kelurahan+kecamatan"
         ? `hanya ${zone.nKel} iklan di Kel. ${zone.kel}; disusutkan ke median Kec. ${zone.kec}`
@@ -487,6 +531,7 @@ export function estimatePrice(opts: {
     priorShare,
     priorLevel,
     zone,
+    feature,
     priorName,
     priorMedian,
     localMedian: muLocal == null ? null : Math.exp(muLocal),

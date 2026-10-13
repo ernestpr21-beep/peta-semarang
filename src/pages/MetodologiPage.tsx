@@ -529,6 +529,7 @@ export function MetodologiPage() {
         <li>Tingkat keyakinan: tinggi (≥ 8 pembanding efektif, median jarak ≤ 1 km, sebaran wajar), sedang (≥ 4 dalam 2 km), selain itu rendah.</li>
       </ol>
 
+      {model.featurePricing ? <FeatureSection /> : null}
       {model.kelurahanPricing ? <KelurahanSection /> : null}
 
       <h2 id="akses">4. Ada akses jalan vs tanpa akses</h2>
@@ -872,6 +873,99 @@ function KelurahanSection() {
         (kuintil termahal: −0,07 → −0,03 log). Struktur ini dipakai karena sesuai cara pengguna membaca peta (satu harga acuan per kelurahan, tanpa rembesan lintas batas) — dengan konsekuensi yang
         disebut di atas. Kelurahan bertanda “kelurahan + kecamatan” atau “kecamatan” sebaiknya dibaca sebagai perkiraan kasar. Medan: DEM Copernicus 30 m, berbukit = lereng rata-rata ≥ 5° dan elevasi
         median ≥ 40 m (61 dari 177 kelurahan).
+      </p>
+    </>
+  );
+}
+
+const FEAT_ID: Record<string, string> = {
+  built_2500: "Area terbangun radius 2,5 km",
+  built_1000: "Area terbangun radius 1 km",
+  roaddens_500: "Kepadatan jalan 500 m",
+  poi_comm_3000: "Jumlah toko/usaha radius 3 km",
+  elev: "Ketinggian (di atas dataran pantai)",
+  d_toll: "Jarak ke gerbang tol (makin jauh)",
+  d_art: "Jarak ke jalan arteri (makin jauh)",
+  d_cbd: "Jarak ke Simpang Lima (makin jauh)",
+  bld_250: "Kerapatan bangunan 250 m (setelah area terbangun)",
+  d_market: "Jarak ke pasar",
+  tree_500: "Tutupan pohon 500 m",
+  grass_500: "Rumput/lahan terbuka 500 m",
+  health_1500: "Faskes radius 1,5 km",
+  slope_250: "Lereng (makin curam)",
+  d_river: "Jarak ke sungai",
+  d_mall: "Jarak ke mal (makin jauh)",
+  kel_poi_comm_1000: "Rata-rata toko/usaha di kelurahan",
+  kec_poi_comm_1000: "Rata-rata toko/usaha di kecamatan",
+  kec_tree_500: "Rata-rata tutupan pohon di kecamatan",
+  kec_roaddens_500: "Rata-rata kepadatan jalan di kecamatan",
+  kel_crop_500: "Sawah di kelurahan",
+  kel_elev: "Rata-rata ketinggian kelurahan",
+  kec_elev: "Rata-rata ketinggian kecamatan",
+  kec_built_250: "Rata-rata area terbangun kecamatan",
+  kec_slope_250: "Rata-rata lereng kecamatan",
+};
+
+function FeatureSection() {
+  const ds = useDataset();
+  const fp = ds.data?.model.featurePricing;
+  if (!fp) return null;
+  const T = (rows: (string | number)[][]) => (
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} className={i === 0 ? "font-semibold" : "border-t border-line"}>
+              {r.map((c, j) => (
+                <td key={j} className={j ? "num py-1 text-right" : "py-1"}>
+                  {c}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+  return (
+    <>
+      <h3 id="model-fitur">3b. Model fitur wilayah (model 2026-10-8)</h3>
+      <p>
+        Harga dasar di titik mana pun kini dihitung dari <b>karakteristik wilayahnya</b>, bukan dari iklan terdekat. Model aditif (spline + regresi ridge, dipilih lewat
+        validasi silang blok spasial 2 km; gradient boosting juga diuji tetapi lebih buruk) dilatih dari <b>semua iklan kota</b> untuk memprediksi log harga ternormalisasi.
+        Tidak ada harga yang diisi manual. Ukuran tanah, akses jalan, kampus dan muka jalan utama tetap dihitung oleh faktor penyesuaian di bagian 2 &amp; 4, jadi tidak masuk
+        model fitur (tidak dihitung dua kali).
+      </p>
+      <p>Sumber fitur (semua data terbuka): ESA WorldCover 10 m (area terbangun, pohon, sawah, rumput, air), Copernicus DEM 30 m (ketinggian, lereng), OpenStreetMap
+        (642 ribu bangunan, jalan, toko/pasar/mal, sekolah, faskes, gerbang tol, industri, sungai, garis pantai). Kelompok faktor yang ditampilkan di panel:</p>
+      {T([
+        ["Fitur (terukur di titik iklan)", "Pengaruh p10 → p90"],
+        ...fp.features
+          .filter((e) => Math.abs(e.effectPct) >= 5 && FEAT_ID[e.feature])
+          .sort((a, b) => Math.abs(b.effectPct) - Math.abs(a.effectPct))
+          .map((e) => [FEAT_ID[e.feature], `${e.effectPct >= 0 ? "+" : "−"}${Math.abs(e.effectPct).toFixed(0)}%`]),
+      ])}
+      <p className="text-xs text-fg-muted">Pengaruh parsial: perubahan harga bila satu fitur bergeser dari persentil 10 ke 90 sementara fitur lain tetap. Fitur saling berkorelasi, jadi baca per kelompok.</p>
+      <p>
+        Harga akhir = model fitur × koreksi kecamatan (residu iklan disusutkan setara {fp.mKec} iklan) × koreksi kelurahan (setara {fp.mKel} iklan). Kelurahan tanpa iklan
+        memakai nilai fiturnya sendiri. Pembanding lokal tidak dipakai lagi untuk harga karena memperburuk validasi; iklan sekitar tetap ditampilkan sebagai acuan. Faktor
+        rob/pesisir dan industri hampir tidak berpengaruh karena sangat sedikit iklan di wilayah itu — bukan berarti tidak penting.
+      </p>
+      <p>Validasi (MdAPE harga tampil, 1.871 iklan bersih; makin kecil makin baik):</p>
+      {T([
+        ["Uji", "2026-10-6", "2026-10-7", "2026-10-8"],
+        ["Leave-one-out", "34,1%", "35,6%", "36,0%"],
+        ["Blok spasial 2 km", "34,3%", "37,4%", "37,2%"],
+        ["Tanpa kelurahan sendiri (LKO)", "34,6%", "42,9%", "38,8%"],
+        ["Kelurahan 1–4 iklan (blok)", "68,7%", "74,1%", "63,4%"],
+        ["Berbukit (LKO)", "34,0%", "42,6%", "40,3%"],
+        ["Datar/padat (LKO)", "36,1%", "44,9%", "36,6%"],
+        ["Bias kuintil termurah / termahal (LKO, log)", "+0,06 / −0,10", "+0,22 / −0,28", "+0,11 / −0,04"],
+      ])}
+      <p>
+        Jujur: model 2026-10-8 lebih baik dari 2026-10-7 di uji blok (tipis, 0,2 poin) dan jelas lebih baik saat kelurahan sendiri disembunyikan (LKO), serta bias
+        “tarik ke rata-rata” jauh berkurang. Namun model lama 2026-10-6 (pembanding terdekat lintas kelurahan) masih sedikit lebih akurat secara keseluruhan; harga di muka
+        jalan arteri (mis. Majapahit) masih cenderung terlalu rendah di semua model.
       </p>
     </>
   );

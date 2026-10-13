@@ -33,6 +33,11 @@ export function PriceSkeleton() {
   );
 }
 
+function fmtPct(p: number) {
+  const v = Math.round(p * 100);
+  return `${v >= 0 ? "+" : "−"}${Math.abs(v)}%`;
+}
+
 export function PriceCard({ price, access, tier, tierIsManual, model }: { price: PriceResult; access: AccessDetection | null; tier: AccessTier | null; tierIsManual: boolean; model: PriceModel }) {
   const area = useAppStore((s) => s.area);
   const setArea = useAppStore((s) => s.setArea);
@@ -200,7 +205,32 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
       {/* Dasar perhitungan */}
       <div className="rounded-lg border border-border p-2.5 text-xs">
         <p className="leading-relaxed text-fg">
-          {price.zone ? (
+          {price.feature ? (
+            <span className="mb-1 block">
+              Harga dasar dari <b>karakteristik wilayah</b> (model fitur, dilatih dari semua iklan kota): {formatRupiahShort(price.feature.featureValue)}/m²; koreksi Kec.{" "}
+              {price.zone?.kec ?? "—"} {fmtPct(price.feature.kecPct)}
+              {price.feature.nKel > 0 ? (
+                <>
+                  , koreksi Kel. {price.zone?.kel} {fmtPct(price.feature.kelPct)} ({price.feature.nKel} iklan)
+                </>
+              ) : (
+                <>, Kel. {price.zone?.kel ?? "—"} belum punya iklan</>
+              )}
+              .
+              {price.feature.contributions.length ? (
+                <span className="mt-1 block text-fg-muted">
+                  Faktor wilayah utama:{" "}
+                  {price.feature.contributions.slice(0, 4).map((c, i) => (
+                    <span key={c.key}>
+                      {i ? " · " : ""}
+                      {c.label} <b className={c.pct >= 0 ? "text-fg" : "text-warn"}>{fmtPct(c.pct)}</b>
+                    </span>
+                  ))}{" "}
+                  (dibanding rata-rata lokasi iklan di Semarang)
+                </span>
+              ) : null}
+            </span>
+          ) : price.zone ? (
             <span className="mb-1 block">
               Wilayah harga: <b>Kel. {price.zone.kel ?? "—"}</b>, Kec. {price.zone.kec ?? "—"} · tingkat{" "}
               <b>
@@ -215,6 +245,7 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
               . Pembanding hanya dari kelurahan yang sama.
             </span>
           ) : null}
+          {price.feature ? "Acuan (tidak menentukan harga): " : null}
           Dihitung dari <b>{price.nUsed} iklan pembanding</b> dalam radius {formatDistance(price.radiusM)} (terdekat {formatDistance(price.nearestM)}, median jarak{" "}
           {formatDistance(price.medianDistanceM)}; {price.nExact} berkoordinat tepat){price.dateMin ? `, iklan ${formatMonth(price.dateMin)}–${formatMonth(price.dateMax)}` : ""}.
         </p>
@@ -226,21 +257,23 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
           <table className="mt-1.5 w-full text-[11px]">
             <tbody className="[&_td]:py-0.5 [&_td:last-child]:text-right [&_td:last-child]:font-mono">
               <tr>
-                <td className="text-fg-muted">Median lokal pembanding (dinormalisasi*)</td>
-                <td>{price.localMedian ? formatRupiahShort(price.localMedian) : "—"}</td>
+                <td className="text-fg-muted">{price.feature ? "Model fitur wilayah (sebelum koreksi)" : "Median lokal pembanding (dinormalisasi*)"}</td>
+                <td>{price.feature ? formatRupiahShort(price.feature.featureValue) : price.localMedian ? formatRupiahShort(price.localMedian) : "—"}</td>
               </tr>
               <tr>
                 <td className="text-fg-muted">
-                  {price.priorLevel === "sekitar"
+                  {price.feature
+                    ? `× koreksi kecamatan ${fmtPct(price.feature.kecPct)} & kelurahan ${fmtPct(price.feature.kelPct)} (n=${price.feature.nKel}); hasil`
+                    : price.priorLevel === "sekitar"
                     ? `Median wilayah sekitar (berbobot jarak, ${price.priorName})`
                     : price.zone
                       ? price.zone.level === "kelurahan" || price.zone.level === "kelurahan+kecamatan"
                         ? `Median kelurahan ${price.zone.kel} (n=${price.zone.nKel}, disusutkan ke kecamatan)`
                         : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`
                       : `Median ${price.priorLevel} ${price.priorLevel !== "kota" ? price.priorName : ""}`}{" "}
-                  (bobot {Math.round(price.priorShare * 100)}%)
+                  {price.feature ? null : <>(bobot {Math.round(price.priorShare * 100)}%)</>}
                 </td>
-                <td>{formatRupiahShort(price.priorMedian)}</td>
+                <td>{formatRupiahShort(price.feature ? price.basePoint / price.campusFactor : price.priorMedian)}</td>
               </tr>
               {price.campusFactor !== 1 && price.campus ? (
                 <tr>

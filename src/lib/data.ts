@@ -1,5 +1,5 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
-import type { Dataset } from "./model";
+import type { Dataset, FeatureGrid } from "./model";
 import type { GeoCollection } from "./geo";
 import type { FacilityRaw } from "./facilities";
 import type { Road } from "./access";
@@ -82,6 +82,26 @@ export interface Evidence {
 export const useEvidence = () => useQuery({ queryKey: ["evidence"], queryFn: () => getJson<Evidence>(dataUrl("evidence.json")), staleTime: Infinity });
 export const useKota = () => useQuery({ queryKey: ["kota"], queryFn: () => getJson<GeoCollection<KotaProps>>(dataUrl("kota.geojson")), staleTime: Infinity });
 export const useKecamatan = () => useQuery({ queryKey: ["kec"], queryFn: () => getJson<GeoCollection<KecProps>>(dataUrl("kecamatan.geojson")), staleTime: Infinity });
+export const useFeatureGrid = () =>
+  useQuery({
+    queryKey: ["feature-grid"],
+    queryFn: async () => {
+      const g = await getJson<FeatureGrid>(dataUrl("feature-grid.json"));
+      const pos = new Map<number, number>();
+      g.idx.forEach((v, i) => pos.set(v, i));
+      return { ...g, pos };
+    },
+    staleTime: Infinity,
+  });
+/** nilai model fitur di titik: sel grid 150 m (null di luar kota) */
+export function featureAt(g: (FeatureGrid & { pos: Map<number, number> }) | undefined, lat: number, lng: number) {
+  if (!g) return null;
+  const i = Math.floor((g.lat0 - lat) / g.dLat), j = Math.floor((lng - g.lng0) / g.dLng);
+  if (i < 0 || j < 0 || i >= g.ny || j >= g.nx) return null;
+  const k = g.pos.get(i * g.nx + j);
+  if (k == null) return null;
+  return { f: g.f[k] / 1000, c: g.c.map((col) => col[k] / 1000) };
+}
 export const useKelurahan = () => useQuery({ queryKey: ["kel"], queryFn: () => getJson<GeoCollection<KelProps>>(dataUrl("kelurahan.geojson")), staleTime: Infinity });
 export const useFacilities = () =>
   useQuery({ queryKey: ["fac"], queryFn: () => getJson<{ osmBase: string; rows: FacilityRaw[] }>(dataUrl("facilities.json")), staleTime: Infinity });

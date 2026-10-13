@@ -140,6 +140,17 @@ export interface PriceModel {
     };
     note: string;
   };
+  /** model fitur wilayah (hedonik, 2026-10-8) */
+  featurePricing?: {
+    mKec: number;
+    mKel: number;
+    cityResidSd: number;
+    alpha: number;
+    nTrain: number;
+    groups: { key: string; pos: string; neg: string; p10Pct: number; p90Pct: number }[];
+    features: { feature: string; p10: number; p90: number; effectPct: number }[];
+    note: string;
+  };
   /** penetapan harga berbasis kelurahan: pembanding & prior hanya dari kelurahan yang sama; fallback kecamatan → kota */
   kelurahanPricing?: { mKel: number; mKec: number; minKel: number; localStrength?: number; weakLocalStrength?: number; note: string };
   /** prior wilayah halus (median berbobot jarak) menggantikan median kelurahan */
@@ -253,6 +264,27 @@ export interface KelurahanZoneStat {
   terrain: "berbukit" | "datar" | null;
   elevM: number | null;
   slopeDeg: number | null;
+  /** model fitur (2026-10-8) */
+  featureValue?: number;
+  kecOff?: number;
+  kelOff?: number;
+  effKel?: number;
+  sdLog?: number;
+  contrib?: number[];
+}
+
+/** grid 150 m nilai model fitur (log) & kontribusi kelompok fitur (log × 1000) */
+export interface FeatureGrid {
+  lat0: number;
+  lng0: number;
+  dLat: number;
+  dLng: number;
+  nx: number;
+  ny: number;
+  groups: { key: string; pos: string; neg: string }[];
+  idx: number[];
+  f: number[];
+  c: number[][];
 }
 
 export interface Dataset {

@@ -218,8 +218,9 @@ export default function MapInner() {
             const v = kelColor.get(key);
             const z = kelZone.get(key);
             // kelurahan tanpa data cukup (fallback kecamatan/kota) diberi isian lebih pucat
-            const op = !v ? 0 : z && z.level !== "kelurahan" ? 0.3 : 0.55;
-            return { color: ink, weight: 0.6, fillColor: v ? priceColor(v) : "transparent", fillOpacity: op, dashArray: z && z.level !== "kelurahan" ? "3 3" : undefined };
+            const weak = z ? (z.featureValue ? z.n === 0 : z.level !== "kelurahan") : false;
+            const op = !v ? 0 : weak ? 0.35 : 0.55;
+            return { color: ink, weight: 0.6, fillColor: v ? priceColor(v) : "transparent", fillOpacity: op, dashArray: weak ? "3 3" : undefined };
           }}
           onEachFeature={(f, layer) => {
             const p = f.properties as { name: string; kecamatan: string };
@@ -228,7 +229,9 @@ export default function MapInner() {
             const lvl = (l: string) => (l === "kelurahan" ? "data kelurahan" : l === "kelurahan+kecamatan" ? "kelurahan + susut ke kecamatan" : l === "kecamatan" ? "fallback kecamatan" : "fallback kota");
             layer.bindTooltip(
               z
-                ? `<b>${p.name}</b> · Kec. ${p.kecamatan}<br/>median ${formatRupiahShort(z.value)}/m² · ${z.n} iklan<br/>keyakinan ${z.confidence} (${lvl(z.level)})${z.terrain === "berbukit" ? "<br/>medan berbukit" : ""}`
+                ? z.featureValue
+                  ? `<b>${p.name}</b> · Kec. ${p.kecamatan}<br/>median ${formatRupiahShort(z.value)}/m² · ${z.n} iklan<br/>dari fitur wilayah ${formatRupiahShort(z.featureValue)}${z.n ? ", dikoreksi data kelurahan" : " (belum ada iklan)"}<br/>keyakinan ${z.confidence}${z.terrain === "berbukit" ? " · medan berbukit" : ""}`
+                  : `<b>${p.name}</b> · Kec. ${p.kecamatan}<br/>median ${formatRupiahShort(z.value)}/m² · ${z.n} iklan<br/>keyakinan ${z.confidence} (${lvl(z.level)})${z.terrain === "berbukit" ? "<br/>medan berbukit" : ""}`
                 : `<b>${p.name}</b> · ${p.kecamatan}<br/>${st ? `median ${formatRupiahShort(st.median)}/m² (n=${st.n})` : "belum ada data iklan"}`,              { sticky: true },
             );
           }}

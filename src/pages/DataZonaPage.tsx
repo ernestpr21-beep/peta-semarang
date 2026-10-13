@@ -65,13 +65,13 @@ const LEVEL_LABEL: Record<KelurahanZoneStat["level"], string> = {
   kecamatan: "kecamatan",
   kota: "kota",
 };
-type SortKey = "name" | "kec" | "value" | "low" | "high" | "n" | "level" | "terrain";
+type SortKey = "name" | "kec" | "value" | "low" | "high" | "n" | "level" | "terrain" | "featureValue";
 
 function ZoneTable({ rows }: { rows: KelurahanZoneStat[] }) {
   const [sort, setSort] = useState<{ k: SortKey; desc: boolean }>({ k: "value", desc: true });
   const sorted = useMemo(() => {
     const out = [...rows];
-    const val = (z: KelurahanZoneStat) => (sort.k === "terrain" ? (z.terrain ?? "") : sort.k === "level" ? ["kelurahan", "kelurahan+kecamatan", "kecamatan", "kota"].indexOf(z.level) : z[sort.k]);
+    const val = (z: KelurahanZoneStat) => (sort.k === "terrain" ? (z.terrain ?? "") : sort.k === "level" ? ["kelurahan", "kelurahan+kecamatan", "kecamatan", "kota"].indexOf(z.level) : sort.k === "featureValue" ? (z.featureValue ?? 0) : z[sort.k]);
     out.sort((a, b) => {
       const x = val(a), y = val(b);
       const c = typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), "id");
@@ -100,6 +100,11 @@ function ZoneTable({ rows }: { rows: KelurahanZoneStat[] }) {
             <H k="low" right>
               Rentang**
             </H>
+            {rows[0]?.featureValue ? (
+              <H k="featureValue" right>
+                Dari fitur
+              </H>
+            ) : null}
             <H k="n" right>
               Iklan
             </H>
@@ -114,6 +119,7 @@ function ZoneTable({ rows }: { rows: KelurahanZoneStat[] }) {
               <td className="text-fg-muted">{z.kec}</td>
               <td className="num text-right">{formatRupiahShort(z.value)}</td>
               <td className={cn("num text-right text-fg-muted", z.rangeKind === "model" && "italic")}>{formatRupiahRange(z.low, z.high)}</td>
+              {z.featureValue ? <td className="num text-right text-fg-muted">{formatRupiahShort(z.featureValue)}</td> : null}
               <td className={cn("num text-right", z.n < 5 && "text-warn")}>
                 {z.n}
                 {z.nExact < z.n ? <span className="text-fg-subtle"> ({z.nExact} tepat)</span> : null}
@@ -195,8 +201,8 @@ export function DataZonaPage() {
           onClick={() =>
             useZones
               ? downloadCsv("harga-kelurahan-semarang.csv", [
-                  ["kelurahan", "kecamatan", "median_rp_m2", "median_kelurahan_mentah", "median_kecamatan_tersusut", "rentang_bawah", "rentang_atas", "jenis_rentang", "n_iklan", "n_lokasi_tepat", "n_iklan_kecamatan", "tingkat_data", "keyakinan", "medan", "elevasi_m", "lereng_derajat"],
-                  ...zoneRows.map((z) => [z.name, z.kec, z.value, z.kelMedian, z.kecValue, z.low, z.high, z.rangeKind, z.n, z.nExact, z.nKec, z.level, z.confidence, z.terrain, z.elevM, z.slopeDeg]),
+                  ["kelurahan", "kecamatan", "median_rp_m2", "dari_model_fitur", "koreksi_kecamatan_log", "koreksi_kelurahan_log", "median_kelurahan_mentah", "median_kecamatan_tersusut", "rentang_bawah", "rentang_atas", "jenis_rentang", "n_iklan", "n_lokasi_tepat", "n_iklan_kecamatan", "tingkat_data", "keyakinan", "medan", "elevasi_m", "lereng_derajat"],
+                  ...zoneRows.map((z) => [z.name, z.kec, z.value, z.featureValue ?? "", z.kecOff ?? "", z.kelOff ?? "", z.kelMedian, z.kecValue, z.low, z.high, z.rangeKind, z.n, z.nExact, z.nKec, z.level, z.confidence, z.terrain, z.elevM, z.slopeDeg]),
                 ])
               : downloadCsv(`harga-${level}-semarang.csv`, [
               ["wilayah", "kecamatan", "n_iklan", "n_lokasi_tepat", "median_ternormalisasi", "p25", "p75", "median_penawaran_asli", "periode_awal", "periode_akhir"],
@@ -214,10 +220,20 @@ export function DataZonaPage() {
         <>
           <ZoneTable rows={zoneRows} />
           <p className="text-fg-muted">
-            Semua {ds.data.zones?.length} kelurahan. *Median = nilai lapisan peta: median harga ternormalisasi iklan di kelurahan itu (bidang acuan {meta.refArea} m², akses jalan lingkungan), disusutkan ke
-            median kecamatan setara {ds.data.model.kelurahanPricing?.mKel ?? 8} iklan — makin banyak iklan, makin dekat ke median kelurahan sendiri. Tingkat data: <b>kelurahan</b> = cukup iklan
-            sendiri; <b>kelurahan + kecamatan</b> = 1–4 iklan, banyak bertumpu pada kecamatan; <b>kecamatan</b> = belum ada iklan sama sekali. **Rentang = kuartil 25–75% iklan bila ≥ 3 iklan; miring =
-            rentang model (sedikit data). Medan dari DEM Copernicus 30 m (berbukit = lereng rata-rata ≥ 5° dan elevasi ≥ 40 m).
+            Semua {ds.data.zones?.length} kelurahan.{" "}
+            {ds.data.model.featurePricing ? (
+              <>
+                *Median = nilai lapisan peta: harga dari <b>model fitur wilayah</b> (kepadatan bangunan, jarak ke pusat kota &amp; jalan besar, toko/pasar, lereng,
+                ketinggian, pesisir/rob, lahan hijau — dilatih dari semua iklan kota; median berbobot area terbangun di dalam kelurahan) × koreksi kecamatan (setara{" "}
+                {ds.data.model.featurePricing.mKec} iklan) × koreksi kelurahan (setara {ds.data.model.featurePricing.mKel} iklan). Kolom "dari fitur" = sebelum koreksi. Kelurahan tanpa iklan
+                memakai karakteristiknya sendiri, bukan median kecamatan. **Rentang = ±0,674σ model (50% tengah).
+              </>
+            ) : (
+              <>
+                *Median = nilai lapisan peta: median harga ternormalisasi iklan di kelurahan itu, disusutkan ke median kecamatan. **Rentang = kuartil 25–75% bila ≥ 3 iklan.
+              </>
+            )}{" "}
+            Tingkat data: <b>kelurahan</b> = ≥ 5 iklan; <b>kelurahan + kecamatan</b> = 1–4 iklan; <b>kecamatan</b> = belum ada iklan. Medan dari DEM Copernicus 30 m (berbukit = lereng ≥ 5° dan elevasi ≥ 40 m).
           </p>
         </>
       ) : (
@@ -225,7 +241,7 @@ export function DataZonaPage() {
       )}
       <p className="text-fg-muted">
         *Median &amp; kuartil <b>ternormalisasi</b>: harga per m² untuk bidang acuan {meta.refArea} m², akses jalan lingkungan, setelah koreksi selisih antarportal dan waktu. Kolom "median penawaran asli" = harga/m²
-        apa adanya. Angka oranye = kurang dari 5 iklan (kurang andal). {meta.kelurahanTotal - meta.kelurahanCovered} kelurahan belum punya iklan sama sekali — estimasi di sana memakai median kecamatannya (tidak meminjam
+        apa adanya. Angka oranye = kurang dari 5 iklan (kurang andal). {meta.kelurahanTotal - meta.kelurahanCovered} kelurahan belum punya iklan sama sekali — estimasi di sana {ds.data.model.featurePricing ? "dihitung dari karakteristik wilayahnya (model fitur)" : "memakai median kecamatannya"} (tidak meminjam
         pembanding dari kelurahan tetangga).
       </p>
       <h2>Sumber</h2>

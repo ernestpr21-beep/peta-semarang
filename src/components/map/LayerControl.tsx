@@ -84,7 +84,7 @@ export function LayerControl() {
             <input type="checkbox" className="mt-0.5 accent-[var(--primary)]" checked={showPrice} onChange={(e) => setShowPrice(e.target.checked)} />
             <span>
               <span className="font-medium text-fg">Median harga per kelurahan</span>
-              <span className="block text-fg-muted">Lapisan utama. Bidang acuan 150 m², akses jalan lingkungan. Arsir putus-putus = data kelurahan sedikit (disusutkan ke kecamatan).</span>
+              <span className="block text-fg-muted">Lapisan utama. Bidang acuan 150 m², akses jalan lingkungan. Nilai dari model fitur wilayah + koreksi data kelurahan. Arsir putus-putus = belum ada iklan (murni dari fitur).</span>
             </span>
           </label>
           <div>

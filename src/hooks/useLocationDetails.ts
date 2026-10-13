@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAppStore } from "@/lib/store";
-import { useDataset, useFacilities, useKecamatan, useKelurahan, useKota, useReverseGeocode, useRoadsAround } from "@/lib/data";
+import { useDataset, useFeatureGrid, featureAt, useFacilities, useKecamatan, useKelurahan, useKota, useReverseGeocode, useRoadsAround } from "@/lib/data";
 import { findFeature, nearestCampus } from "@/lib/geo";
 import { detectAccess, namedMainRoadsWithin, type AccessDetection } from "@/lib/access";
 import { estimatePrice, findAreaStat, type PriceResult } from "@/lib/estimate";
@@ -39,6 +39,7 @@ export function useLocationDetails(): LocationDetails {
   const lat = clicked?.lat ?? null;
   const lng = clicked?.lng ?? null;
   const roads = useRoadsAround(lat, lng);
+  const fgrid = useFeatureGrid();
   const address = useReverseGeocode(lat, lng);
 
   const admin = useMemo(() => {
@@ -63,11 +64,13 @@ export function useLocationDetails(): LocationDetails {
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
       kel: admin.kel,
       kec: admin.kec,
+      feature: featureAt(fgrid.data, clicked.lat, clicked.lng),
+      zoneStat: ds.data.zones?.find((z) => z.name === admin.kel && z.kec === admin.kec) ?? null,
       area,
       campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
       mainRoad: clicked && roads.roads ? namedMainRoadsWithin(clicked.lat, clicked.lng, roads.roads, ds.data.model.corridor?.maxRoadM ?? 60) : null,
     });
-  }, [clicked, ds.data, admin, area, roads.roads]);
+  }, [clicked, ds.data, admin, area, roads.roads, fgrid.data]);
 
   const facilitiesAll = useMemo(
     () => (clicked && fac.data ? facilitiesNear(fac.data.rows, clicked.lat, clicked.lng, SCORE_SEARCH_RADIUS) : null),
@@ -76,7 +79,7 @@ export function useLocationDetails(): LocationDetails {
   const facilities = useMemo(() => facilitiesAll?.filter((f) => f.distanceM <= radiusM) ?? null, [facilitiesAll, radiusM]);
   const score = useMemo(() => (clicked && facilitiesAll ? computeLocationScore(clicked.lat, clicked.lng, facilitiesAll) : null), [clicked, facilitiesAll]);
 
-  const loading = Boolean(clicked) && (ds.isLoading || kota.isLoading || kec.isLoading || kel.isLoading || fac.isLoading || roads.loading);
+  const loading = Boolean(clicked) && (ds.isLoading || fgrid.isLoading || kota.isLoading || kec.isLoading || kel.isLoading || fac.isLoading || roads.loading);
   const errObj = ds.error ?? kota.error ?? kel.error ?? fac.error ?? roads.error;
   const tier = override ?? access?.tier ?? null;
 

@@ -6,12 +6,15 @@ import { detectAccess, type Road } from "../src/lib/access";
 import { findFeature, nearestCampus, type GeoCollection } from "../src/lib/geo";
 import { computeLocationScore, SCORE_SEARCH_RADIUS } from "../src/lib/score";
 import { facilitiesNear, type FacilityRaw } from "../src/lib/facilities";
-import type { Dataset } from "../src/lib/model";
+import type { Dataset, FeatureGrid } from "../src/lib/model";
+import { featureAt } from "../src/lib/data";
 
 const PUB = path.resolve(import.meta.dirname, "../public/data");
 const ds = JSON.parse(fs.readFileSync(path.join(PUB, "dataset.json"), "utf8")) as Dataset;
 const kota = JSON.parse(fs.readFileSync(path.join(PUB, "kota.geojson"), "utf8")) as GeoCollection<{ name: string }>;
 const kel = JSON.parse(fs.readFileSync(path.join(PUB, "kelurahan.geojson"), "utf8")) as GeoCollection<{ name: string; kecamatan: string }>;
+const fgRaw = JSON.parse(fs.readFileSync(path.join(PUB, "feature-grid.json"), "utf8")) as FeatureGrid;
+const fgrid = { ...fgRaw, pos: new Map(fgRaw.idx.map((v, i) => [v, i] as [number, number])) };
 const fac = JSON.parse(fs.readFileSync(path.join(PUB, "facilities.json"), "utf8")) as { rows: FacilityRaw[] };
 
 function roadsAround(lat: number, lng: number): Road[] {
@@ -40,6 +43,8 @@ export function estimateAt(lat: number, lng: number, area = 150) {
     kec: k?.kecamatan ?? null,
     area,
     campus: nearestCampus(lat, lng, ds.campuses),
+    feature: featureAt(fgrid, lat, lng),
+    zoneStat: ds.zones?.find((z) => z.name === k?.name && z.kec === k?.kecamatan) ?? null,
   });
   return { r, k, access: detectAccess(lat, lng, roadsAround(lat, lng)) };
 }
@@ -202,16 +207,30 @@ describe("model 2026-10-4 (prototipe audit): akses hasil deteksi OSM terkalibras
   });
 });
 
-describe("model 2026-10-7: penetapan harga per kelurahan", () => {
-  it("zona untuk semua 177 kelurahan, nilai peta = prior estimator", () => {
+describe("model 2026-10-8: model fitur wilayah per kelurahan", () => {
+  it("zona untuk semua 177 kelurahan; harga titik = model fitur + koreksi, dengan rincian faktor", () => {
     expect(ds.zones?.length).toBe(177);
-    const z = ds.zones!.find((x) => x.name === "Sekaran")!;
     const r = estimateAt(-7.0517, 110.3936).r as PriceEstimateResult;
     expect(r.zone?.kel).toBe("Sekaran");
-    expect(Math.abs(r.zone!.value / z.value - 1)).toBeLessThan(0.01);
-    expect(r.priorMedian).toBeCloseTo(r.zone!.value, -2);
+    expect(r.feature).toBeTruthy();
+    expect(r.feature!.contributions.length).toBeGreaterThan(0);
+    // nilai titik dekat nilai zona (median sel dalam kelurahan) — dalam faktor 2
+    expect(Math.abs(Math.log(r.basePoint / r.campusFactor / r.zone!.value))).toBeLessThan(Math.log(2));
   });
-  it("pembanding hanya dari kelurahan yang sama; kelurahan tanpa iklan memakai median kecamatan", () => {
+  it("kelurahan tanpa iklan memakai nilai fiturnya sendiri, bukan median kecamatan", () => {
+    const empty = ds.zones!.filter((z) => z.n === 0);
+    expect(empty.length).toBeGreaterThan(0);
+    const vals = new Set(empty.map((z) => Math.round(z.value)));
+    let same = 0;
+    for (const z of empty) {
+      expect(z.featureValue).toBeGreaterThan(0);
+      const kec = ds.kecamatan.find((k) => k.name === z.kec);
+      if (kec?.median && Math.abs(z.value / kec.median - 1) < 0.01) same++;
+    }
+    expect(same).toBeLessThanOrEqual(1);
+    expect(vals.size).toBeGreaterThan(1);
+  });
+  it("pembanding (acuan) hanya dari kelurahan yang sama; kelurahan tanpa iklan berkeyakinan rendah", () => {
     const a = estimateAt(-7.0517, 110.3936);
     const r = a.r as PriceEstimateResult;
     expect(r.used.length).toBeGreaterThan(0);
@@ -221,6 +240,7 @@ describe("model 2026-10-7: penetapan harga per kelurahan", () => {
     const p = estimateAt(-6.9737, 110.4289); // Purwodinatan (belum ada iklan)
     const rp = p.r as PriceEstimateResult;
     expect(rp.zone?.level).toBe("kecamatan");
+    expect(rp.feature?.nKel).toBe(0);
     expect(rp.used.length).toBe(0);
     expect(rp.confidence).toBe("rendah");
   });
