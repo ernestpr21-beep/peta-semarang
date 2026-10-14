@@ -14,8 +14,35 @@ from sklearn.model_selection import KFold, GroupKFold
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sampler as SP
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.path.dirname(HERE))
-FEATS = SP.NAMES
-MONO = {'d_cbd': -1, 'poi_comm_1000': 1, 'd_art': -1, 'rob_250': -1}
+# 2026-10-9: paparan rob = satu indeks gabungan (rob_exp, lihat build_features.py) masuk LINEAR dengan batasan monoton
+# (koefisien ≤ 0: paparan hanya bisa menurunkan harga; disusutkan ridge). Lapisan pesisir lama (d_coast, rob_250, water_500) tidak
+# dipakai lagi karena spline-nya memberi tanda yang menyesatkan di pesisir (mis. Mangunharjo "jauh dari pesisir +34%").
+# shop_250 hanya untuk premi muka jalan (tidak dihitung dua kali di harga dasar).
+EXCL = {'rob_250', 'd_coast', 'water_500', 'kel_rob_250', 'kec_rob_250', 'wet_500', 'gsw_500', 'shop_250'}
+LIN = ['rob_exp', 'kel_rob_exp', 'kec_rob_exp']
+FEATS = [n for n in SP.NAMES if n not in EXCL]
+MONO = {'d_cbd': -1, 'poi_comm_1000': 1, 'd_art': -1, 'rob_exp': -1}
+def SAMPLE(lat, lng): return SP.sample(lat, lng, FEATS)
+class GAM:
+    """spline kubik per fitur (kecuali LIN) + suku linear LIN dengan koefisien ≤ 0, satu ridge (alpha dipilih CV)."""
+    def fit(self, X, y, w):
+        self.lin = [FEATS.index(f) for f in LIN if f in FEATS]; self.spl = [j for j in range(X.shape[1]) if j not in self.lin]
+        self.sc = StandardScaler().fit(X); Z = self.sc.transform(X)
+        self.st = SplineTransformer(n_knots=5, degree=3).fit(Z[:, self.spl]); self.keep = list(self.lin)
+        for _ in range(len(self.lin) + 1):
+            self.rg = RidgeCV(alphas=np.logspace(-1, 3, 13)).fit(self._B(Z), y, sample_weight=w)
+            cl = self.rg.coef_[-len(self.keep):] if self.keep else []
+            bad = [j for j, c in zip(self.keep, cl) if c > 0]
+            if not bad: break
+            self.keep = [j for j in self.keep if j not in bad]
+        self.alpha_ = self.rg.alpha_; return self
+    def _B(self, Z): return np.hstack([self.st.transform(Z[:, self.spl])] + ([Z[:, self.keep]] if self.keep else []))
+    def predict(self, X): return self.rg.predict(self._B(self.sc.transform(X)))
+    def contrib(self, X):
+        Z = self.sc.transform(X); B = self.st.transform(Z[:, self.spl]); k = B.shape[1] // len(self.spl); C = np.zeros(X.shape)
+        for a, j in enumerate(self.spl): C[:, j] = B[:, a * k:(a + 1) * k] @ self.rg.coef_[a * k:(a + 1) * k]
+        for b, j in enumerate(self.keep): C[:, j] = Z[:, j] * self.rg.coef_[B.shape[1] + b]
+        return C
 def i32(x):
     x &= 0xffffffff; return x - 2 ** 32 if x >= 2 ** 31 else x
 def u32(x): return x & 0xffffffff
@@ -27,11 +54,11 @@ def make(kind):
     if kind == 'hgb':
         return HistGradientBoostingRegressor(max_iter=250, learning_rate=0.06, max_leaf_nodes=15, min_samples_leaf=30, l2_regularization=1.0,
                                              monotonic_cst=[MONO.get(f, 0) for f in FEATS], random_state=0)
-    return make_pipeline(StandardScaler(), SplineTransformer(n_knots=5, degree=3), RidgeCV(alphas=np.logspace(-1, 3, 13)))
+    return GAM()
 def fit(kind, X, y, w):
     m = make(kind)
     if kind == 'hgb': m.fit(X, y, sample_weight=w)
-    else: m.fit(X, y, ridgecv__sample_weight=w)
+    else: m.fit(X, y, w)
     return m
 def oof_resid(kind, X, y, w, seed=0):
     r = np.zeros(len(y))
@@ -74,10 +101,10 @@ def combine(F_te, te_pts, tr_rows, res, VARS):
             out[vname((mc, mk, ml))].append(f + off)
     return out
 def vname(v): return 'C%sK%sL%s' % tuple('-' if x is None else int(x) for x in v)
-VARS = [(None, None, None), (5, None, None), (10, None, None), (20, None, None), (40, None, None), (10, 20, None), (10, 40, None), (20, 20, None), (10, 20, 10), (None, 20, None)]
+VARS = [(None, None, None), (10, 40, None), (10, 40, 10), (10, 40, 20), (10, 40, 40), (10, 40, 80)]
 if __name__ == '__main__' and sys.argv[1] != 'fit':
     mode = sys.argv[1]
-    rows = load_rows(); X = SP.sample([r['lat'] for r in rows], [r['lng'] for r in rows]); y = np.array([r['y'] for r in rows]); w = np.array([r['w'] for r in rows])
+    rows = load_rows(); X = SAMPLE([r['lat'] for r in rows], [r['lng'] for r in rows]); y = np.array([r['y'] for r in rows]); w = np.array([r['w'] for r in rows])
     if mode == 'select':  # pilih jenis model: blok spasial 5 lipatan, F saja, iklan titik
         for kind in ('ridge', 'hgb'):
             p = np.zeros(len(y))
@@ -89,7 +116,7 @@ if __name__ == '__main__' and sys.argv[1] != 'fit':
     kind = sys.argv[2]
     if mode == 'eval':
         ev = json.load(open(sys.argv[3])); out_path = sys.argv[4]
-        Xe = SP.sample([e['lat'] for e in ev], [e['lng'] for e in ev])
+        Xe = SAMPLE([e['lat'] for e in ev], [e['lng'] for e in ev])
         rid = {r['id']: i for i, r in enumerate(rows)}
         res = {}
         rng = np.random.RandomState(1); rand_fold = rng.randint(0, 20, len(ev))
@@ -115,27 +142,37 @@ if __name__ == '__main__' and sys.argv[1] != 'fit':
         json.dump(res, open(out_path, 'w'))
 
 # ---------------- mode 'fit': model produksi ----------------
-GROUPS = [  # (kunci, label positif, label negatif, fitur)
-    ('padat', 'kepadatan bangunan tinggi', 'kepadatan bangunan rendah', ['built_250', 'built_1000', 'built_2500', 'bld_250', 'roaddens_500', 'kel_built_250', 'kec_built_250', 'kel_bld_250', 'kec_bld_250', 'kel_roaddens_500', 'kec_roaddens_500']),
-    ('pusat', 'dekat pusat kota', 'jauh dari pusat kota', ['d_cbd']),
-    ('jalan', 'dekat jalan besar/tol', 'jauh dari jalan besar/tol', ['d_art', 'd_sec', 'd_toll', 'd_drive']),
-    ('belanja', 'dekat toko/pasar/mal', 'jauh dari toko/pasar/mal', ['poi_comm_1000', 'poi_comm_3000', 'd_mall', 'd_market', 'comlu_500', 'kel_poi_comm_1000', 'kec_poi_comm_1000']),
-    ('fasilitas', 'banyak sekolah & faskes', 'sedikit sekolah & faskes', ['school_1000', 'health_1500']),
-    ('lereng', 'lereng landai', 'lereng curam', ['slope_250', 'kel_slope_250', 'kec_slope_250']),
-    ('tinggi', 'lebih tinggi dari dataran pantai', 'dataran rendah', ['elev', 'kel_elev', 'kec_elev']),
-    ('rob', 'jauh dari pesisir/rob', 'rawan rob / pesisir', ['rob_250', 'd_coast', 'water_500', 'kel_rob_250', 'kec_rob_250']),
-    ('sungai', 'posisi terhadap sungai', 'posisi terhadap sungai', ['d_river']),
-    ('industri', 'kawasan industri sekitar', 'kawasan industri sekitar', ['ind_500', 'kel_ind_500', 'kec_ind_500']),
-    ('hijau', 'ada lahan hijau sekitar', 'dominan sawah/kebun/hutan', ['tree_500', 'crop_500', 'grass_500', 'kel_tree_500', 'kec_tree_500', 'kel_crop_500', 'kec_crop_500']),
+GROUPS = [  # (kunci, label bila keadaan "tinggi", label bila "rendah", fitur, fitur keadaan, orientasi, arah harga yang wajar)
+    # label menggambarkan KEADAAN lokasi (dibanding rata-rata lokasi iklan), bukan tanda kontribusi. Bila arah harga yang wajar
+    # diketahui (mis. paparan rob hanya menurunkan harga) dan tanda kontribusi bertentangan, kontribusi tidak ditampilkan.
+    ('padat', 'kepadatan bangunan tinggi', 'kepadatan bangunan rendah', ['built_250', 'built_1000', 'built_2500', 'bld_250', 'roaddens_500', 'kel_built_250', 'kec_built_250', 'kel_bld_250', 'kec_bld_250', 'kel_roaddens_500', 'kec_roaddens_500'], 'built_1000', 1, 1),
+    ('pusat', 'dekat pusat kota', 'jauh dari pusat kota', ['d_cbd'], 'd_cbd', -1, 1),
+    ('jalan', 'dekat jalan besar/tol', 'jauh dari jalan besar/tol', ['d_art', 'd_sec', 'd_toll', 'd_drive'], 'd_art', -1, 1),
+    ('belanja', 'banyak toko/pasar sekitar', 'sedikit toko/pasar sekitar', ['poi_comm_1000', 'poi_comm_3000', 'd_mall', 'd_market', 'comlu_500', 'kel_poi_comm_1000', 'kec_poi_comm_1000'], 'poi_comm_3000', 1, 1),
+    ('fasilitas', 'banyak sekolah & faskes', 'sedikit sekolah & faskes', ['school_1000', 'health_1500'], 'school_1000', 1, 0),
+    ('lereng', 'lereng curam', 'lahan landai', ['slope_250', 'kel_slope_250', 'kec_slope_250'], 'slope_250', 1, -1),
+    ('tinggi', 'dataran lebih tinggi', 'dataran rendah', ['elev', 'kel_elev', 'kec_elev'], 'elev', 1, 0),
+    ('rob', 'rawan rob / genangan pesisir', 'di luar zona rob', ['rob_exp', 'kel_rob_exp', 'kec_rob_exp'], 'rob_exp', 1, -1),
+    ('sungai', 'dekat sungai', 'jauh dari sungai', ['d_river'], 'd_river', -1, 0),
+    ('industri', 'dekat kawasan industri/pelabuhan', 'jauh dari kawasan industri', ['ind_500', 'kel_ind_500', 'kec_ind_500'], 'ind_500', 1, 0),
+    ('hijau', 'banyak pohon/sawah sekitar', 'sedikit lahan hijau', ['tree_500', 'crop_500', 'grass_500', 'kel_tree_500', 'kec_tree_500', 'kel_crop_500', 'kec_crop_500'], 'tree_500', 1, 0),
 ]
+def sides(Xs, Xref):
+    """keadaan per kelompok (+1 'tinggi' / −1 'rendah') dibanding median lokasi iklan"""
+    return np.stack([np.where((Xs[:, FEATS.index(sf)] - np.median(Xref[:, FEATS.index(sf)])) * o >= 0, 1, -1) for _, _, _, _, sf, o, _ in GROUPS], axis=1)
+def audit_labels(Cgg, S):
+    """tekan kontribusi yang tandanya bertentangan dengan makna keadaan; kembalikan (C tampil, jumlah ditekan per kelompok)"""
+    C = Cgg.copy(); sup = {}
+    for g, (k, *_r, ex) in enumerate(GROUPS):
+        bad = (ex != 0) & (np.sign(C[:, g]) * S[:, g] * ex < 0) & (np.abs(C[:, g]) >= math.log(1.02))
+        C[bad, g] = 0; sup[k] = int(bad.sum())
+    return C, sup
 M_KEC, M_KEL = 10, 40
 def contributions(m, X):
     """kontribusi aditif per fitur (model spline + ridge): basis_j · koef_j, dipusatkan pada rata-rata iklan."""
-    sc, spl, rg = m.named_steps['standardscaler'], m.named_steps['splinetransformer'], m.named_steps['ridgecv']
-    B = spl.transform(sc.transform(X)); k = B.shape[1] // X.shape[1]
-    return np.stack([B[:, j * k:(j + 1) * k] @ rg.coef_[j * k:(j + 1) * k] for j in range(X.shape[1])], axis=1)
+    return m.contrib(X)
 def fit_main(out_dir, pub_dir):
-    rows = load_rows(); X = SP.sample([r['lat'] for r in rows], [r['lng'] for r in rows]); y = np.array([r['y'] for r in rows]); w = np.array([r['w'] for r in rows])
+    rows = load_rows(); X = SAMPLE([r['lat'] for r in rows], [r['lng'] for r in rows]); y = np.array([r['y'] for r in rows]); w = np.array([r['w'] for r in rows])
     m = fit('ridge', X, y, w); r_oof = oof_resid('ridge', X, y, w)
     C = contributions(m, X); cmean = C.mean(axis=0)
     # offset kecamatan & kelurahan dari residu luar-lipatan (sama dengan combine() varian C10K40)
@@ -159,7 +196,7 @@ def fit_main(out_dir, pub_dir):
     # semua iklan (termasuk pencilan) berlokasi: F model penuh + offset — untuk koridor & audit
     allr = [r for r in csv.DictReader(open(os.path.join(ROOT, 'data/listings_all.csv'))) if r.get('lat') and r.get('lng')]
     if allr:
-        Xa = SP.sample([float(r['lat']) for r in allr], [float(r['lng']) for r in allr]); Fa = m.predict(Xa)
+        Xa = SAMPLE([float(r['lat']) for r in allr], [float(r['lng']) for r in allr]); Fa = m.predict(Xa)
         with open(os.path.join(out_dir, 'feature_preds_all.csv'), 'w', newline='') as f:
             wr = csv.writer(f); wr.writerow(['id', 'mu', 'F'])
             for r, fa in zip(allr, Fa):
@@ -171,11 +208,13 @@ def fit_main(out_dir, pub_dir):
     nx = int((SP.W + SP.NX * SP.DX - SP.W) / dLng); ny = int(SP.NY * SP.DY / dLat)
     gi, gj = np.mgrid[0:ny, 0:nx]; glat = SP.N - (gi.ravel() + 0.5) * dLat; glng = SP.W + (gj.ravel() + 0.5) * dLng
     li, lj = SP.idx(glat, glng); gl = lab[li, lj]; inside = gl > 0
-    Xg = SP.sample(glat[inside], glng[inside]); Fg = m.predict(Xg); Cg = contributions(m, Xg) - cmean
+    Xg = SAMPLE(glat[inside], glng[inside]); Fg = m.predict(Xg); Cg = contributions(m, Xg) - cmean
     built = SP.raw(glat[inside], glng[inside], 'built_250')
     gidx = np.nonzero(inside)[0]; glab = gl[inside]
-    groups = [(k, lp, ln, [FEATS.index(f) for f in fs if f in FEATS]) for k, lp, ln, fs in GROUPS]
+    groups = [(k, lp, ln, [FEATS.index(f) for f in fs if f in FEATS]) for k, lp, ln, fs, *_ in GROUPS]
     Cgg = np.stack([Cg[:, ix].sum(axis=1) for _, _, _, ix in groups], axis=1)
+    Sg = sides(Xg, X); Cgg, suppressed = audit_labels(Cgg, Sg)
+    print('label audit — sel grid ditekan per kelompok:', suppressed, 'dari', len(Xg))
     kel_off = {}
     zones = []
     for i, f in enumerate(kg):
@@ -186,19 +225,22 @@ def fit_main(out_dir, pub_dir):
             vv = Fg[sel]; ww = built[sel] + 0.05; o = np.argsort(vv); cw = np.cumsum(ww[o]); fmed = float(vv[o][np.searchsorted(cw, 0.5 * cw[-1])])
             p25 = float(vv[o][np.searchsorted(cw, 0.25 * cw[-1])]); p75 = float(vv[o][np.searchsorted(cw, 0.75 * cw[-1])])
             cmed = [float(np.average(Cgg[sel][:, g], weights=ww)) for g in range(len(groups))]
+            smed = [int(1 if np.average(Sg[sel][:, g], weights=ww) >= 0 else -1) for g in range(len(groups))]
+            for g, (*_r, ex) in enumerate(GROUPS):
+                if ex and cmed[g] * smed[g] * ex < 0: cmed[g] = 0.0
         else:
-            fmed = p25 = p75 = float(np.median(y)); cmed = [0.0] * len(groups)
+            fmed = p25 = p75 = float(np.median(y)); cmed = [0.0] * len(groups); smed = [1] * len(groups)
         gk = [e - oc for r, e in byk.get((nm, kc), [])]
         sd = city_sd if len(gk) < 3 else min(1, len(gk) / 6) * max(0.25, 1.4826 * float(np.median(np.abs(np.array(gk) - np.median(gk))))) + (1 - min(1, len(gk) / 6)) * city_sd
         zones.append({'name': nm, 'kec': kc, 'F': round(fmed, 4), 'Fp25': round(p25, 4), 'Fp75': round(p75, 4), 'kecOff': round(oc, 4), 'kelOff': round(ok, 4), 'effKec': round(ec, 1), 'effKel': round(ek, 1),
-                      'n': nk, 'nKec': ncc, 'sdLog': round(sd, 3), 'contrib': [round(c, 3) for c in cmed]})
+                      'n': nk, 'nKec': ncc, 'sdLog': round(sd, 3), 'contrib': [round(c, 3) for c in cmed], 'side': smed})
     grid = {'lat0': SP.N, 'lng0': SP.W, 'dLat': dLat, 'dLng': dLng, 'nx': nx, 'ny': ny,
             'groups': [{'key': k, 'pos': lp, 'neg': ln} for k, lp, ln, _ in groups],
-            'idx': gidx.tolist(), 'f': np.round(Fg * 1000).astype(int).tolist(), 'c': np.round(Cgg * 1000).astype(int).T.tolist()}
+            'idx': gidx.tolist(), 'f': np.round(Fg * 1000).astype(int).tolist(), 'c': np.round(Cgg * 1000).astype(int).T.tolist(), 's': [''.join('1' if v > 0 else '0' for v in row) for row in Sg.T]}
     json.dump(grid, open(os.path.join(pub_dir, 'feature-grid.json'), 'w'), separators=(',', ':'))
     # efek terukur: kontribusi per kelompok di antara iklan (p10–p90) & efek parsial fitur utama (p10 → p90)
     Cl = C - cmean
-    eff = {'groups': [], 'features': [], 'cityResidSd': round(city_sd, 3), 'n': len(rows), 'alpha': float(m.named_steps['ridgecv'].alpha_), 'mKec': M_KEC, 'mKel': M_KEL}
+    eff = {'labelAudit': {'gridCells': int(len(Xg)), 'suppressed': suppressed}, 'linearMonotone': [FEATS[j] for j in m.keep], 'robCoef': [round(float(c), 4) for c in m.rg.coef_[-len(m.keep):]] if m.keep else [], 'groups': [], 'features': [], 'cityResidSd': round(city_sd, 3), 'n': len(rows), 'alpha': float(m.alpha_), 'mKec': M_KEC, 'mKel': M_KEL}
     for k, lp, ln, ix in groups:
         g = Cl[:, ix].sum(axis=1); eff['groups'].append({'key': k, 'pos': lp, 'neg': ln, 'p10Pct': round((math.exp(np.percentile(g, 10)) - 1) * 100, 1), 'p90Pct': round((math.exp(np.percentile(g, 90)) - 1) * 100, 1)})
     for j, fname in enumerate(FEATS):
