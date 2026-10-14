@@ -6,6 +6,8 @@ export interface Comparable {
   id: string;
   lat: number;
   lng: number;
+  /** residu log terhadap model fitur luar-lipatan (iklan titik; 2026-10-9) */
+  fr?: number;
   /** Harga penawaran asli per m² (Rp) */
   ppm: number;
   /** Harga per m² yang sudah dinormalisasi ke bidang acuan (luas acuan, akses jalan lingkungan, residensial) */
@@ -124,6 +126,20 @@ export interface PriceModel {
     note: string;
   };
   /** premi koridor jalan arteri bernama (2026-10-5): residu iklan muka jalan per ruas, lihat Metodologi */
+  /** 2026-10-9: premi muka jalan (tier utama) = kelas jalan + intensitas toko sepanjang jalan + efek ruas bernama (disusutkan) */
+  frontage?: {
+    maxRoadM: number;
+    classOf: Record<string, string>;
+    cls: Record<string, number>;
+    clsLabel: Record<string, string>;
+    shopCoef: number;
+    shopRef: number;
+    k: number;
+    aliases: Record<string, string>;
+    roads: Record<string, { label: string; n: number; u: number }>;
+    validation?: unknown;
+    note: string;
+  };
   corridor?: {
     k: number;
     bwM: number;
@@ -148,6 +164,10 @@ export interface PriceModel {
     alpha: number;
     nTrain: number;
     groups: { key: string; pos: string; neg: string; p10Pct: number; p90Pct: number }[];
+    local?: { mLoc: number; bwM: number; k: number; note: string };
+    labelAudit?: { gridCells: number; suppressed: Record<string, number> };
+    linearMonotone?: string[];
+    robCoef?: number[];
     features: { feature: string; p10: number; p90: number; effectPct: number }[];
     note: string;
   };
@@ -271,6 +291,7 @@ export interface KelurahanZoneStat {
   effKel?: number;
   sdLog?: number;
   contrib?: number[];
+  side?: number[];
 }
 
 /** grid 150 m nilai model fitur (log) & kontribusi kelompok fitur (log × 1000) */
@@ -282,6 +303,10 @@ export interface FeatureGrid {
   nx: number;
   ny: number;
   groups: { key: string; pos: string; neg: string }[];
+  /** keadaan per kelompok per sel: '1' = "tinggi" (label pos), '0' = "rendah" */
+  s?: string[];
+  /** log(1 + jumlah toko/usaha dalam 250 m) × 1000 */
+  sh?: number[];
   idx: number[];
   f: number[];
   c: number[][];

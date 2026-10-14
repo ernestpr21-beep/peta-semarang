@@ -6,13 +6,14 @@ import path from "node:path";
 import { estimatePrice, findAreaStat, type PriceEstimateResult } from "../src/lib/estimate";
 import { detectAccess, namedMainRoadsWithin, type Road } from "../src/lib/access";
 import { nearestCampus, type GeoCollection, findFeature } from "../src/lib/geo";
-import type { Dataset, PriceModel } from "../src/lib/model";
+import type { Dataset, FeatureGrid, PriceModel } from "../src/lib/model";
+import { featureAt } from "../src/lib/data";
 
 const PUB = path.resolve(import.meta.dirname, "../public/data");
 type Ev = { id: string; lat: number; lng: number; area: number; ppm: number; date: string; src: string; kel: string; kec: string; outlier: boolean; txtTier: string; corr: string | null; corrHow: string | null; proj: [number, number] | null; group: string[] };
 it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
   const ev = JSON.parse(fs.readFileSync(process.env.VAL_EVAL as string, "utf8")) as Ev[];
-  const variants = JSON.parse(process.env.VAL_VARIANTS as string) as { name: string; dataset: string; k?: number; bwM?: number; noCorridor?: boolean; corrScope?: "kel" | "kec"; kp?: Partial<NonNullable<PriceModel["kelurahanPricing"]>>; noKel?: boolean; override?: string; overrideKey?: string }[];
+  const variants = JSON.parse(process.env.VAL_VARIANTS as string) as { name: string; dataset: string; k?: number; bwM?: number; noCorridor?: boolean; corrScope?: "kel" | "kec"; kp?: Partial<NonNullable<PriceModel["kelurahanPricing"]>>; noKel?: boolean; override?: string; overrideKey?: string; corrOverride?: string; corrKey?: string }[];
   const kel = JSON.parse(fs.readFileSync(path.join(PUB, "kelurahan.geojson"), "utf8")) as GeoCollection<{ name: string; kecamatan: string }>;
   const tiles = new Map<string, Road[]>();
   const roadsAround = (lat: number, lng: number) => {
@@ -24,6 +25,9 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
     }
     return out;
   };
+  const fgRaw = JSON.parse(fs.readFileSync(path.join(PUB, "feature-grid.json"), "utf8")) as FeatureGrid;
+  const fg = { ...fgRaw, pos: new Map(fgRaw.idx.map((v, i) => [v, i] as [number, number])) };
+  const shopAt = (lat: number, lng: number) => featureAt(fg, lat, lng)?.sh ?? null;
   const KX = 110500, KY = 110574;
   const fold = (lat: number, lng: number) => {
     const bx = Math.floor((lng * KX) / 2000), by = Math.floor((lat * KY) / 2000);
@@ -37,14 +41,14 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
     const acc = detectAccess(e.lat, e.lng, rd);
     const u = acc.nearest.utama;
     const k = findFeature(e.lat, e.lng, kel)?.properties;
-    let atRoad = null as null | { tier: typeof acc.tier; near: ReturnType<typeof namedMainRoadsWithin>; nearest: { name: string | null; distanceM: number }[] };
+    let atRoad = null as null | { u: { name: string | null; highway: string; distanceM: number } | null; tier: typeof acc.tier; near: ReturnType<typeof namedMainRoadsWithin>; nearest: { name: string | null; distanceM: number }[] };
     if (e.proj) {
       const rd2 = roadsAround(e.proj[0], e.proj[1]);
       const a2 = detectAccess(e.proj[0], e.proj[1], rd2);
       const u2 = a2.nearest.utama;
-      atRoad = { tier: a2.tier, near: namedMainRoadsWithin(e.proj[0], e.proj[1], rd2, 60), nearest: u2 ? [{ name: u2.name, distanceM: u2.distanceM }] : [] };
+      atRoad = { u: u2 ? { name: u2.name, highway: u2.highway, distanceM: u2.distanceM } : null, tier: a2.tier, near: namedMainRoadsWithin(e.proj[0], e.proj[1], rd2, 60), nearest: u2 ? [{ name: u2.name, distanceM: u2.distanceM }] : [] };
     }
-    return { atRoad, tier: acc.tier, near: namedMainRoadsWithin(e.lat, e.lng, rd, 60), nearest: u ? [{ name: u.name, distanceM: u.distanceM }] : [], kelName: k?.name ?? null, kecName: k?.kecamatan ?? null,
+    return { uPin: u ? { name: u.name, highway: u.highway, distanceM: u.distanceM } : null, atRoad, tier: acc.tier, near: namedMainRoadsWithin(e.lat, e.lng, rd, 60), nearest: u ? [{ name: u.name, distanceM: u.distanceM }] : [], kelName: k?.name ?? null, kecName: k?.kecamatan ?? null,
       campus: null as ReturnType<typeof nearestCampus>, fold: fold(e.lat, e.lng) };
   });
   const admCache = new Map<string, [string | null, string | null]>();
@@ -59,6 +63,7 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
     const m0 = ds.model;
     const months = (d: string) => { const [y, mo] = d.split("-").map(Number); const [ya, ma] = m0.asOf.split("-").map(Number); return Math.max(0, ((ya - y) * 12 + (ma - mo)) / 12); };
     const compFold = ds.comparables.map((c) => fold(c.lat, c.lng));
+    const cov = v.corrOverride ? (JSON.parse(fs.readFileSync(v.corrOverride, "utf8")) as Record<string, Record<string, Record<string, { pin: number | null; proj: number | null }>>>) : null;
     const ov = v.override ? (JSON.parse(fs.readFileSync(v.override, "utf8")) as Record<string, Record<string, Record<string, number>>>) : null;
     for (const mode of ["loo", "cv", "lko"] as const) {
       const rows = ev.map((e, i) => {
@@ -66,6 +71,7 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
         const g = new Set(e.group.concat([e.id]));
         const comps = ds.comparables.filter((c, j) => !g.has(c.id) && (mode === "loo" || (mode === "cv" ? compFold[j] !== f.fold : !(c.kel === e.kel && c.kec === e.kec))));
         const bo = ov ? ov[mode]?.[v.overrideKey ?? "K4L6"]?.[e.id] : undefined;
+        const co = cov ? cov[mode]?.[v.corrKey ?? "F"]?.[e.id] : undefined;
         if (ov && bo == null) return null;
         let model: PriceModel = m0;
         if (m0.corridor && !v.noCorridor) {
@@ -80,20 +86,20 @@ it.skipIf(!process.env.VAL_OUT)("validasi bersama", () => {
         if (model.kelurahanPricing && v.kp) model = { ...model, kelurahanPricing: { ...model.kelurahanPricing, ...v.kp } };
         if (v.noKel) model = { ...model, kelurahanPricing: undefined };
         if (!f.campus) f.campus = nearestCampus(e.lat, e.lng, ds.campuses);
-        const r = estimatePrice({ lat: e.lat, lng: e.lng, insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName, baseLogOverride: bo,
+        const r = estimatePrice({ lat: e.lat, lng: e.lng, insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName, baseLogOverride: bo, corridorLogOverride: cov ? (co?.pin ?? 0) : undefined, frontRoad: f.uPin, shop: shopAt(e.lat, e.lng),
           area: e.area, campus: f.campus, mainRoad: model.corridor?.blend ? f.near : f.nearest }) as PriceEstimateResult;
         if (!r.available) return null;
         const y = Math.log(e.ppm * Math.exp(m0.trendPerYear * months(e.date)) * (m0.sourceAdj?.[e.src as "lamudi" | "pinhome"] ?? 1));
         const sh = r.autoTiers[f.tier];
         let eRoadAuto: number | null = null, eRoadMan: number | null = null;
         if (f.atRoad && e.proj) {
-          const r2 = estimatePrice({ lat: e.proj[0], lng: e.proj[1], insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName, baseLogOverride: bo,
+          const r2 = estimatePrice({ lat: e.proj[0], lng: e.proj[1], insideCity: true, comps, model, kelStat: findAreaStat(ds.kelurahan, f.kelName, f.kecName), kecStat: findAreaStat(ds.kecamatan, f.kecName), kel: f.kelName, kec: f.kecName, baseLogOverride: bo, corridorLogOverride: cov ? (co?.proj ?? 0) : undefined, frontRoad: f.atRoad.u, shop: shopAt(e.proj[0], e.proj[1]),
             area: e.area, campus: f.campus, mainRoad: model.corridor?.blend ? f.atRoad.near : f.atRoad.nearest }) as PriceEstimateResult;
           eRoadAuto = Math.log(r2.autoTiers[f.atRoad.tier].point) - y;
           eRoadMan = Math.log(r2.tiers.utama.point) - y;
         }
         return { eRoadAuto, eRoadMan, id: e.id, eShown: Math.log(sh.point) - y, cov: y >= Math.log(sh.low) && y <= Math.log(sh.high), eManU: Math.log(r.tiers.utama.point) - y, eAutoU: Math.log(r.autoTiers.utama.point) - y,
-          corr: r.corridor?.factor ?? 1, tier: f.tier, zl: r.zone?.level ?? null };
+          corr: r.corridor?.factor ?? 1, tier: f.tier, uPin: f.uPin, uProj: f.atRoad?.u ?? null, proj: e.proj, zl: r.zone?.level ?? null };
       });
       result[`${v.name}|${mode}`] = rows;
     }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { corridorKey, corridorPremium, estimatePrice, findAreaStat, sizeFactor, type PriceEstimateResult } from "../src/lib/estimate";
+import { corridorKey, corridorPremium, estimatePrice, frontagePremium, findAreaStat, sizeFactor, type PriceEstimateResult } from "../src/lib/estimate";
 import { detectAccess, type Road } from "../src/lib/access";
 import { findFeature, nearestCampus, type GeoCollection } from "../src/lib/geo";
 import { computeLocationScore, SCORE_SEARCH_RADIUS } from "../src/lib/score";
@@ -63,7 +63,8 @@ describe("estimasi harga per lokasi", () => {
   });
   const ling = (k: string) => (res[k].r as PriceEstimateResult).tiers.lingkungan.point;
   it("Simpang Lima jauh lebih mahal daripada Tembalang, Gunungpati, Tugu", () => {
-    expect(ling("simpangLima")).toBeGreaterThan(ling("tembalang") * 1.5);
+    // 2026-10-9: koreksi lokal dalam kelurahan menaikkan Tembalang (sekitar Undip) — rasio ≈ 1,46
+    expect(ling("simpangLima")).toBeGreaterThan(ling("tembalang") * 1.4);
     expect(ling("simpangLima")).toBeGreaterThan(ling("gunungpati") * 2);
     expect(ling("simpangLima")).toBeGreaterThan(ling("tugu") * 1.5);
   });
@@ -259,16 +260,17 @@ describe("model 2026-10-5: premi koridor jalan arteri (audit Jl. Majapahit)", ()
     const base = { lat, lng, insideCity: true, comps: ds.comparables, model: m, kelStat: findAreaStat(ds.kelurahan, k?.name ?? null, k?.kecamatan),
       kecStat: findAreaStat(ds.kecamatan, k?.kecamatan ?? null), campus: nearestCampus(lat, lng, ds.campuses) };
     const r0 = estimatePrice(base) as PriceEstimateResult;
-    const r1 = estimatePrice({ ...base, mainRoad: { name: "Jalan Majapahit", distanceM: 10 } }) as PriceEstimateResult;
+    const r1 = estimatePrice({ ...base, mainRoad: { name: "Jalan Majapahit", distanceM: 10 }, frontRoad: { name: "Jalan Majapahit", highway: "primary", distanceM: 10 } }) as PriceEstimateResult;
     expect(r1.corridor?.key).toBe("majapahit");
     expect(r1.corridor!.factor).toBeGreaterThan(1.5);
-    // 2026-10-7: harga dasar kini hanya dari kelurahan titik (lebih rendah dari v6), premi koridor tetap ≈ ×2
     expect(r1.autoTiers.utama.point).toBeGreaterThan(5.5e6);
     expect(r1.tiers.lingkungan.point).toBe(r0.tiers.lingkungan.point);
     expect(r1.autoTiers.gang.point).toBe(r0.autoTiers.gang.point);
-    // jauh dari ruas (> maxRoadM) atau ruas tanpa bukti → tanpa premi
-    expect(corridorPremium(m, lat, lng, { name: "Jalan Majapahit", distanceM: 200 })).toBeNull();
-    expect(corridorPremium(m, lat, lng, { name: "Jalan Kedungmundu", distanceM: 5 })).toBeNull();
+    // 2026-10-9: premi muka jalan hanya bila jalan utama ≤ maxRoadM (tier utama terdeteksi/dipilih); bidang dalam tanpa jalan utama dekat → tanpa premi
+    expect(frontagePremium(m, { name: "Jalan Majapahit", highway: "primary", distanceM: 200 }, null)).toBeNull();
+    expect(frontagePremium(m, null, null)).toBeNull();
+    // jalan kolektor tanpa bukti ruas → tanpa premi kelas
+    expect(frontagePremium(m, { name: "Jalan Tanpa Data", highway: "tertiary", distanceM: 5 }, null)!.factor).toBeCloseTo(1, 5);
   });
   it("validasi tersimpan: galat iklan muka jalan arteri turun, validasi harga tampil keseluruhan tidak memburuk", () => {
     const v = m.corridor!.validation;

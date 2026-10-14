@@ -216,6 +216,7 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
               ) : (
                 <>, Kel. {price.zone?.kel ?? "—"} belum punya iklan</>
               )}
+              {price.feature.localPct != null && Math.abs(price.feature.localPct) >= 0.01 ? <>, koreksi lokal (iklan terdekat sekelurahan) {fmtPct(price.feature.localPct)}</> : null}
               .
               {price.feature.contributions.length ? (
                 <span className="mt-1 block text-fg-muted">

@@ -65,6 +65,8 @@ export interface FeatureBreakdown {
   featureValue: number;
   kecPct: number;
   kelPct: number;
+  /** koreksi lokal dalam kelurahan (2026-10-9) */
+  localPct?: number;
   nKel: number;
   contributions: { key: string; label: string; pct: number }[];
 }
@@ -247,6 +249,17 @@ export function corridorPremium(model: PriceModel, lat: number, lng: number, roa
   };
 }
 
+/** Premi muka jalan 2026-10-9: kelas jalan + toko sepanjang jalan + efek ruas bernama (disusutkan). Hanya tier utama. */
+export function frontagePremium(model: PriceModel, road: { name: string | null; highway: string; distanceM: number } | null | undefined, shop: number | null | undefined): CorridorPremium | null {
+  const fm = model.frontage;
+  if (!fm || !road || road.distanceM > fm.maxRoadM) return null;
+  const cls = fm.classOf[road.highway] ?? "lain";
+  const key = road.name ? corridorKey(road.name, fm.aliases) : null;
+  const r = key ? fm.roads[key] : undefined;
+  const prem = (fm.cls[cls] ?? 0) + (cls === "arteri" ? fm.shopCoef * ((shop ?? fm.shopRef) - fm.shopRef) : 0) + (r?.u ?? 0);
+  return { key: r ? (key as string) : cls, label: r?.label ?? road.name ?? fm.clsLabel[cls] ?? "jalan utama", factor: Math.exp(prem), nEff: r?.n ?? 0, nUsed: r?.n ?? 0 };
+}
+
 /** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
 export function campusFactor(model: PriceModel, distanceM: number | null | undefined) {
   if (!model.campus || distanceM == null || !Number.isFinite(distanceM)) return 1;
@@ -307,7 +320,7 @@ export function estimatePrice(opts: {
   /** validasi: log harga dasar dari luar (mis. prediksi luar-lipatan model fitur) */
   baseLogOverride?: number;
   /** model fitur: nilai sel grid 150 m di titik (log F & kontribusi kelompok fitur, log) */
-  feature?: { f: number; c: number[] } | null;
+  feature?: { f: number; c: number[]; s?: number[]; sh?: number } | null;
   /** statistik zona kelurahan titik (dataset.zones) */
   zoneStat?: KelurahanZoneStat | null;
   area?: number;
@@ -315,6 +328,11 @@ export function estimatePrice(opts: {
   campus?: { name: string; distanceM: number } | null;
   /** jalan utama OSM bernama di dekat titik (nama & jarak; satu atau beberapa) — untuk premi koridor jalan arteri */
   mainRoad?: RoadNear | RoadNear[] | null;
+  /** 2026-10-9: jalan utama terdekat (kelas OSM) & intensitas toko 250 m — untuk premi muka jalan */
+  frontRoad?: { name: string | null; highway: string; distanceM: number } | null;
+  shop?: number | null;
+  /** audit: log premi muka jalan luar-lipatan (menggantikan perhitungan premi) */
+  corridorLogOverride?: number | null;
 }): PriceResult {
   const { lat, lng, comps, model } = opts;
   if (!opts.insideCity) return { available: false, reason: "Titik di luar Kota Semarang — estimasi tidak dihitung." };
@@ -409,18 +427,37 @@ export function estimatePrice(opts: {
   const zs = fp ? opts.zoneStat ?? null : null;
   let feature: FeatureBreakdown | null = null;
   let muFeat: number | null = null;
+  let localAdj = 0;
   if (fp && zs) {
     const fLog = opts.feature?.f ?? Math.log(zs.featureValue ?? zs.value);
     muFeat = fLog + (zs.kecOff ?? 0) + (zs.kelOff ?? 0);
+    // 2026-10-9: koreksi lokal dalam kelurahan dari residu iklan titik terdekat di kelurahan yang sama (disusutkan)
+    const lc = fp.local;
+    if (lc && opts.kel) {
+      const near = opts.comps
+        .filter((c) => c.fr != null && c.kel === opts.kel && c.kec === opts.kec)
+        .map((c) => ({ d: haversineMeters(lat, lng, c.lat, c.lng), v: (c.fr as number) - (zs.kecOff ?? 0) - (zs.kelOff ?? 0) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, lc.k);
+      if (near.length) {
+        const ws = near.map((x) => 1 / (1 + (x.d / lc.bwM) ** 2));
+        const tot = ws.reduce((a, b) => a + b, 0);
+        const ne = (tot * tot) / ws.reduce((a, b) => a + b * b, 0);
+        localAdj = (weightedQuantile(near.map((x) => x.v), ws, 0.5) * ne) / (ne + lc.mLoc);
+        muFeat += localAdj;
+      }
+    }
     sLocal = zs.sdLog ?? fp.cityResidSd;
     const contrib = opts.feature?.c ?? zs.contrib ?? [];
+    const side = opts.feature?.s ?? zs.side;
     feature = {
       featureValue: Math.exp(fLog),
       kecPct: Math.exp(zs.kecOff ?? 0) - 1,
       kelPct: Math.exp(zs.kelOff ?? 0) - 1,
+      localPct: Math.exp(localAdj) - 1,
       nKel: zs.n,
       contributions: fp.groups
-        .map((g, i) => ({ key: g.key, label: (contrib[i] ?? 0) >= 0 ? g.pos : g.neg, pct: Math.exp(contrib[i] ?? 0) - 1 }))
+        .map((g, i) => ({ key: g.key, label: (side ? side[i] ?? 1 : (contrib[i] ?? 0)) >= 0 ? g.pos : g.neg, pct: Math.exp(contrib[i] ?? 0) - 1 }))
         .filter((x) => Math.abs(x.pct) >= 0.02)
         .sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct)),
     };
@@ -439,7 +476,12 @@ export function estimatePrice(opts: {
   const basePoint = Math.exp(mu) * campusF;
 
   const cbd = cbdFrontageFactor(model, lat, lng);
-  const corridor = corridorPremium(model, lat, lng, opts.mainRoad);
+  const corridor =
+    opts.corridorLogOverride != null
+      ? { key: "audit", label: "", factor: Math.exp(opts.corridorLogOverride), nEff: 0, nUsed: 0 }
+      : model.frontage
+        ? frontagePremium(model, opts.frontRoad, opts.shop)
+        : corridorPremium(model, lat, lng, opts.mainRoad);
   const corrF = corridor?.factor ?? 1;
   const ss = spreadScale(model, area);
   const tiers = {} as Record<AccessTier, TierPrice>;

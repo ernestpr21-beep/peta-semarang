@@ -100,7 +100,7 @@ export function featureAt(g: (FeatureGrid & { pos: Map<number, number> }) | unde
   if (i < 0 || j < 0 || i >= g.ny || j >= g.nx) return null;
   const k = g.pos.get(i * g.nx + j);
   if (k == null) return null;
-  return { f: g.f[k] / 1000, c: g.c.map((col) => col[k] / 1000) };
+  return { f: g.f[k] / 1000, c: g.c.map((col) => col[k] / 1000), s: g.s ? g.s.map((col) => (col[k] === "1" ? 1 : -1)) : undefined, sh: g.sh ? g.sh[k] / 1000 : undefined };
 }
 export const useKelurahan = () => useQuery({ queryKey: ["kel"], queryFn: () => getJson<GeoCollection<KelProps>>(dataUrl("kelurahan.geojson")), staleTime: Infinity });
 export const useFacilities = () =>

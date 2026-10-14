@@ -529,6 +529,7 @@ export function MetodologiPage() {
         <li>Tingkat keyakinan: tinggi (≥ 8 pembanding efektif, median jarak ≤ 1 km, sebaran wajar), sedang (≥ 4 dalam 2 km), selain itu rendah.</li>
       </ol>
 
+      {model.frontage ? <FrontageSection /> : null}
       {model.featurePricing ? <FeatureSection /> : null}
       {model.kelurahanPricing ? <KelurahanSection /> : null}
 
@@ -966,6 +967,42 @@ function FeatureSection() {
         Jujur: model 2026-10-8 lebih baik dari 2026-10-7 di uji blok (tipis, 0,2 poin) dan jelas lebih baik saat kelurahan sendiri disembunyikan (LKO), serta bias
         “tarik ke rata-rata” jauh berkurang. Namun model lama 2026-10-6 (pembanding terdekat lintas kelurahan) masih sedikit lebih akurat secara keseluruhan; harga di muka
         jalan arteri (mis. Majapahit) masih cenderung terlalu rendah di semua model.
+      </p>
+    </>
+  );
+}
+
+function FrontageSection() {
+  const ds = useDataset();
+  const m = ds.data?.model;
+  const fm = m?.frontage;
+  if (!m || !fm) return null;
+  const roads = Object.entries(fm.roads).filter(([, r]) => r.n >= 3).sort((a, b) => b[1].n - a[1].n);
+  return (
+    <>
+      <h3 id="muka-jalan">3c. Premi muka jalan &amp; paparan rob (model 2026-10-9)</h3>
+      <p>
+        <b>Muka jalan.</b> Untuk tier "pinggir jalan utama" saja, harga dikalikan premi muka jalan: jalan arteri (OSM trunk/primary) ×{Math.exp(fm.cls.arteri ?? 0).toFixed(2)}
+        {fm.shopCoef > 0 ? `, sedikit naik bila banyak toko/usaha dalam 250 m (koef. ${fm.shopCoef.toFixed(3)} per log toko)` : ""}, ditambah efek ruas bernama yang
+        disusutkan (setara {fm.k} iklan). Jalan kolektor tidak mendapat premi kelas (faktor tier sudah dikalibrasi di sana). Dilatih dari iklan yang jelas bermuka jalan
+        (teks/pin koridor arteri, teks “jalan utama/raya”); bidang dalam yang pinnya dekat arteri tidak mendapat premi kecuali tier jalan utama terdeteksi (≤ {fm.maxRoadM} m) atau dipilih.
+      </p>
+      {roads.length ? (
+        <p className="text-xs text-fg-muted">
+          Efek ruas (≥ 3 iklan): {roads.map(([, r]) => `${r.label} ${r.u >= 0 ? "+" : "−"}${Math.abs(Math.round((Math.exp(r.u) - 1) * 100))}% (n=${r.n})`).join(" · ")}
+        </p>
+      ) : null}
+      <p>
+        <b>Rob/genangan pesisir.</b> Indeks paparan gabungan: elevasi DEM rendah dekat pantai, zona rob yang dikenal (Semarang Utara, Genuk, Tugu, Gayamsari, Semarang Timur
+        bagian utara), tambak/rawa/mangrove OSM, dan genangan berulang JRC Global Surface Water 1984–2021. Peta penurunan tanah (InSAR) yang terbit tidak tersedia sebagai
+        data terbuka siap pakai, jadi tidak dipakai. Indeks masuk model sebagai suku linear dengan batasan monoton (hanya boleh menurunkan harga).
+        {m.featurePricing?.linearMonotone?.length
+          ? " Data mendukung efek negatif; koefisiennya disusutkan."
+          : " Dengan batasan itu data tidak menunjukkan efek negatif yang dapat diandalkan (koefisien = 0): harga di pesisir dijelaskan oleh fitur lain (dataran rendah, kepadatan, toko). Karena itu panel tidak menampilkan faktor rob."}
+      </p>
+      <p>
+        <b>Audit label.</b> Label kontribusi kini menggambarkan keadaan lokasi dibanding rata-rata lokasi iklan (mis. “dataran rendah”), bukan tanda angkanya. Untuk faktor
+        yang arah harganya jelas (kepadatan, pusat kota, jalan besar, toko, lereng, rob), kontribusi yang tandanya bertentangan dengan makna label tidak ditampilkan.
       </p>
     </>
   );

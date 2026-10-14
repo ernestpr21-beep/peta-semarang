@@ -54,6 +54,7 @@ export function useLocationDetails(): LocationDetails {
 
   const price = useMemo(() => {
     if (!clicked || !ds.data || !admin) return null;
+    const feat = featureAt(fgrid.data, clicked.lat, clicked.lng);
     return estimatePrice({
       lat: clicked.lat,
       lng: clicked.lng,
@@ -64,13 +65,15 @@ export function useLocationDetails(): LocationDetails {
       kecStat: findAreaStat(ds.data.kecamatan, admin.kec),
       kel: admin.kel,
       kec: admin.kec,
-      feature: featureAt(fgrid.data, clicked.lat, clicked.lng),
+      feature: feat,
+      shop: feat?.sh ?? null,
+      frontRoad: access?.nearest.utama ?? null,
       zoneStat: ds.data.zones?.find((z) => z.name === admin.kel && z.kec === admin.kec) ?? null,
       area,
       campus: nearestCampus(clicked.lat, clicked.lng, ds.data.campuses),
       mainRoad: clicked && roads.roads ? namedMainRoadsWithin(clicked.lat, clicked.lng, roads.roads, ds.data.model.corridor?.maxRoadM ?? 60) : null,
     });
-  }, [clicked, ds.data, admin, area, roads.roads, fgrid.data]);
+  }, [clicked, ds.data, admin, area, roads.roads, fgrid.data, access]);
 
   const facilitiesAll = useMemo(
     () => (clicked && fac.data ? facilitiesNear(fac.data.rows, clicked.lat, clicked.lng, SCORE_SEARCH_RADIUS) : null),
