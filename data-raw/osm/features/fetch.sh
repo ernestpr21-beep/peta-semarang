@@ -18,3 +18,5 @@ for r in 0 1 2; do for c in 0 1 2; do
   get bld_${r}_${c} "[out:json][timeout:600][bbox:$s,$w,$n,$e];way[building];out center qt;"
 done; done
 echo ALLDONE
+# 2026-10-9: tambak/rawa/genangan untuk paparan rob
+get wet "[out:json][timeout:600][bbox:$B];(way[landuse~\"^(aquaculture|salt_pond|basin|reservoir)$\"];way[natural=wetland];relation[natural=wetland];way[\"wetland\"];way[water~\"^(fishpond|pond|reservoir|basin)$\"];);out tags geom qt;"

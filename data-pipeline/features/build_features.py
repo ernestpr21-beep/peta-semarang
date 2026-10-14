@@ -75,6 +75,9 @@ def fpts(pred):
     return out
 comm = pts_count(fpts(lambda t: t.get('shop') in ('supermarket', 'convenience', 'mall', 'department_store') or t.get('amenity') in ('bank', 'marketplace', 'fuel')))
 L['poi_comm_1000'] = focal_sum(comm, 1000); L['poi_comm_3000'] = focal_sum(comm, 3000)
+# intensitas komersial sepanjang jalan (2026-10-9): semua toko/usaha (shop=*, amenity komersial) dalam 250 m
+shop_all = pts_count(fpts(lambda t: bool(t.get('shop')) or t.get('amenity') in ('bank', 'restaurant', 'cafe', 'fast_food', 'fuel', 'marketplace', 'pharmacy')))
+L['shop_250'] = focal_sum(shop_all, 250)
 L['d_mall'] = dist_m(pts_count(fpts(lambda t: t.get('shop') in ('mall', 'department_store'))) > 0)
 L['d_market'] = dist_m(pts_count(fpts(lambda t: t.get('amenity') == 'marketplace')) > 0)
 L['school_1000'] = focal_sum(pts_count(fpts(lambda t: t.get('amenity') in ('school', 'kindergarten'))), 1000)
@@ -113,6 +116,22 @@ if L.get('d_coast') is None:  # cadangan: air WorldCover di utara
     L['d_coast'] = dist_m(((water > 0.5) & (lat_c > -6.97)).astype(np.uint8))
 # rawan rob: elevasi < 4 m dan ≤ 4 km dari pantai — pangsa dalam 250 m
 L['rob_250'] = focal_mean(((L['elev'] < 4) & (L['d_coast'] < 4000)).astype(np.float32), 250)
+# --- paparan rob/genangan pesisir (2026-10-9) ---
+# (a) OSM tambak/rawa/mangrove/kolam, (b) JRC Global Surface Water occurrence (genangan berulang 1984–2021),
+# (c) elevasi DEM rendah dekat pantai, (d) zona rob yang dikenal: Kec. Semarang Utara, Genuk, Tugu, Gayamsari & Semarang Timur bagian utara.
+wet = os.path.join(RAW, 'features/wet.json.gz')
+if os.path.exists(wet):
+    L['wet_500'] = focal_mean(burn(osm_polys(wet, lambda t: True), False).astype(np.float32), 500)
+gsw_p = os.path.join(CACHE, 'gsw_occ_smg.tif')
+if os.path.exists(gsw_p):
+    g = rasterio.open(gsw_p); gw = np.zeros((NY, NX), np.float32)
+    reproject(g.read(1).astype(np.float32), gw, src_transform=g.transform, src_crs=g.crs, dst_transform=TR, dst_crs='EPSG:4326', resampling=Resampling.average)
+    L['gsw_500'] = focal_mean((gw >= 10).astype(np.float32), 500)
+lowc = np.clip((6.0 - L['elev']) / 6.0, 0, 1) * np.exp(-L['d_coast'] / 3000.0)
+_kg = json.load(open(os.path.join(ROOT, 'public/data/kelurahan.geojson')))['features']
+ROBK = {'Semarang Utara', 'Genuk', 'Tugu', 'Gayamsari', 'Semarang Timur'}
+zone = burn([shape(f['geometry']) for f in _kg if f['properties']['kecamatan'] in ROBK], False).astype(np.float32) * (lat_c > -6.985) * (L['elev'] < 8)
+L['rob_exp'] = (0.35 * lowc + 0.25 * focal_mean(zone, 250) + 0.2 * np.clip(L.get('wet_500', 0) * 3, 0, 1) + 0.2 * np.clip(L.get('gsw_500', 0) * 3, 0, 1)).astype(np.float32)
 # --- bangunan OSM ---
 bf = sorted(glob.glob(os.path.join(RAW, 'features/bld_*.json.gz')))
 if len(bf) == 9:
@@ -129,7 +148,7 @@ kg = json.load(open(os.path.join(ROOT, 'public/data/kelurahan.geojson')))['featu
 lab = rasterize(((shape(f['geometry']), i + 1) for i, f in enumerate(kg)), out_shape=(NY, NX), transform=TR, dtype=np.int32)
 kec_names = sorted({f['properties']['kecamatan'] for f in kg}); kec_of = np.array([0] + [kec_names.index(f['properties']['kecamatan']) + 1 for f in kg])
 labc = kec_of[lab] * (lab > 0)
-AGG = ['built_250', 'bld_250', 'slope_250', 'elev', 'poi_comm_1000', 'tree_500', 'crop_500', 'roaddens_500', 'rob_250', 'ind_500']
+AGG = ['built_250', 'bld_250', 'slope_250', 'elev', 'poi_comm_1000', 'tree_500', 'crop_500', 'roaddens_500', 'rob_250', 'ind_500', 'rob_exp']
 for k in [a for a in AGG if a in L]:
     src = L[k] if k not in ('bld_250', 'poi_comm_1000') else np.log1p(np.maximum(L[k], 0))
     mk = np.array([0] + list(ndimage.mean(src, lab, np.arange(1, len(kg) + 1)))); L['kel_' + k] = np.nan_to_num(mk[lab]).astype(np.float32)
