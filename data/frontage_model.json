@@ -1,0 +1,278 @@
+{
+ "maxRoadM": 30.0,
+ "classOf": {
+  "trunk": "arteri",
+  "trunk_link": "arteri",
+  "primary": "arteri",
+  "primary_link": "arteri",
+  "secondary": "sekunder",
+  "secondary_link": "sekunder",
+  "tertiary": "tersier",
+  "tertiary_link": "tersier"
+ },
+ "cls": {
+  "arteri": 0.6751
+ },
+ "clsLabel": {
+  "arteri": "jalan arteri",
+  "sekunder": "jalan kolektor",
+  "tersier": "jalan kolektor kecil",
+  "lain": "jalan utama"
+ },
+ "shopCoef": 0.0176,
+ "shopRef": 0.6887,
+ "k": 8.0,
+ "aliases": {
+  "brigjen sudiarto": "majapahit",
+  "arteri soekarno hatta": "soekarno hatta",
+  "flyover ahmad yani": "ahmad yani",
+  "arteri utara": "arteri yos sudarso",
+  "komdor laut yos sudarso": "arteri yos sudarso",
+  "yos sudarso": "arteri yos sudarso",
+  "jenderal ahmad yani": "ahmad yani"
+ },
+ "roads": {
+  "abdul rahman saleh": {
+   "label": "Jl. Abdul Rahman Saleh",
+   "n": 1,
+   "u": -0.0392
+  },
+  "ahmad yani": {
+   "label": "Jl. Ahmad Yani",
+   "n": 1,
+   "u": 0.0106
+  },
+  "banjarsari": {
+   "label": "Jl. Banjarsari Raya",
+   "n": 1,
+   "u": 0.0098
+  },
+  "basudewa": {
+   "label": "Jl. Basudewa",
+   "n": 1,
+   "u": 0.0563
+  },
+  "cemara": {
+   "label": "Jl. Cemara Raya",
+   "n": 1,
+   "u": -0.0173
+  },
+  "cendrawasih": {
+   "label": "Jl. Cendrawasih",
+   "n": 1,
+   "u": -0.0138
+  },
+  "dr cipto": {
+   "label": "Jl. Dokter Cipto",
+   "n": 3,
+   "u": -0.3915
+  },
+  "dr wahidin": {
+   "label": "Jl. Dokter Wahidin",
+   "n": 2,
+   "u": 0.0338
+  },
+  "gajah": {
+   "label": "Jl. Gajah Raya",
+   "n": 1,
+   "u": -0.0403
+  },
+  "gatot subroto": {
+   "label": "Jl. Gatot Subroto",
+   "n": 3,
+   "u": 0.0504
+  },
+  "grafika": {
+   "label": "Jl. Grafika Raya",
+   "n": 1,
+   "u": -0.0073
+  },
+  "hanoman": {
+   "label": "Jl. Hanoman Raya",
+   "n": 1,
+   "u": 0.0619
+  },
+  "jatingaleh ii": {
+   "label": "Jl. Jatingaleh II",
+   "n": 1,
+   "u": -0.0356
+  },
+  "jenderal urip sumoharjo": {
+   "label": "Jl. Jenderal Urip Sumoharjo",
+   "n": 1,
+   "u": -0.2055
+  },
+  "kaligetas": {
+   "label": "Jl. Raya Kaligetas",
+   "n": 1,
+   "u": -0.0184
+  },
+  "ketileng": {
+   "label": "Jl. Ketileng Raya",
+   "n": 1,
+   "u": 0.0518
+  },
+  "kolonel rw sugiarto": {
+   "label": "Jl. Kolonel RW Sugiarto",
+   "n": 1,
+   "u": -0.0282
+  },
+  "kompol maksum": {
+   "label": "Jl. Kompol Maksum",
+   "n": 1,
+   "u": -0.0891
+  },
+  "kompol r soekanto": {
+   "label": "Jl. Kompol R. Soekanto",
+   "n": 2,
+   "u": -0.1218
+  },
+  "letjen sarwo edi": {
+   "label": "Jl. Letnan Jenderal Sarwo Edi",
+   "n": 1,
+   "u": -0.0082
+  },
+  "m h thamrin": {
+   "label": "Jl. M.H. Thamrin",
+   "n": 1,
+   "u": 0.1125
+  },
+  "madukoro": {
+   "label": "Jl. Madukoro",
+   "n": 1,
+   "u": -0.019
+  },
+  "majapahit": {
+   "label": "Jl. Brigadir Jenderal Sudiarto",
+   "n": 5,
+   "u": -0.0472
+  },
+  "meranti": {
+   "label": "Jl. Meranti Raya",
+   "n": 1,
+   "u": -0.0428
+  },
+  "mgr soegiyopranoto": {
+   "label": "Jl. MGR Soegiyopranoto",
+   "n": 1,
+   "u": 0.0594
+  },
+  "mr koesbiyono tjondrobirowo": {
+   "label": "Jl. Mr. Koesbiyono Tjondrobirowo",
+   "n": 1,
+   "u": 0.0335
+  },
+  "mt haryono": {
+   "label": "Jl. MT. Haryono",
+   "n": 1,
+   "u": 0.0079
+  },
+  "mulawarman": {
+   "label": "Jl. Mulawarman Raya",
+   "n": 1,
+   "u": -0.0715
+  },
+  "pawiyatan luhur": {
+   "label": "Jl. Pawiyatan Luhur",
+   "n": 3,
+   "u": -0.2341
+  },
+  "perintis kemerdekaan": {
+   "label": "Jl. Perintis Kemerdekaan",
+   "n": 4,
+   "u": 0.0346
+  },
+  "pramuka": {
+   "label": "Jl. Pramuka",
+   "n": 1,
+   "u": -0.0001
+  },
+  "profesor soedarto": {
+   "label": "Jl. Profesor Soedarto",
+   "n": 1,
+   "u": 0.0111
+  },
+  "profesor soeharso": {
+   "label": "Jl. Profesor Soeharso",
+   "n": 1,
+   "u": 0.0172
+  },
+  "ringin bhakti": {
+   "label": "Jl. Ringin Bhakti",
+   "n": 1,
+   "u": 0.0271
+  },
+  "rm hadi soebono": {
+   "label": "Jl. RM. Hadi Soebono",
+   "n": 3,
+   "u": -0.2004
+  },
+  "rm soebagiyono": {
+   "label": "Jl. RM Soebagiyono",
+   "n": 2,
+   "u": -0.0544
+  },
+  "rm soebagiyono tjondro koesoemo": {
+   "label": "Jl. RM Soebagiyono Tjondro Koesoemo",
+   "n": 1,
+   "u": -0.1052
+  },
+  "sapta prasetya utara": {
+   "label": "Jl. Sapta Prasetya Utara Raya",
+   "n": 1,
+   "u": -0.0551
+  },
+  "semarang boja": {
+   "label": "Jl. Semarang-Boja",
+   "n": 1,
+   "u": 0.0995
+  },
+  "sidodadi": {
+   "label": "Jl. Sidodadi Raya",
+   "n": 1,
+   "u": 0.0379
+  },
+  "soekarno hatta": {
+   "label": "Jl. Soekarno-Hatta",
+   "n": 2,
+   "u": 0.0282
+  },
+  "srikaton selatan": {
+   "label": "Jl. Srikaton Selatan",
+   "n": 1,
+   "u": -0.0092
+  },
+  "sriwijaya": {
+   "label": "Jl. Sriwijaya",
+   "n": 1,
+   "u": 0.0594
+  },
+  "taman tlogo mulyo": {
+   "label": "Jl. Taman Tlogo Mulyo",
+   "n": 1,
+   "u": -0.0429
+  },
+  "telaga bodas": {
+   "label": "Jl. Telaga Bodas",
+   "n": 1,
+   "u": 0.0337
+  },
+  "teuku umar": {
+   "label": "Jl. Teuku Umar",
+   "n": 2,
+   "u": -0.1674
+  },
+  "timoho": {
+   "label": "Jl. Timoho Raya",
+   "n": 1,
+   "u": 0.007
+  },
+  "untung suropati": {
+   "label": "Jl. Untung Suropati",
+   "n": 3,
+   "u": 0.1074
+  }
+ },
+ "nTrain": 232,
+ "note": "Premi log tier jalan utama = a[kelas jalan OSM] + b·(log(1+toko/usaha 250 m) − ref) + u[ruas bernama]; kelas disusutkan setara 2 iklan, ruas setara 8 iklan. Dilatih dari iklan bermuka jalan (teks/pin koridor, teks \"jalan utama/raya\", pin ≤ 30 m dari jalan utama). Hanya berlaku bila tier jalan utama terdeteksi/dipilih."
+}

@@ -1,0 +1,233 @@
+id,road,cls,shop,how,outlier,target_loo,target_cv,target_lko
+pinhome:2869202,karangrejo,sekunder,1.0926,pin ≤30 m,0,-0.3929,-0.4405,-0.3169
+pinhome:1105066,meranti,tersier,1.9382,teks jalan utama,0,-0.3849,-0.3849,-0.3849
+pinhome:3072973,sekaran,sekunder,0.6887,pin ≤30 m,0,-0.2839,-0.5251,-0.451
+pinhome:885689,,arteri,1.0926,teks jalan utama,0,-1.4323,-1.4768,-1.4323
+pinhome:3096134,basudewa,tersier,2.0716,teks jalan utama,0,0.5067,0.322,0.4101
+pinhome:3101180,papandayan,sekunder,0.0,pin ≤30 m,0,0.3035,0.4729,0.4426
+pinhome:3072122,soekarno hatta,arteri,0.0,pin ≤30 m,0,-1.1846,-1.1024,-1.1846
+pinhome:3093499,sekaran,sekunder,0.6887,pin ≤30 m,0,-0.6466,-0.8979,-0.7801
+pinhome:3104257,mr koesbiyono tjondrowibowo,sekunder,0.0,pin ≤30 m,0,-0.2961,-0.4392,-0.3338
+pinhome:1683725,karangrejo,sekunder,0.6887,pin ≤30 m,0,0.3164,0.2313,0.4095
+pinhome:3087692,perintis kemerdekaan,arteri,1.0926,teks/pin koridor,0,1.0135,0.9407,1.1336
+pinhome:3103608,bugangan,tersier,0.0,pin ≤30 m,0,0.8202,0.8028,0.8379
+pinhome:3018386,kolonel rw sugiarto,sekunder,1.0926,pin ≤30 m,0,-0.2397,-0.1062,-0.2397
+pinhome:2819205,profesor soedarto sh,sekunder,1.6022,pin ≤30 m,0,0.0357,-0.1214,-0.1214
+pinhome:3000944,kanal,tersier,0.0,pin ≤30 m,0,-2.1606,-2.3114,-2.3114
+pinhome:1722146,meranti,tersier,1.0926,pin ≤30 m,0,-0.1839,-0.2037,-0.2973
+pinhome:3106775,taman siswa,sekunder,1.3796,pin ≤30 m,0,-0.2384,-0.1431,-0.4432
+pinhome:2996893,papandayan,sekunder,1.0926,pin ≤30 m,1,-1.6355,-1.3842,-1.4307
+pinhome:3003149,rm hadi soebono,arteri,0.0,pin ≤30 m,0,0.0117,-0.3938,-0.4191
+pinhome:2645641,taman siswa,sekunder,0.6887,pin ≤30 m,0,-0.713,-0.4253,-0.793
+pinhome:3009131,lamongan,tersier,1.0926,pin ≤30 m,0,1.5441,1.714,1.6599
+pinhome:3000891,sriwijaya,sekunder,0.6887,pin ≤30 m,0,-0.4225,-0.6254,-0.4471
+pinhome:2974950,rm soebagiyono tjondro koesoemo,arteri,0.0,teks/pin koridor,0,-0.2842,-0.2842,-0.2235
+pinhome:3034622,ampel gading,sekunder,0.6887,pin ≤30 m,0,-0.5398,-0.6576,-0.1344
+pinhome:1353645,rm hadi soebono,arteri,0.0,teks/pin koridor,0,-0.8421,-1.1786,-1.1988
+pinhome:2868266,menoreh,sekunder,1.3796,pin ≤30 m,0,-0.167,-0.167,-0.167
+pinhome:2941959,majapahit,arteri,1.7843,teks/pin koridor,0,0.546,0.6963,0.6437
+pinhome:2413042,soekarno hatta,arteri,0.0,teks/pin koridor,0,1.0887,0.971,1.14
+pinhome:2910524,sidodadi,tersier,0.0,pin ≤30 m,0,-0.6066,-0.5738,-0.6066
+pinhome:973173,setiabudi,arteri,1.7843,teks/pin koridor,1,1.6052,1.7739,1.5713
+pinhome:1999141,kompol r soekanto,sekunder,1.0926,teks jalan utama,0,0.4956,0.3903,0.2769
+pinhome:1123636,dr cipto,arteri,1.0926,teks/pin koridor,0,0.9243,0.8242,0.8983
+pinhome:1140999,dr cipto,arteri,1.0926,teks/pin koridor,0,-0.8129,-0.5793,-0.5472
+pinhome:2987491,fatmawati,sekunder,0.6887,pin ≤30 m,0,-0.4191,-0.3938,-0.5144
+pinhome:1056810,woltermonginsidi,sekunder,1.9382,pin ≤30 m,0,-0.3563,-0.3804,-0.3063
+pinhome:1069168,kompol r soekanto,sekunder,0.0,pin ≤30 m,0,-0.7342,-0.5846,-0.6006
+pinhome:1339834,elang,sekunder,0.0,pin ≤30 m,0,0.0105,0.0105,-0.102
+pinhome:1360693,ahmad yani,arteri,2.0716,teks/pin koridor,0,0.7946,0.6515,1.057
+pinhome:1428957,pawiyatan luhur,sekunder,1.0926,pin ≤30 m,0,0.3876,-0.1374,-0.1088
+pinhome:1455404,supriyadi,tersier,0.0,pin ≤30 m,0,0.1634,-0.0644,0.0126
+pinhome:1545827,cemara,sekunder,0.6887,pin ≤30 m,0,-0.2909,-0.3139,-0.4616
+pinhome:1570285,perintis kemerdekaan,arteri,1.0926,teks/pin koridor,0,0.8082,0.7835,0.9707
+pinhome:1581987,soekarno hatta,arteri,0.0,teks/pin koridor,1,0.9978,0.9697,1.0567
+pinhome:1587673,teuku umar,arteri,1.3796,teks/pin koridor,0,-0.1355,-0.3026,-0.3767
+pinhome:1663955,,tersier,0.0,pin ≤30 m,0,0.1926,0.2836,0.2371
+pinhome:1696793,untung suropati,sekunder,0.0,pin ≤30 m,0,0.3045,-0.1693,-0.0276
+pinhome:1729069,pawiyatan luhur,sekunder,1.0926,teks jalan utama,0,-0.0391,-0.4999,-0.4686
+pinhome:1759221,gatot subroto,tersier,0.6887,teks/pin koridor,0,0.1846,0.3598,0.4964
+pinhome:1785073,gatot subroto,tersier,0.6887,teks/pin koridor,0,0.2973,0.5291,0.5735
+pinhome:1889494,gatot subroto,tersier,0.0,teks/pin koridor,0,-0.9375,-0.5035,-0.8337
+pinhome:1977747,telaga bodas,tersier,0.0,teks jalan utama,0,0.303,0.2077,0.3131
+pinhome:2018821,majapahit,arteri,1.0926,teks/pin koridor,1,1.3622,1.1722,1.2733
+pinhome:2181699,fatmawati,sekunder,1.7843,pin ≤30 m,0,0.4702,0.3942,0.3942
+pinhome:2292405,gajah,sekunder,1.0926,teks/pin koridor,0,-0.3626,-0.5483,-0.342
+pinhome:2311646,lingkar utara undip,tersier,0.0,pin ≤30 m,0,0.9509,0.8828,0.8315
+pinhome:2329645,jati,tersier,2.3897,pin ≤30 m,0,-0.6288,-0.7173,-0.7341
+pinhome:2423595,kuripan,tersier,0.0,pin ≤30 m,0,0.034,0.034,0.2282
+pinhome:2456006,rm soebagiyono tjondro koesoemo,arteri,0.6887,pin ≤30 m,0,0.2094,0.2835,0.1404
+pinhome:2460888,anyar gondoriyo wates,tersier,0.6887,pin ≤30 m,1,0.6055,0.6745,0.8286
+pinhome:2492041,perintis kemerdekaan,arteri,0.0,teks/pin koridor,0,0.7668,0.6651,0.841
+pinhome:2676716,rm soebagiyono,arteri,0.6887,teks/pin koridor,0,0.4032,0.3122,0.3122
+pinhome:2746383,unta,tersier,0.0,pin ≤30 m,0,-0.2766,-0.0917,-0.2232
+pinhome:2799139,mulawarman,sekunder,0.0,pin ≤30 m,0,-0.2147,-0.2147,-0.3431
+pinhome:2806896,majapahit,arteri,1.7843,teks/pin koridor,0,-0.0153,-0.1359,-0.0153
+pinhome:2847026,bsb city,tersier,0.0,pin ≤30 m,0,0.0484,0.4609,0.8145
+pinhome:2869227,grafika utama,tersier,1.0926,pin ≤30 m,0,-0.6016,-0.6401,-0.7473
+pinhome:2913667,m h thamrin,sekunder,2.4767,teks jalan utama,0,1.0122,1.2354,0.8638
+pinhome:2918386,profesor soeharso,sekunder,0.0,teks jalan utama,0,0.1552,0.1552,0.0885
+pinhome:2929803,banjir kanal,tersier,0.0,pin ≤30 m,0,0.0424,0.1829,-0.0663
+pinhome:2940347,soekarno hatta,arteri,0.0,teks/pin koridor,0,0.8039,0.973,0.8729
+pinhome:2944129,teuku umar,arteri,1.0926,teks/pin koridor,0,-0.1548,-0.0595,-0.0082
+pinhome:901080,sapta prasetya,tersier,0.6887,pin ≤30 m,0,-0.1347,-0.1347,-0.2648
+pinhome:1861842,kolonel haji imam soeparto,sekunder,0.0,pin ≤30 m,0,-0.354,-0.0955,-0.0955
+pinhome:2257502,majapahit,arteri,1.7843,teks/pin koridor,0,1.3973,1.5892,1.5515
+pinhome:2261289,perintis kemerdekaan,arteri,1.3796,teks/pin koridor,1,1.9585,1.9585,1.8979
+pinhome:2665413,sekaran,sekunder,0.0,pin ≤30 m,0,-0.2618,-0.0505,-0.3083
+pinhome:2706368,ampel gading,sekunder,0.0,pin ≤30 m,0,-0.9352,-0.7441,-0.8442
+pinhome:1652218,cemara,sekunder,1.9382,teks jalan utama,0,-0.1555,-0.1555,-0.2781
+pinhome:2476643,cendrawasih,sekunder,0.6887,teks jalan utama,0,-0.124,0.1355,0.3178
+pinhome:2729400,durian,sekunder,0.0,pin ≤30 m,0,-0.0919,-0.0287,-0.1513
+pinhome:2885380,profesor soedarto,tersier,1.0926,teks jalan utama,0,0.0999,0.1653,0.0873
+pinhome:845071,pramuka,sekunder,1.0926,teks/pin koridor,1,1.8277,1.6941,1.7587
+pinhome:933428,semarang boja,arteri,0.0,teks/pin koridor,0,1.5588,1.3918,1.5
+pinhome:965027,jatibarang,sekunder,0.0,pin ≤30 m,0,-0.4406,-0.6413,-0.5948
+pinhome:968695,pramuka,sekunder,0.0,teks jalan utama,0,-0.0013,0.0338,-0.0013
+pinhome:1004603,madukoro,tersier,1.0926,teks/pin koridor,0,-0.1712,-0.1878,-0.204
+pinhome:1037511,dr wahidin,arteri,1.6022,teks/pin koridor,0,0.8602,0.84,0.8602
+pinhome:1120955,profesor soedarto sh,sekunder,1.3796,pin ≤30 m,0,-1.1,-1.2508,-1.2408
+pinhome:1145880,soekarno hatta,arteri,1.0926,teks/pin koridor,1,0.8403,0.7552,0.8628
+pinhome:1164790,kolonel rw sugiarto,sekunder,0.0,teks jalan utama,0,-0.2534,-0.2534,-0.2534
+pinhome:2314210,dr wahidin,arteri,0.0,teks/pin koridor,1,1.7291,1.4684,1.609
+pinhome:1183413,arteri yos sudarso,arteri,0.0,pin ≤30 m,0,-0.0218,0.0323,0.051
+pinhome:1252164,pamularsih,arteri,0.6887,pin ≤30 m,0,-0.3003,-0.3941,-0.3166
+pinhome:1279250,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.8299,0.6629,0.7429
+pinhome:1309118,wonodri sendang,tersier,1.0926,pin ≤30 m,0,-0.2246,-0.2246,-0.0704
+pinhome:1314664,menoreh,sekunder,0.6887,pin ≤30 m,0,-0.2037,-0.2817,-0.2304
+pinhome:1329386,timoho,sekunder,1.0926,pin ≤30 m,0,0.0529,0.2453,0.3919
+pinhome:1336928,dewi sartika,tersier,0.0,pin ≤30 m,0,0.359,0.3077,0.2589
+pinhome:1381573,jenderal urip sumoharjo,arteri,0.0,pin ≤30 m,0,0.6028,0.4251,0.5487
+pinhome:1406013,majapahit,arteri,0.6887,teks/pin koridor,0,1.5939,1.7762,1.691
+pinhome:1411654,meteseh,sekunder,0.6887,pin ≤30 m,0,-0.1395,-0.3275,-0.3557
+pinhome:1462746,hanoman,tersier,0.0,teks/pin koridor,0,0.5573,0.7058,0.3983
+pinhome:1463793,durian,sekunder,0.6887,pin ≤30 m,0,0.118,0.1662,0.1418
+pinhome:1513636,candi mas,tersier,0.0,pin ≤30 m,0,0.0098,0.0624,0.147
+pinhome:1531176,papandayan,sekunder,0.0,pin ≤30 m,0,-0.4094,-0.2973,-0.5636
+pinhome:1545046,jendral sudirman,arteri,1.9382,pin ≤30 m,0,-0.343,-0.3282,-0.2178
+pinhome:1555201,kedungmundu,sekunder,1.7843,pin ≤30 m,0,-0.3296,-0.2808,-0.3296
+pinhome:1599180,dr suratmo,tersier,1.3796,pin ≤30 m,0,-0.2614,-0.326,-0.3049
+pinhome:1611433,gajah,sekunder,0.0,pin ≤30 m,0,-0.736,-0.8926,-0.6658
+pinhome:1639232,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.2287,0.1546,0.0856
+pinhome:1749914,kenanga,tersier,0.0,pin ≤30 m,0,0.2985,0.2576,0.3855
+pinhome:2285578,wotgandul dalam,tersier,1.0926,pin ≤30 m,0,-0.3077,-0.2684,-0.3818
+pinhome:978849,letjen suprapto,sekunder,2.4767,pin ≤30 m,0,0.9681,0.9681,1.2992
+pinhome:2129777,simongan,sekunder,0.0,pin ≤30 m,0,-0.2078,-0.0537,-0.0296
+pinhome:2442623,puspanjolo selatan,tersier,0.6887,pin ≤30 m,0,0.0957,0.1549,0.1308
+pinhome:2662787,abdul rahman saleh,tersier,0.0,pin ≤30 m,0,-1.1408,-0.9508,-0.9738
+pinhome:928171,candi kencana,tersier,0.0,pin ≤30 m,0,-0.5746,-0.4411,-0.417
+pinhome:1037707,abdul rahman saleh,tersier,0.0,pin ≤30 m,0,0.1985,0.1139,0.3236
+pinhome:906175,sriwijaya,sekunder,0.0,pin ≤30 m,0,-0.5268,-0.4397,-0.3444
+pinhome:940143,tentara pelajar,sekunder,1.0926,pin ≤30 m,1,-1.5757,-1.8049,-1.4969
+pinhome:2134516,menoreh,sekunder,0.6887,pin ≤30 m,0,0.2058,0.2748,0.2058
+pinhome:2157402,semeru,tersier,0.0,pin ≤30 m,0,-0.1211,-0.1349,-0.2511
+pinhome:1403226,menoreh,sekunder,1.0926,pin ≤30 m,0,0.2625,0.3625,0.2865
+pinhome:1960229,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.3484,0.3484,0.3686
+pinhome:2012509,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.4831,0.5372,0.4831
+pinhome:2354646,pramuka,sekunder,0.0,pin ≤30 m,0,-0.0078,-0.0078,-0.0566
+pinhome:2819060,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.5395,0.6305,0.5615
+pinhome:555598,taman siswa,sekunder,2.0716,pin ≤30 m,0,0.0678,0.206,-0.1091
+pinhome:3041316,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,0.1372,0.08,-0.0741
+pinhome:2544643,rm hadi soebono,arteri,0.0,pin ≤30 m,0,-0.4763,-0.7386,-0.7886
+pinhome:2905845,bsb city,tersier,0.0,pin ≤30 m,0,0.1517,0.5657,1.2335
+pinhome:938576,rm soebagiyono,arteri,0.0,teks/pin koridor,0,0.5656,0.4114,0.4512
+pinhome:2504015,krt wongsonegoro,tersier,0.0,pin ≤30 m,0,-0.705,-0.705,-0.8184
+pinhome:2474943,majapahit,arteri,1.3796,teks/pin koridor,1,0.9633,0.8819,1.0335
+pinhome:1052966,majapahit,arteri,1.0926,teks/pin koridor,1,2.1273,2.0896,2.0181
+pinhome:1128155,kh thohir,tersier,0.0,pin ≤30 m,0,-0.3011,-0.3011,-0.3701
+pinhome:1981883,profesor soedarto,tersier,0.0,pin ≤30 m,0,-0.4878,-0.3778,-0.2541
+pinhome:2021228,kompol r soekanto,sekunder,0.0,pin ≤30 m,0,0.1734,0.3666,0.3503
+pinhome:2077031,,tersier,0.0,pin ≤30 m,0,-0.6331,-0.7567,-0.6844
+pinhome:2798950,profesor soedarto,tersier,1.0926,pin ≤30 m,0,-0.7227,-0.6248,-0.7227
+pinhome:2872319,meteseh,sekunder,0.6887,pin ≤30 m,0,-0.3438,-0.56,-0.5874
+pinhome:2452149,profesor soedarto,tersier,1.0926,pin ≤30 m,0,-0.0748,0.0063,-0.0748
+pinhome:896602,profesor soedarto,tersier,1.0926,pin ≤30 m,0,-0.185,-0.1302,-0.2114
+pinhome:902430,banjarsari,sekunder,0.6887,pin ≤30 m,0,-0.1817,-0.1483,-0.2297
+pinhome:2956246,jatingaleh ii,tersier,0.6887,teks jalan utama,0,-0.3207,-0.5403,-0.1695
+lamudi:41032-73-d5d6c2541f83-d136-19e1ae9-a82d-7621,letjen sarwo edi,sekunder,0.6887,teks jalan utama,0,-0.0738,0.0513,-0.131
+lamudi:tanah-strategis-tirto-agung-raya-banyumanik-173664382219,tirto agung,sekunder,1.0926,pin ≤30 m,0,0.4317,0.5067,0.4438
+lamudi:tanah-strategis-durian-raya-banyumanik-173657477289,durian,sekunder,0.0,pin ≤30 m,0,0.3134,0.3622,0.3254
+lamudi:tanah-strategis-banyumanik-jln-karang-rejo-5-173664297252,karangrejo,sekunder,0.6887,pin ≤30 m,0,-0.6536,-0.6241,-0.4448
+lamudi:41032-73-ee46891d63fc-1ae8-1a0f811-8fa7-735c,mulawarman selatan,tersier,0.6887,pin ≤30 m,0,-0.1398,-0.1233,-0.2186
+lamudi:41032-73-7bd40ead531b-41fb-19a2d9d-a15f-7102,untung suropati,sekunder,0.0,pin ≤30 m,0,0.4773,0.751,0.5969
+lamudi:41032-73-9c3df1864ea-8a83-19d9f8b-9301-739a,sultan agung,arteri,1.0926,pin ≤30 m,0,1.0022,0.8764,0.8764
+lamudi:41032-73-192e3a908203-aa1e-19ff65b-ab05-7d79,cepoko i,sekunder,0.0,pin ≤30 m,0,-0.6182,-0.7434,-0.8006
+lamudi:rumah-kavling-dijual-dekat-banyak-fasilitas-umum-d-172605040246,gedawang,tersier,0.0,pin ≤30 m,1,1.2215,1.1381,1.3613
+lamudi:tanah-dijual-dekat-greenwood-estatesemarang-lokasi-174139762513,mr wuryanto,arteri,0.0,pin ≤30 m,0,0.1644,0.2514,0.0843
+lamudi:tanah-dijual-di-kelud-sampangan-dekat-fakultas-ked-175584600386,papandayan,sekunder,0.0,pin ≤30 m,0,-0.5551,-0.5807,-0.7221
+lamudi:41032-73-55bdefd79706-f875-19c0a13-8115-7535,setiabudi,arteri,0.0,pin ≤30 m,0,0.754,0.6799,0.6657
+lamudi:41032-73-59c26a03dc3a-2678-19a2e2c-8cc7-7671,untung suropati,sekunder,0.0,teks jalan utama,0,0.5691,0.8986,0.762
+lamudi:41032-73-1519d60ce76c-584d-19a36bd-978c-73db,hasanuddin,tersier,1.0926,pin ≤30 m,0,0.2684,0.31,0.3535
+lamudi:41032-73-669c822e414-85d2-19a2df1-8ee4-7343,untung suropati,sekunder,0.0,teks jalan utama,0,0.394,0.7248,0.5791
+lamudi:41032-73-ad04dcc9db6c-c58b-19f3cb4-8bfb-72b1,kaligawe,arteri,0.6887,pin ≤30 m,0,-1.421,-1.3744,-1.3744
+lamudi:41032-73-bd9cb333530c-22fa-19a2dca-aaaa-782a,untung suropati,sekunder,0.0,pin ≤30 m,0,0.3951,0.7674,0.6217
+lamudi:41032-73-eefcc91e0319-cade-19a2de4-9028-7547,candi penataran,sekunder,0.0,pin ≤30 m,0,0.795,0.7593,0.9105
+lamudi:41032-73-c3b39d26286-42a7-19e0aea-b3dc-7094,imam bonjol,arteri,1.3796,teks/pin koridor,1,0.8076,0.8076,0.8721
+lamudi:41032-73-8e90b63c3e9d-8b1a-19ead89-be32-781a,rm hadi soebono,arteri,1.7843,pin ≤30 m,0,-0.2198,-0.0528,-0.4683
+lamudi:41032-73-4a85e950acdf-5fb6-19f5ff7-9928-7816,durian,sekunder,0.6887,pin ≤30 m,0,0.1369,0.2025,0.2196
+lamudi:41032-73-9db9ef4aacee-36ac-199f060-9954-71bf,gatot subroto,tersier,0.6887,pin ≤30 m,0,-0.837,-0.3831,-0.7073
+lamudi:41032-73-4af2d77f78d2-abde-19bbb0f-bb5e-7737,sidodadi,tersier,0.0,teks jalan utama,0,0.3412,0.0788,-0.0304
+lamudi:kavling-di-puri-arga-golf-bsb-semarang-17153287861,rm hadi soebono,arteri,1.6022,pin ≤30 m,1,1.4373,1.1146,1.0161
+lamudi:tanah-kosong-di-taman-kukilo-mukti-utara-pedurunga-175138143446,sapta prasetya utara,tersier,0.0,teks jalan utama,0,-0.4962,-0.4436,-0.6169
+lamudi:41032-73-a7a9e2173686-8377-199945c-9ec3-72fd,majapahit,arteri,0.6887,teks/pin koridor,1,1.6973,1.6707,1.5947
+lamudi:41032-73-da8bb08d3209-a1be-19ac8bd-9f9a-7a09,majapahit,arteri,0.6887,teks/pin koridor,0,0.5523,0.6837,0.6492
+lamudi:41032-73-b53a34f92881-ffa5-19f3aa1-9903-72b2,kompol maksum,arteri,1.3796,teks/pin koridor,0,-0.1145,-0.0737,-0.451
+lamudi:41032-73-dcf1c11b0b7-f51e-19de891-a090-7bf3,kaligetas,sekunder,0.0,teks jalan utama,0,-0.1659,-0.32,-0.32
+lamudi:41032-73-46e3ca58e199-7f29-19e61cf-a6ae-76df,mgr soegiyopranoto,arteri,1.3796,teks/pin koridor,0,1.222,0.8021,0.9563
+lamudi:41032-73-22ad1dc38b16-3a1a-19dde89-83ef-78e4,cinde selatan,tersier,0.0,pin ≤30 m,0,-0.6554,-0.8377,-0.7085
+lamudi:41032-73-6c8a4e67c505-99f7-19f760d-9c5a-7bb2,kompol r soekanto,sekunder,0.0,teks jalan utama,0,-0.6092,-0.7243,-0.6092
+lamudi:41032-73-1b02347fd415-930b-19fa95a-90e5-7b40,perintis kemerdekaan,arteri,0.0,teks/pin koridor,0,0.7411,0.6039,0.684
+lamudi:41032-73-fc22f1b7b6a5-b3e4-1a01992-ad9d-7eec,gatot subroto,tersier,0.6887,pin ≤30 m,0,-0.2998,0.0397,-0.2998
+lamudi:41032-73-5b7c56a816d1-8a07-1a0a34f-af1e-76b0,klipang golf,sekunder,1.3796,pin ≤30 m,0,-0.0545,-0.0545,0.0588
+lamudi:41032-73-7433e8e90dad-82d0-19fdb48-88c8-72a6,jatimulyo,tersier,1.3796,pin ≤30 m,0,0.4909,0.645,0.4353
+lamudi:41032-73-25b0270701ef-61d6-19e1b3f-8d55-74cb,pemuda,arteri,2.5566,pin ≤30 m,0,-0.6513,-0.5906,-0.7625
+lamudi:41032-73-97f621a889ac-e2ff-19fda8e-a780-7734,pawiyatan luhur,sekunder,0.6887,pin ≤30 m,0,-0.3264,-0.7319,-0.6792
+lamudi:41032-73-8d2a79ffcc8-d33d-1a0ec13-92d9-7289,abdul rahman saleh,tersier,0.6887,pin ≤30 m,0,-0.0145,0.0387,-0.2167
+lamudi:41032-73-2cb95ff42398-f06e-19b68b1-ba7f-7442,mt haryono,arteri,1.0926,teks/pin koridor,0,0.7532,0.8222,0.7532
+lamudi:41032-73-a34b17e40207-b614-19c1cf4-b719-7234,cepoko,sekunder,0.0,pin ≤30 m,0,-0.4501,-0.5146,-0.4501
+lamudi:dijual-kavling-murah-567m2-di-mulawarman-5-menit-u-172976002282,timoho,sekunder,1.0926,teks jalan utama,0,0.063,0.2478,0.371
+lamudi:41032-73-ecb2e58a78f2-95ca-1a10fcb-a645-7caa,kolonel rw sugiarto,sekunder,0.0,pin ≤30 m,0,-0.1515,0.0821,-0.2315
+lamudi:41032-73-926907211d4d-d30f-199a39f-8fe1-75dc,anyar gondoriyo,tersier,0.0,pin ≤30 m,0,-1.3349,-1.3726,-1.2548
+lamudi:kavling-premium-borobudur-timur-samping-ramai-many-174498295442,abdul rahman saleh,tersier,1.3796,teks jalan utama,0,-0.353,-0.44,-0.5006
+lamudi:41032-73-be7c5cd58ecc-4db1-1a0ba3d-87c4-7ac9,pawiyatan luhur,sekunder,0.6887,teks jalan utama,0,-1.3519,-1.6686,-1.6248
+lamudi:41032-73-6ecb188830ec-28f8-19af7aa-86e5-7387,durian,sekunder,0.0,pin ≤30 m,0,0.0713,0.1348,0.0868
+lamudi:41032-73-414dc7f20af-c62-19bdad5-bedf-7659,ketileng,sekunder,0.6887,teks jalan utama,0,0.4664,0.4138,0.4938
+lamudi:41032-73-98e51d9009b9-5e5d-1a1001a-8b2b-7208,klipang golf,sekunder,1.3796,pin ≤30 m,0,0.793,0.7285,0.8984
+lamudi:tanah-depan-gor-tri-lomba-juang-semarang-174115898012,tri lomba juang,sekunder,2.0716,pin ≤30 m,0,0.6107,0.7442,0.8443
+lamudi:41032-73-558840b3bfc3-a69d-1a0a24a-8a1e-7aa7,tirto agung,sekunder,1.0926,pin ≤30 m,0,-0.4825,-0.3897,-0.4305
+lamudi:41032-73-cc68efcbbc9e-fe00-1a0c6ce-986f-7d7c,dewi sartika,tersier,0.0,pin ≤30 m,0,0.2223,0.1758,0.1313
+lamudi:41032-73-5d983f69889c-b8b2-19c0807-b47b-7230,mr koesbiyono tjondrobirowo,sekunder,0.0,pin ≤30 m,1,1.1027,1.0074,0.9204
+lamudi:41032-73-aad960f71ba9-c8d1-19c9dfc-823a-7f7b,grafika,sekunder,1.3796,teks jalan utama,0,-0.0661,-0.013,0.1877
+lamudi:41032-73-498755fd7fac-7e39-1a071b4-b312-733a,srikaton selatan,tersier,0.6887,teks jalan utama,0,-0.0824,0.1206,0.2259
+lamudi:41032-73-478cefa6af36-d121-19f6121-9439-72c1,rm hadi soebono,arteri,1.7843,teks/pin koridor,0,0.7378,0.7905,0.3941
+lamudi:41032-73-2411af4f1802-7363-1a02830-b975-7db4,soekarno hatta,arteri,0.0,pin ≤30 m,0,-1.5991,-1.4784,-1.5761
+lamudi:41032-73-ecba98da5157-17b4-19bd972-94ba-71fa,rm hadi soebono,arteri,1.7843,pin ≤30 m,0,0.2487,0.4138,0.0169
+lamudi:41032-73-169aaff6db48-9b5f-19d34dd-a336-7073,jedung,tersier,0.0,pin ≤30 m,0,0.2156,0.2156,0.2156
+lamudi:41032-73-dd8113931f9c-65cc-19c30fe-8a27-7806,jedung,tersier,1.0926,pin ≤30 m,0,0.283,0.2185,0.2185
+lamudi:jual-cepat-murah-tanah-tembalang-selangkah-ke-kamp-173198906462,mulawarman,sekunder,0.0,teks jalan utama,0,-0.6438,-0.5994,-0.7405
+lamudi:41032-73-ef016e3a9ed2-d4b8-19e40a8-aae2-7730,taman tlogo mulyo,tersier,0.0,teks jalan utama,0,-0.3863,-0.4162,-0.4452
+lamudi:41032-73-a886513164eb-fee-19b7d24-985b-73b1,mr koesbiyono tjondrobirowo,sekunder,0.6887,teks jalan utama,0,0.3014,0.2473,0.2473
+lamudi:41032-73-a878e6a2bd9e-e61-19e6bf0-be9c-772b,ringin bhakti,tersier,0.0,pin ≤30 m,0,0.4505,0.6534,0.975
+lamudi:41032-73-314c4b12d921-528a-19ec04c-8822-786e,sriwijaya,sekunder,0.6887,teks/pin koridor,0,0.535,0.535,0.6816
+lamudi:kavling-di-mulawarman-semarang-17134338092,mulawarman,sekunder,0.0,pin ≤30 m,0,-0.8652,-0.7276,-0.8652
+lamudi:kavling-di-cangkiran-mijen-semarang-175196196040,rm hadi soebono,arteri,1.6022,pin ≤30 m,1,-2.0582,-2.3033,-2.4259
+lamudi:kavling-di-untung-suropati-semarang-172102581922,untung suropati,sekunder,1.6022,teks jalan utama,0,0.2324,0.1924,0.34
+lamudi:41032-73-76fad83ae913-16e2-19cd4bd-8d87-7df4,ringin bhakti,tersier,0.0,teks jalan utama,0,0.2443,0.3026,0.1542
+lamudi:41032-73-73e5d40d956a-7d99-1a06ae9-ae08-7fd1,banjarsari,sekunder,1.0926,teks jalan utama,0,0.0882,0.1634,0.2618
+lamudi:41032-73-3ec2e2b3d0ab-9cbb-19d725e-9be3-7271,dr wahidin,arteri,0.6887,pin ≤30 m,0,0.7766,0.2658,0.6083
+lamudi:41032-73-2deb805718e5-132a-19e7c82-a408-7153,mayjen mt haryono,arteri,0.6887,pin ≤30 m,0,0.3598,-0.0332,0.2884
+lamudi:41032-73-aea6bf8585a9-1ea9-1a056a9-924c-77a4,dr wahidin,arteri,0.6887,teks/pin koridor,0,0.8577,0.3468,0.7035
+lamudi:41032-73-8acfd1b908d7-b0b0-19d7231-8928-7796,dr cipto,arteri,1.0926,teks/pin koridor,0,-0.7534,-0.6256,-0.8054
+lamudi:41032-73-f2a38c4f7da8-30fb-19ebda3-afc3-7dfb,untung suropati,sekunder,1.0926,pin ≤30 m,0,-0.6816,-0.64,-0.5034
+lamudi:41032-73-1bb3229fc0a7-90ab-19d7b11-8729-77d3,anjasmoro,tersier,0.6887,pin ≤30 m,0,0.7839,0.8007,0.7839
+lamudi:41032-73-a60735c4a6dc-bfa3-199cd9d-9e91-7058,pawiyatan luhur,sekunder,0.6887,teks jalan utama,0,-0.8584,-1.2002,-1.1461
+lamudi:41032-73-e4e97faf8bd6-104d-19a7662-81f9-7482,mr koesbiyono tjondrobirowo,sekunder,0.0,pin ≤30 m,0,-0.2375,-0.2888,-0.3376
+lamudi:41032-73-e85097118812-12ff-19f6a32-9ca4-74b6,jenderal urip sumoharjo,arteri,0.0,teks/pin koridor,0,-1.1867,-1.1379,-0.9148
+lamudi:41032-73-4cc0945d66d9-10026-1a01dbd-a131-7725,papandayan,sekunder,0.0,pin ≤30 m,0,-0.2391,-0.1857,-0.3496
+lamudi:41032-73-3264666a8fe4-a6f1-1a0b36b-9675-7cc3,pramuka,sekunder,0.0,pin ≤30 m,0,-1.1554,-1.2889,-1.1554
+lamudi:41032-73-f421cbb49cbf-7442-19d3d69-84a3-7333,taman tlogo mulyo,tersier,0.0,pin ≤30 m,0,-0.1029,-0.1674,-0.1982
+lamudi:41032-73-e937bb641a7a-f053-19fdaeb-892b-70d8,madukoro,tersier,1.0926,pin ≤30 m,1,0.7035,0.7035,0.6678
+lamudi:41032-73-91682a6bdd27-f32-286a7a3f-a5d7-4934,menoreh,sekunder,1.0926,pin ≤30 m,0,0.0554,0.1705,0.0774
+lamudi:41032-73-b1b943cb96fd-1797-fbe03028-a796-4e3f,candi prambanan,tersier,0.0,pin ≤30 m,0,-0.6539,-0.6139,-0.4357
+lamudi:41032-73-44f044c87fbf-7c6b-1c4b0b7e-8c26-41f6,candi prambanan,tersier,0.0,pin ≤30 m,0,-0.1974,-0.1423,0.0213
+lamudi:41032-73-ec341829c453-1fff-2b5e0582-b69e-439e,rm hadi soebono,arteri,0.0,teks/pin koridor,0,-0.072,-0.2186,-0.3056

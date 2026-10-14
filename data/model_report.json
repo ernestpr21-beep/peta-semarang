@@ -1,5 +1,5 @@
 {
- "version": "2026-10-8",
+ "version": "2026-10-9",
  "minEffComparables": 10,
  "locLevels": {
   "titik": 1871,
@@ -206,36 +206,36 @@
    {
     "minM2": 0,
     "maxM2": 100,
-    "scale": 0.895,
-    "scaleRaw": 0.851,
+    "scale": 0.901,
+    "scaleRaw": 0.86,
     "n": 236
    },
    {
     "minM2": 100,
     "maxM2": 175,
-    "scale": 0.953,
-    "scaleRaw": 0.947,
+    "scale": 0.945,
+    "scaleRaw": 0.939,
     "n": 883
    },
    {
     "minM2": 175,
     "maxM2": 500,
-    "scale": 1.079,
-    "scaleRaw": 1.086,
+    "scale": 1.078,
+    "scaleRaw": 1.085,
     "n": 1090
    },
    {
     "minM2": 500,
     "maxM2": 1500,
-    "scale": 1.072,
-    "scaleRaw": 1.087,
+    "scale": 1.051,
+    "scaleRaw": 1.061,
     "n": 476
    },
    {
     "minM2": 1500,
     "maxM2": null,
-    "scale": 1.394,
-    "scaleRaw": 1.509,
+    "scale": 1.391,
+    "scaleRaw": 1.504,
     "n": 344
    }
   ],
@@ -243,28 +243,28 @@
    "crossFitCoverage50": [
     {
      "withScale": 46.3,
-     "without": 46.4,
+     "without": 46.8,
      "n": 1532
     },
     {
-     "withScale": 52.5,
-     "without": 49.4,
+     "withScale": 51.4,
+     "without": 49.7,
      "n": 1497
     }
    ],
    "coverageByClassWithout": [
-    56.4,
-    52.4,
-    47.2,
+    55.1,
+    53.1,
+    47.8,
     47.3,
     33.7
    ],
    "coverageByClassWith": [
     51.3,
+    50.1,
     49.8,
-    49.7,
-    50.2,
-    46.8
+    48.9,
+    46.5
    ]
   },
   "note": "Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1."
@@ -280,16 +280,16 @@
   },
   "gangCheck": {
    "n": 25,
-   "q25LogVsLingPoint": -0.508,
-   "medianLogVsLingPoint": -0.252,
-   "q75LogVsLingPoint": 0.248,
+   "q25LogVsLingPoint": -0.503,
+   "medianLogVsLingPoint": -0.249,
+   "q75LogVsLingPoint": 0.266,
    "shareAboveLingPoint": 36.0,
    "withoutCap": {
-    "coverage50": 48.0,
+    "coverage50": 52.0,
     "aboveHigh": 32.0
    },
    "withCap": {
-    "coverage50": 44.0,
+    "coverage50": 48.0,
     "aboveHigh": 36.0
    },
    "capMult": 1.0
@@ -298,10 +298,10 @@
  },
  "autoAccess": {
   "factors": {
-   "utama": 1.056,
-   "lingkungan": 1.056,
-   "gang": 1.056,
-   "tanpa": 1.015
+   "utama": 1.059,
+   "lingkungan": 1.059,
+   "gang": 1.059,
+   "tanpa": 1.016
   },
   "cbdScale": 1.0,
   "sdLog": 0.1,
@@ -312,35 +312,35 @@
    "tanpa": 300
   },
   "medianRaw": {
-   "utama": 1.022,
-   "lingkungan": 1.06,
-   "gang": 1.067,
-   "tanpa": 1.013
+   "utama": 1.029,
+   "lingkungan": 1.066,
+   "gang": 1.063,
+   "tanpa": 1.014
   },
   "validation": {
    "before": {
     "n": 1871,
-    "medianAbsErrPct": 41.9,
+    "medianAbsErrPct": 42.1,
     "biasLog": -0.158,
-    "within25pct": 33.4,
-    "coverage50pct": 44.0,
+    "within25pct": 33.2,
+    "coverage50pct": 43.6,
     "biasByDetectedTier": {
-     "utama": 0.15,
-     "lingkungan": -0.059,
-     "gang": -0.265,
+     "utama": 0.142,
+     "lingkungan": -0.064,
+     "gang": -0.261,
      "tanpa": -0.611
     }
    },
    "after": {
     "n": 1871,
-    "medianAbsErrPct": 36.6,
+    "medianAbsErrPct": 36.5,
     "biasLog": 0.001,
-    "within25pct": 37.5,
-    "coverage50pct": 50.7,
+    "within25pct": 37.7,
+    "coverage50pct": 50.0,
     "biasByDetectedTier": {
-     "utama": 0.042,
-     "lingkungan": -0.005,
-     "gang": -0.011,
+     "utama": 0.037,
+     "lingkungan": -0.007,
+     "gang": -0.004,
      "tanpa": 0.002
     }
    },
@@ -365,7 +365,7 @@
      [
       -6.99238,
       110.42764,
-      0.921
+      0.935
      ]
     ],
     "ids": [
@@ -382,17 +382,17 @@
      [
       -6.97264,
       110.4342,
-      0.998
+      0.989
      ],
      [
       -6.97215,
       110.4341,
-      -0.837
+      -0.695
      ],
      [
       -6.97264,
       110.4342,
-      -0.785
+      -0.725
      ]
     ],
     "ids": [
@@ -413,17 +413,17 @@
      [
       -7.01823,
       110.42667,
-      1.035
+      1.057
      ],
      [
       -7.01312,
       110.43163,
-      1.709
+      1.753
      ],
      [
       -7.00981,
       110.43192,
-      0.77
+      0.761
      ]
     ],
     "ids": [
@@ -444,7 +444,7 @@
      [
       -6.98702,
       110.44809,
-      -0.5
+      -0.455
      ]
     ],
     "ids": [
@@ -461,12 +461,12 @@
      [
       -6.99534,
       110.36674,
-      0.233
+      0.242
      ],
      [
       -6.99734,
       110.36611,
-      0.333
+      0.345
      ],
      [
       -7.00026,
@@ -492,7 +492,7 @@
      [
       -6.98342,
       110.36948,
-      0.656
+      0.633
      ]
     ],
     "ids": [
@@ -509,7 +509,7 @@
      [
       -6.9698,
       110.4228,
-      0.788
+      0.771
      ]
     ],
     "ids": [
@@ -526,7 +526,7 @@
      [
       -6.97256,
       110.30894,
-      -1.103
+      -1.037
      ]
     ],
     "ids": [
@@ -543,7 +543,7 @@
      [
       -6.99877,
       110.4336,
-      -0.217
+      -0.214
      ]
     ],
     "ids": [
@@ -560,7 +560,7 @@
      [
       -6.97307,
       110.40049,
-      -0.243
+      -0.199
      ]
     ],
     "ids": [
@@ -577,47 +577,47 @@
      [
       -7.00892,
       110.46512,
-      0.529
+      0.531
      ],
      [
       -7.00565,
       110.45423,
-      1.385
+      1.376
      ],
      [
       -7.00791,
       110.4619,
-      -0.009
+      -0.012
      ],
      [
       -7.00901,
       110.46546,
-      1.453
+      1.45
      ],
      [
       -7.01028,
       110.46984,
-      1.596
+      1.587
      ],
      [
       -7.00729,
       110.45977,
-      0.97
+      0.955
      ],
      [
       -7.01405,
       110.48038,
-      2.083
+      2.084
      ],
      [
       -7.01152,
       110.47448,
-      1.667
+      1.636
      ],
      [
       -6.99866,
       110.44225,
-      0.521
+      0.512
      ]
     ],
     "ids": [
@@ -650,7 +650,7 @@
      [
       -6.98405,
       110.40831,
-      0.784
+      0.795
      ]
     ],
     "ids": [
@@ -667,7 +667,7 @@
      [
       -6.97988,
       110.4314,
-      0.726
+      0.804
      ]
     ],
     "ids": [
@@ -684,32 +684,32 @@
      [
       -7.07857,
       110.41149,
-      0.97
+      0.981
      ],
      [
       -7.07469,
       110.41119,
-      0.854
+      0.858
      ],
      [
       -7.07546,
       110.4113,
-      0.679
+      0.682
      ],
      [
       -7.1015,
       110.40907,
-      1.949
+      1.969
      ],
      [
       -7.10264,
       110.40907,
-      1.81
+      1.826
      ],
      [
       -7.08455,
       110.40975,
-      0.765
+      0.759
      ]
     ],
     "ids": [
@@ -736,12 +736,12 @@
      [
       -7.04993,
       110.32068,
-      -0.767
+      -0.76
      ],
      [
       -7.0286,
       110.33463,
-      0.751
+      0.749
      ],
      [
       -7.05959,
@@ -767,12 +767,12 @@
      [
       -7.08575,
       110.31055,
-      0.316
+      0.328
      ],
      [
       -7.09578,
       110.33631,
-      0.569
+      0.575
      ]
     ],
     "ids": [
@@ -791,7 +791,7 @@
      [
       -7.09111,
       110.35617,
-      -0.316
+      -0.327
      ]
     ],
     "ids": [
@@ -808,7 +808,7 @@
      [
       -7.02455,
       110.33509,
-      1.492
+      1.483
      ]
     ],
     "ids": [
@@ -825,7 +825,7 @@
      [
       -7.0586,
       110.41448,
-      1.611
+      1.609
      ]
     ],
     "ids": [
@@ -842,17 +842,17 @@
      [
       -6.99807,
       110.46402,
-      1.059
+      1.061
      ],
      [
       -6.99934,
       110.46535,
-      0.991
+      1.018
      ],
      [
       -6.99932,
       110.46522,
-      0.784
+      0.786
      ],
      [
       -6.98787,
@@ -880,7 +880,7 @@
      [
       -7.00243,
       110.42505,
-      0.737
+      0.733
      ]
     ],
     "ids": [
@@ -897,12 +897,12 @@
      [
       -7.02911,
       110.41849,
-      -0.091
+      -0.111
      ],
      [
       -7.02793,
       110.41839,
-      -0.066
+      -0.067
      ]
     ],
     "ids": [
@@ -919,79 +919,79 @@
    "frontage": {
     "manualBefore": {
      "n": 48,
-     "medianAbsErrPct": 119.2,
-     "biasLog": -0.758
+     "medianAbsErrPct": 117.8,
+     "biasLog": -0.76
     },
     "manualAfter": {
      "n": 48,
-     "medianAbsErrPct": 71.2,
-     "biasLog": -0.255
+     "medianAbsErrPct": 69.8,
+     "biasLog": -0.247
     },
     "autoBefore": {
      "n": 48,
-     "medianAbsErrPct": 140.0,
-     "biasLog": -0.866
+     "medianAbsErrPct": 139.3,
+     "biasLog": -0.865
     },
     "autoAfter": {
      "n": 48,
-     "medianAbsErrPct": 86.1,
-     "biasLog": -0.362
+     "medianAbsErrPct": 87.2,
+     "biasLog": -0.352
     },
     "autoNonOutlierBefore": {
      "n": 37,
      "medianAbsErrPct": 119.7,
-     "biasLog": -0.677
+     "biasLog": -0.68
     },
     "autoNonOutlierAfter": {
      "n": 37,
-     "medianAbsErrPct": 64.4,
-     "biasLog": -0.24
+     "medianAbsErrPct": 64.2,
+     "biasLog": -0.241
     },
     "autoTextBefore": {
      "n": 31,
-     "medianAbsErrPct": 179.8,
-     "biasLog": -1.029
+     "medianAbsErrPct": 183.0,
+     "biasLog": -1.04
     },
     "autoTextAfter": {
      "n": 31,
-     "medianAbsErrPct": 84.7,
-     "biasLog": -0.572
+     "medianAbsErrPct": 86.5,
+     "biasLog": -0.571
     },
     "autoPinBefore": {
      "n": 17,
-     "medianAbsErrPct": 130.3,
-     "biasLog": -0.629
+     "medianAbsErrPct": 131.1,
+     "biasLog": -0.617
     },
     "autoPinAfter": {
      "n": 17,
-     "medianAbsErrPct": 94.0,
-     "biasLog": -0.197
+     "medianAbsErrPct": 88.0,
+     "biasLog": -0.18
     }
    },
    "display": {
     "before": {
      "n": 1871,
-     "medianAbsErrPct": 36.6,
+     "medianAbsErrPct": 36.5,
      "biasLog": 0.001,
-     "within25pct": 37.5,
-     "coverage50pct": 50.7,
+     "within25pct": 37.7,
+     "coverage50pct": 50.0,
      "biasByDetectedTier": {
-      "utama": 0.042,
-      "lingkungan": -0.005,
-      "gang": -0.011,
+      "utama": 0.037,
+      "lingkungan": -0.007,
+      "gang": -0.004,
       "tanpa": 0.002
      }
     },
     "after": {
      "n": 1871,
-     "medianAbsErrPct": 36.5,
-     "biasLog": 0.001,
-     "within25pct": 37.5,
-     "coverage50pct": 50.8,
+     "medianAbsErrPct": 36.3,
+     "biasLog": 0.002,
+     "within25pct": 37.8,
+     "coverage50pct": 50.1,
      "biasByDetectedTier": {
-      "utama": 0.045,
-      "lingkungan": -0.005,
-      "gang": -0.011,
+      "utama": 0.04,
+      "lingkungan": -0.007,
+      "gang": -0.004,
       "tanpa": 0.002
      }
     },
@@ -1000,89 +1000,367 @@
   },
   "note": "Premi log tier jalan utama di ruas arteri (OSM trunk/primary) bernama: median berbobot exp(−½(jarak/bwM)²) residu iklan muka jalan ruas itu, × nEff/(nEff + k). Berlaku bila ruas jalan utama terdekat ≤ maxRoadM dan bernama sama."
  },
+ "frontage": {
+  "maxRoadM": 30.0,
+  "classOf": {
+   "trunk": "arteri",
+   "trunk_link": "arteri",
+   "primary": "arteri",
+   "primary_link": "arteri",
+   "secondary": "sekunder",
+   "secondary_link": "sekunder",
+   "tertiary": "tersier",
+   "tertiary_link": "tersier"
+  },
+  "cls": {
+   "arteri": 0.6751
+  },
+  "clsLabel": {
+   "arteri": "jalan arteri",
+   "sekunder": "jalan kolektor",
+   "tersier": "jalan kolektor kecil",
+   "lain": "jalan utama"
+  },
+  "shopCoef": 0.0176,
+  "shopRef": 0.6887,
+  "k": 8.0,
+  "aliases": {
+   "brigjen sudiarto": "majapahit",
+   "arteri soekarno hatta": "soekarno hatta",
+   "flyover ahmad yani": "ahmad yani",
+   "arteri utara": "arteri yos sudarso",
+   "komdor laut yos sudarso": "arteri yos sudarso",
+   "yos sudarso": "arteri yos sudarso",
+   "jenderal ahmad yani": "ahmad yani"
+  },
+  "roads": {
+   "abdul rahman saleh": {
+    "label": "Jl. Abdul Rahman Saleh",
+    "n": 1,
+    "u": -0.0392
+   },
+   "ahmad yani": {
+    "label": "Jl. Ahmad Yani",
+    "n": 1,
+    "u": 0.0106
+   },
+   "banjarsari": {
+    "label": "Jl. Banjarsari Raya",
+    "n": 1,
+    "u": 0.0098
+   },
+   "basudewa": {
+    "label": "Jl. Basudewa",
+    "n": 1,
+    "u": 0.0563
+   },
+   "cemara": {
+    "label": "Jl. Cemara Raya",
+    "n": 1,
+    "u": -0.0173
+   },
+   "cendrawasih": {
+    "label": "Jl. Cendrawasih",
+    "n": 1,
+    "u": -0.0138
+   },
+   "dr cipto": {
+    "label": "Jl. Dokter Cipto",
+    "n": 3,
+    "u": -0.3915
+   },
+   "dr wahidin": {
+    "label": "Jl. Dokter Wahidin",
+    "n": 2,
+    "u": 0.0338
+   },
+   "gajah": {
+    "label": "Jl. Gajah Raya",
+    "n": 1,
+    "u": -0.0403
+   },
+   "gatot subroto": {
+    "label": "Jl. Gatot Subroto",
+    "n": 3,
+    "u": 0.0504
+   },
+   "grafika": {
+    "label": "Jl. Grafika Raya",
+    "n": 1,
+    "u": -0.0073
+   },
+   "hanoman": {
+    "label": "Jl. Hanoman Raya",
+    "n": 1,
+    "u": 0.0619
+   },
+   "jatingaleh ii": {
+    "label": "Jl. Jatingaleh II",
+    "n": 1,
+    "u": -0.0356
+   },
+   "jenderal urip sumoharjo": {
+    "label": "Jl. Jenderal Urip Sumoharjo",
+    "n": 1,
+    "u": -0.2055
+   },
+   "kaligetas": {
+    "label": "Jl. Raya Kaligetas",
+    "n": 1,
+    "u": -0.0184
+   },
+   "ketileng": {
+    "label": "Jl. Ketileng Raya",
+    "n": 1,
+    "u": 0.0518
+   },
+   "kolonel rw sugiarto": {
+    "label": "Jl. Kolonel RW Sugiarto",
+    "n": 1,
+    "u": -0.0282
+   },
+   "kompol maksum": {
+    "label": "Jl. Kompol Maksum",
+    "n": 1,
+    "u": -0.0891
+   },
+   "kompol r soekanto": {
+    "label": "Jl. Kompol R. Soekanto",
+    "n": 2,
+    "u": -0.1218
+   },
+   "letjen sarwo edi": {
+    "label": "Jl. Letnan Jenderal Sarwo Edi",
+    "n": 1,
+    "u": -0.0082
+   },
+   "m h thamrin": {
+    "label": "Jl. M.H. Thamrin",
+    "n": 1,
+    "u": 0.1125
+   },
+   "madukoro": {
+    "label": "Jl. Madukoro",
+    "n": 1,
+    "u": -0.019
+   },
+   "majapahit": {
+    "label": "Jl. Brigadir Jenderal Sudiarto",
+    "n": 5,
+    "u": -0.0472
+   },
+   "meranti": {
+    "label": "Jl. Meranti Raya",
+    "n": 1,
+    "u": -0.0428
+   },
+   "mgr soegiyopranoto": {
+    "label": "Jl. MGR Soegiyopranoto",
+    "n": 1,
+    "u": 0.0594
+   },
+   "mr koesbiyono tjondrobirowo": {
+    "label": "Jl. Mr. Koesbiyono Tjondrobirowo",
+    "n": 1,
+    "u": 0.0335
+   },
+   "mt haryono": {
+    "label": "Jl. MT. Haryono",
+    "n": 1,
+    "u": 0.0079
+   },
+   "mulawarman": {
+    "label": "Jl. Mulawarman Raya",
+    "n": 1,
+    "u": -0.0715
+   },
+   "pawiyatan luhur": {
+    "label": "Jl. Pawiyatan Luhur",
+    "n": 3,
+    "u": -0.2341
+   },
+   "perintis kemerdekaan": {
+    "label": "Jl. Perintis Kemerdekaan",
+    "n": 4,
+    "u": 0.0346
+   },
+   "pramuka": {
+    "label": "Jl. Pramuka",
+    "n": 1,
+    "u": -0.0001
+   },
+   "profesor soedarto": {
+    "label": "Jl. Profesor Soedarto",
+    "n": 1,
+    "u": 0.0111
+   },
+   "profesor soeharso": {
+    "label": "Jl. Profesor Soeharso",
+    "n": 1,
+    "u": 0.0172
+   },
+   "ringin bhakti": {
+    "label": "Jl. Ringin Bhakti",
+    "n": 1,
+    "u": 0.0271
+   },
+   "rm hadi soebono": {
+    "label": "Jl. RM. Hadi Soebono",
+    "n": 3,
+    "u": -0.2004
+   },
+   "rm soebagiyono": {
+    "label": "Jl. RM Soebagiyono",
+    "n": 2,
+    "u": -0.0544
+   },
+   "rm soebagiyono tjondro koesoemo": {
+    "label": "Jl. RM Soebagiyono Tjondro Koesoemo",
+    "n": 1,
+    "u": -0.1052
+   },
+   "sapta prasetya utara": {
+    "label": "Jl. Sapta Prasetya Utara Raya",
+    "n": 1,
+    "u": -0.0551
+   },
+   "semarang boja": {
+    "label": "Jl. Semarang-Boja",
+    "n": 1,
+    "u": 0.0995
+   },
+   "sidodadi": {
+    "label": "Jl. Sidodadi Raya",
+    "n": 1,
+    "u": 0.0379
+   },
+   "soekarno hatta": {
+    "label": "Jl. Soekarno-Hatta",
+    "n": 2,
+    "u": 0.0282
+   },
+   "srikaton selatan": {
+    "label": "Jl. Srikaton Selatan",
+    "n": 1,
+    "u": -0.0092
+   },
+   "sriwijaya": {
+    "label": "Jl. Sriwijaya",
+    "n": 1,
+    "u": 0.0594
+   },
+   "taman tlogo mulyo": {
+    "label": "Jl. Taman Tlogo Mulyo",
+    "n": 1,
+    "u": -0.0429
+   },
+   "telaga bodas": {
+    "label": "Jl. Telaga Bodas",
+    "n": 1,
+    "u": 0.0337
+   },
+   "teuku umar": {
+    "label": "Jl. Teuku Umar",
+    "n": 2,
+    "u": -0.1674
+   },
+   "timoho": {
+    "label": "Jl. Timoho Raya",
+    "n": 1,
+    "u": 0.007
+   },
+   "untung suropati": {
+    "label": "Jl. Untung Suropati",
+    "n": 3,
+    "u": 0.1074
+   }
+  },
+  "nTrain": 232,
+  "note": "Premi log tier jalan utama = a[kelas jalan OSM] + b·(log(1+toko/usaha 250 m) − ref) + u[ruas bernama]; kelas disusutkan setara 2 iklan, ruas setara 8 iklan. Dilatih dari iklan bermuka jalan (teks/pin koridor, teks \"jalan utama/raya\", pin ≤ 30 m dari jalan utama). Hanya berlaku bila tier jalan utama terdeteksi/dipilih."
+ },
  "featurePricing": {
   "mKec": 10,
   "mKel": 40,
-  "cityResidSd": 0.449,
-  "alpha": 4.6415888336127775,
+  "cityResidSd": 0.444,
+  "alpha": 2.1544346900318834,
   "nTrain": 3029,
   "groups": [
    {
     "key": "padat",
     "pos": "kepadatan bangunan tinggi",
     "neg": "kepadatan bangunan rendah",
-    "p10Pct": -26.7,
-    "p90Pct": 32.7
+    "p10Pct": -24.9,
+    "p90Pct": 26.3
    },
    {
     "key": "pusat",
     "pos": "dekat pusat kota",
     "neg": "jauh dari pusat kota",
-    "p10Pct": -8.7,
-    "p90Pct": 6.8
+    "p10Pct": -10.6,
+    "p90Pct": 9.1
    },
    {
     "key": "jalan",
     "pos": "dekat jalan besar/tol",
     "neg": "jauh dari jalan besar/tol",
-    "p10Pct": -14.0,
-    "p90Pct": 17.5
+    "p10Pct": -14.3,
+    "p90Pct": 18.3
    },
    {
     "key": "belanja",
-    "pos": "dekat toko/pasar/mal",
-    "neg": "jauh dari toko/pasar/mal",
-    "p10Pct": -23.3,
-    "p90Pct": 22.6
+    "pos": "banyak toko/pasar sekitar",
+    "neg": "sedikit toko/pasar sekitar",
+    "p10Pct": -25.1,
+    "p90Pct": 23.2
    },
    {
     "key": "fasilitas",
     "pos": "banyak sekolah & faskes",
     "neg": "sedikit sekolah & faskes",
-    "p10Pct": -6.9,
-    "p90Pct": 8.1
+    "p10Pct": -7.8,
+    "p90Pct": 9.5
    },
    {
     "key": "lereng",
-    "pos": "lereng landai",
-    "neg": "lereng curam",
-    "p10Pct": -10.6,
-    "p90Pct": 12.2
+    "pos": "lereng curam",
+    "neg": "lahan landai",
+    "p10Pct": -11.2,
+    "p90Pct": 11.8
    },
    {
     "key": "tinggi",
-    "pos": "lebih tinggi dari dataran pantai",
+    "pos": "dataran lebih tinggi",
     "neg": "dataran rendah",
-    "p10Pct": -20.1,
-    "p90Pct": 25.4
+    "p10Pct": -20.9,
+    "p90Pct": 24.0
    },
    {
     "key": "rob",
-    "pos": "jauh dari pesisir/rob",
-    "neg": "rawan rob / pesisir",
-    "p10Pct": -1.8,
-    "p90Pct": 1.5
+    "pos": "rawan rob / genangan pesisir",
+    "neg": "di luar zona rob",
+    "p10Pct": 0.0,
+    "p90Pct": 0.0
    },
    {
     "key": "sungai",
-    "pos": "posisi terhadap sungai",
-    "neg": "posisi terhadap sungai",
-    "p10Pct": -2.9,
-    "p90Pct": 2.9
+    "pos": "dekat sungai",
+    "neg": "jauh dari sungai",
+    "p10Pct": -3.7,
+    "p90Pct": 3.7
    },
    {
     "key": "industri",
-    "pos": "kawasan industri sekitar",
-    "neg": "kawasan industri sekitar",
-    "p10Pct": -0.4,
-    "p90Pct": 2.5
+    "pos": "dekat kawasan industri/pelabuhan",
+    "neg": "jauh dari kawasan industri",
+    "p10Pct": -0.5,
+    "p90Pct": 2.8
    },
    {
     "key": "hijau",
-    "pos": "ada lahan hijau sekitar",
-    "neg": "dominan sawah/kebun/hutan",
-    "p10Pct": -10.5,
-    "p90Pct": 12.1
+    "pos": "banyak pohon/sawah sekitar",
+    "neg": "sedikit lahan hijau",
+    "p10Pct": -13.1,
+    "p90Pct": 18.1
    }
   ],
   "features": [
@@ -1090,25 +1368,25 @@
     "feature": "bld_250",
     "p10": 1.312,
     "p90": 39.672,
-    "effectPct": -13.1
+    "effectPct": -14.7
    },
    {
     "feature": "built_1000",
     "p10": 0.115,
     "p90": 0.838,
-    "effectPct": 14.8
+    "effectPct": 15.1
    },
    {
     "feature": "built_250",
     "p10": 0.03,
     "p90": 0.924,
-    "effectPct": -3.3
+    "effectPct": -3.7
    },
    {
     "feature": "built_2500",
     "p10": 0.131,
     "p90": 0.764,
-    "effectPct": 50.2
+    "effectPct": 54.7
    },
    {
     "feature": "comlu_500",
@@ -1120,79 +1398,73 @@
     "feature": "crop_500",
     "p10": 0.0,
     "p90": 0.065,
-    "effectPct": 3.3
+    "effectPct": 2.5
    },
    {
     "feature": "d_art",
     "p10": 190.394,
     "p90": 3570.399,
-    "effectPct": -14.8
+    "effectPct": -13.2
    },
    {
     "feature": "d_cbd",
     "p10": 3347.472,
     "p90": 11983.554,
-    "effectPct": -14.5
-   },
-   {
-    "feature": "d_coast",
-    "p10": 4048.472,
-    "p90": 14000.611,
-    "effectPct": -0.9
+    "effectPct": -18.0
    },
    {
     "feature": "d_drive",
     "p10": 0.0,
     "p90": 100.0,
-    "effectPct": -2.9
+    "effectPct": -3.4
    },
    {
     "feature": "d_mall",
     "p10": 938.948,
     "p90": 4810.522,
-    "effectPct": -5.2
+    "effectPct": -4.4
    },
    {
     "feature": "d_market",
     "p10": 450.694,
     "p90": 2601.874,
-    "effectPct": 12.9
+    "effectPct": 12.1
    },
    {
     "feature": "d_river",
     "p10": 190.394,
     "p90": 1565.327,
-    "effectPct": -5.7
+    "effectPct": -7.2
    },
    {
     "feature": "d_sec",
     "p10": 50.0,
     "p90": 989.002,
-    "effectPct": -4.9
+    "effectPct": -4.7
    },
    {
     "feature": "d_toll",
     "p10": 706.841,
     "p90": 5718.369,
-    "effectPct": -20.2
+    "effectPct": -21.5
    },
    {
     "feature": "elev",
     "p10": 7.908,
     "p90": 258.956,
-    "effectPct": 22.3
+    "effectPct": 27.0
    },
    {
     "feature": "grass_500",
     "p10": 0.004,
     "p90": 0.103,
-    "effectPct": 11.2
+    "effectPct": 12.6
    },
    {
     "feature": "health_1500",
     "p10": 3.006,
     "p90": 28.051,
-    "effectPct": -9.5
+    "effectPct": -10.4
    },
    {
     "feature": "ind_500",
@@ -1204,171 +1476,189 @@
     "feature": "kec_bld_250",
     "p10": 1.46,
     "p90": 3.134,
-    "effectPct": 0.3
+    "effectPct": -3.4
    },
    {
     "feature": "kec_built_250",
     "p10": 0.135,
     "p90": 0.728,
-    "effectPct": 6.3
+    "effectPct": 6.4
    },
    {
     "feature": "kec_crop_500",
     "p10": 0.014,
     "p90": 0.044,
-    "effectPct": -4.0
+    "effectPct": -5.4
    },
    {
     "feature": "kec_elev",
     "p10": 11.793,
     "p90": 220.989,
-    "effectPct": -6.5
+    "effectPct": -5.8
    },
    {
     "feature": "kec_ind_500",
     "p10": 0.0,
     "p90": 0.022,
-    "effectPct": 3.5
+    "effectPct": 3.9
    },
    {
     "feature": "kec_poi_comm_1000",
     "p10": 0.68,
     "p90": 2.278,
-    "effectPct": 10.4
+    "effectPct": 11.5
    },
    {
     "feature": "kec_roaddens_500",
     "p10": 0.221,
     "p90": 0.593,
-    "effectPct": 9.1
+    "effectPct": 6.9
    },
    {
-    "feature": "kec_rob_250",
-    "p10": -0.0,
-    "p90": 0.383,
-    "effectPct": 0.7
+    "feature": "kec_rob_exp",
+    "p10": 0.0,
+    "p90": 0.16,
+    "effectPct": 0.0
    },
    {
     "feature": "kec_slope_250",
     "p10": 1.049,
     "p90": 7.536,
-    "effectPct": -5.8
+    "effectPct": -4.5
    },
    {
     "feature": "kec_tree_500",
     "p10": 0.11,
     "p90": 0.775,
-    "effectPct": -9.6
+    "effectPct": -15.7
    },
    {
     "feature": "kel_bld_250",
     "p10": 1.294,
     "p90": 3.404,
-    "effectPct": -13.1
+    "effectPct": -14.0
    },
    {
     "feature": "kel_built_250",
     "p10": 0.111,
     "p90": 0.843,
-    "effectPct": -3.4
+    "effectPct": -15.7
    },
    {
     "feature": "kel_crop_500",
     "p10": 0.0,
     "p90": 0.073,
-    "effectPct": 8.9
+    "effectPct": 8.6
    },
    {
     "feature": "kel_elev",
     "p10": 8.596,
     "p90": 251.726,
-    "effectPct": 8.1
+    "effectPct": 5.8
    },
    {
     "feature": "kel_ind_500",
     "p10": -0.0,
     "p90": 0.023,
-    "effectPct": -0.1
+    "effectPct": -0.2
    },
    {
     "feature": "kel_poi_comm_1000",
     "p10": 0.453,
     "p90": 3.057,
-    "effectPct": 18.7
+    "effectPct": 21.5
    },
    {
     "feature": "kel_roaddens_500",
     "p10": 0.187,
     "p90": 0.654,
-    "effectPct": -4.7
+    "effectPct": -0.8
    },
    {
-    "feature": "kel_rob_250",
-    "p10": -0.0,
-    "p90": 0.003,
-    "effectPct": -0.0
+    "feature": "kel_rob_exp",
+    "p10": 0.0,
+    "p90": 0.027,
+    "effectPct": 0.0
    },
    {
     "feature": "kel_slope_250",
     "p10": 1.089,
     "p90": 8.245,
-    "effectPct": 2.0
+    "effectPct": 2.4
    },
    {
     "feature": "kel_tree_500",
     "p10": 0.093,
     "p90": 0.778,
-    "effectPct": -4.7
+    "effectPct": -9.4
    },
    {
     "feature": "poi_comm_1000",
     "p10": 0.0,
     "p90": 23.007,
-    "effectPct": -1.5
+    "effectPct": -3.1
    },
    {
     "feature": "poi_comm_3000",
     "p10": 11.003,
     "p90": 148.046,
-    "effectPct": 24.1
+    "effectPct": 23.1
    },
    {
     "feature": "roaddens_500",
     "p10": 0.184,
     "p90": 0.693,
-    "effectPct": 27.9
+    "effectPct": 33.9
    },
    {
-    "feature": "rob_250",
-    "p10": -0.0,
-    "p90": 0.0,
-    "effectPct": -0.0
+    "feature": "rob_exp",
+    "p10": 0.0,
+    "p90": 0.005,
+    "effectPct": 0.0
    },
    {
     "feature": "school_1000",
     "p10": 6.002,
     "p90": 44.014,
-    "effectPct": -0.4
+    "effectPct": -1.5
    },
    {
     "feature": "slope_250",
     "p10": 0.919,
     "p90": 9.542,
-    "effectPct": -6.4
+    "effectPct": -7.7
    },
    {
     "feature": "tree_500",
     "p10": 0.087,
     "p90": 0.823,
-    "effectPct": 10.9
-   },
-   {
-    "feature": "water_500",
-    "p10": -0.0,
-    "p90": 0.001,
-    "effectPct": 0.0
+    "effectPct": 12.8
    }
   ],
+  "labelAudit": {
+   "gridCells": 17181,
+   "suppressed": {
+    "padat": 1629,
+    "pusat": 116,
+    "jalan": 4389,
+    "belanja": 2613,
+    "fasilitas": 0,
+    "lereng": 9123,
+    "tinggi": 0,
+    "rob": 0,
+    "sungai": 0,
+    "industri": 0,
+    "hijau": 0
+   }
+  },
+  "linearMonotone": [],
+  "robCoef": [],
+  "local": {
+   "mLoc": 40,
+   "bwM": 400,
+   "k": 15,
+   "note": "Koreksi lokal dalam kelurahan: median berbobot 1/(1+(d/bwM)²) residu fr ≤ k iklan titik terdekat di kelurahan yang sama, disusutkan nEff/(nEff+mLoc)."
+  },
   "note": "Harga dasar = exp(F(fitur wilayah) + offset kecamatan + offset kelurahan). F: regresi ridge spline (GAM) log harga ternormalisasi pada fitur wilayah (OSM, WorldCover, DEM), dilatih dari semua iklan kota. Offset = median residu luar-lipatan, disusutkan setara mKec / mKel iklan. Iklan pembanding tidak dipakai untuk harga."
  },
  "kelurahanPricing": {
@@ -1678,17 +1968,17 @@
   "medianAbsErrPct_model": 36.8,
   "medianAbsErrPct_kelurahanMedian": 35.1,
   "medianAbsErrPct_kecamatanMedian_raw": 49.9,
-  "within25pct_model": 38.1,
-  "coverage50pct": 48.5,
-  "biasLog": 0.007,
+  "within25pct_model": 37.8,
+  "coverage50pct": 48.0,
+  "biasLog": 0.005,
   "target": "iklan berpin tepat (loc_level=titik), leave-one-out",
   "allLocated": {
    "n": 3029,
-   "medianAbsErrPct_model": 35.5,
+   "medianAbsErrPct_model": 35.4,
    "medianAbsErrPct_kelurahanMedian": 34.2,
    "medianAbsErrPct_kecamatanMedian_raw": 50.0,
-   "within25pct_model": 38.5,
-   "coverage50pct": 49.6,
+   "within25pct_model": 38.3,
+   "coverage50pct": 49.5,
    "biasLog": -0.0
   },
   "nKecamatanOnly": 849
