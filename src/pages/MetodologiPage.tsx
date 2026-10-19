@@ -530,6 +530,7 @@ export function MetodologiPage() {
       </ol>
 
       {model.frontage ? <FrontageSection /> : null}
+      {model.znt ? <ZntSection /> : null}
       {model.featurePricing ? <FeatureSection /> : null}
       {model.kelurahanPricing ? <KelurahanSection /> : null}
 
@@ -1004,6 +1005,31 @@ function FrontageSection() {
         <b>Audit label.</b> Label kontribusi kini menggambarkan keadaan lokasi dibanding rata-rata lokasi iklan (mis. “dataran rendah”), bukan tanda angkanya. Untuk faktor
         yang arah harganya jelas (kepadatan, pusat kota, jalan besar, toko, lereng, rob), kontribusi yang tandanya bertentangan dengan makna label tidak ditampilkan.
       </p>
+    </>
+  );
+}
+
+function ZntSection() {
+  const ds = useDataset();
+  const z = ds.data?.model.znt;
+  if (!z) return null;
+  const kels = [...new Set(z.anchors.map((a) => a.kel))].join(", ");
+  const nf = z.anchors.filter((a) => a.kind === "frontage").length;
+  return (
+    <>
+      <h3 id="znt">3d. Batas bawah ZNT BPN (kalibrasi per kelurahan)</h3>
+      <p>
+        Peta tetap memperkirakan <b>harga pasar</b>. Nilai Tanah Zona (ZNT) BPN dari Bhumi dipakai hanya sebagai <b>batas bawah</b>: di sekitar titik yang sudah dibaca, harga
+        tidak boleh di bawah pita bawah ZNT × {z.margin.toFixed(2)} (harga pasar umumnya ≥ ZNT). ZNT hanya tersedia sebagai pita (mis. 2–5 jt, 10–20 jt, &gt; 20 jt per m²) dan
+        dibaca satu titik demi satu titik, jadi kalibrasi dilakukan per kelurahan. Saat ini: {z.anchors.length} titik baca di Kel. {kels} ({nf} di muka jalan utama).
+      </p>
+      <p>
+        <b>Titik muka jalan</b> menahan harga tier "pinggir jalan utama" pada ruas yang sama: penuh sampai {z.frontR[0]} m dari titik baca, melemah sampai {z.frontR[1]} m.{" "}
+        <b>Titik jalan lingkungan/gang</b> menahan harga dasar (semua tier) hanya di sekitar titik itu (penuh {z.areaR[0]} m, hilang di {z.areaR[1]} m; hanya titik terdekat), sehingga
+        bidang dalam di zona murah tidak ikut naik. Di luar kelurahan yang dibaca radius dikali {z.outsideScale ?? 1}. ZNT tidak pernah menurunkan harga. Bila satu titik jatuh di
+        batas dua zona, titik muka jalan memakai zona jalur jalan dan titik lingkungan memakai pita yang lebih rendah.
+      </p>
+      <p className="text-xs text-fg-muted">{z.note}</p>
     </>
   );
 }

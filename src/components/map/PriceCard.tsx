@@ -218,6 +218,23 @@ export function PriceCard({ price, access, tier, tierIsManual, model }: { price:
               )}
               {price.feature.localPct != null && Math.abs(price.feature.localPct) >= 0.01 ? <>, koreksi lokal (iklan terdekat sekelurahan) {fmtPct(price.feature.localPct)}</> : null}
               .
+              {(() => {
+                const zs = [price.znt?.area, t === "utama" ? price.znt?.front : null].filter((z): z is NonNullable<typeof z> => !!z && z.mult > 1.005);
+                if (!zs.length || !model.znt) return null;
+                const band = (z: (typeof zs)[number]) => (z.hi ? `${z.lo / 1e6}–${z.hi / 1e6} jt` : `> ${z.lo / 1e6} jt`);
+                return (
+                  <span className="mt-1 block">
+                    <b>Batas bawah ZNT BPN {zs[0].year}</b>:{" "}
+                    {zs.map((z, i) => (
+                      <span key={z.kind}>
+                        {i ? "; " : ""}
+                        {z.kind === "frontage" ? "muka jalan" : "zona"} {z.zone ? `${z.zone} ` : ""}({band(z)}, titik baca {z.distanceM} m) → harga dinaikkan {fmtPct(z.mult - 1)}
+                      </span>
+                    ))}
+                    . Harga pasar diasumsikan ≥ pita bawah ZNT × {model.znt.margin.toFixed(2)}.
+                  </span>
+                );
+              })()}
               {price.feature.contributions.length ? (
                 <span className="mt-1 block text-fg-muted">
                   Faktor wilayah utama:{" "}
