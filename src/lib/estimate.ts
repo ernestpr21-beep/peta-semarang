@@ -1,4 +1,4 @@
-import { haversineMeters } from "./geo";
+import { distToSegment, localProjector, haversineMeters } from "./geo";
 import type { AccessTier, AreaStat, Comparable, KelurahanZoneStat, PriceModel } from "./model";
 import { TIER_ORDER } from "./model";
 import { normalizeName, roundSig } from "./utils";
@@ -263,7 +263,7 @@ export function frontagePremium(model: PriceModel, road: { name: string | null; 
 }
 
 export interface ZntFloor {
-  kind: "frontage" | "area";
+  kind: "frontage" | "area" | "zone";
   id: string;
   zone: string | null;
   lo: number;
@@ -276,25 +276,47 @@ export interface ZntFloor {
   mult: number;
 }
 const taper = (d: number, r: [number, number]) => (d <= r[0] ? 1 : d >= r[1] ? 0 : 1 - (d - r[0]) / (r[1] - r[0]));
-/** Jangkar ZNT di titik: jangkar muka jalan (untuk tier utama, jalan yang sama) & jangkar area terdekat */
-type ZntHit = { a: NonNullable<PriceModel["znt"]>["anchors"][number]; d: number; w: number };
-export function zntAnchors(model: PriceModel, lat: number, lng: number, road: { name: string | null; highway: string; distanceM: number } | null | undefined, kel?: string | null): { front: ZntHit | null; area: ZntHit | null } {
+type ZntHit = { kind: ZntFloor["kind"]; id: string; zone: string | null; lo: number; hi: number | null; year: number; margin: number; d: number; w: number };
+function ringDist(lat: number, lng: number, ring: number[][]) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j];
+    if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  if (inside) return 0;
+  const pr = localProjector(lat, lng);
+  let best = Infinity;
+  for (let i = 0; i + 1 < ring.length; i++) {
+    const [ax, ay] = pr(ring[i][1], ring[i][0]), [bx, by] = pr(ring[i + 1][1], ring[i + 1][0]);
+    best = Math.min(best, distToSegment(ax, ay, bx, by));
+  }
+  return best;
+}
+/** Jangkar ZNT di titik: jangkar muka jalan terdekat pada ruas yang sama (tier utama), jangkar area terdekat, dan poligon zona (bila ada) */
+export function zntAnchors(model: PriceModel, lat: number, lng: number, road: { name: string | null; highway: string; distanceM: number } | null | undefined, kel?: string | null): { front: ZntHit | null; area: ZntHit[] } {
   const z = model.znt;
-  if (!z) return { front: null, area: null };
+  if (!z) return { front: null, area: [] };
   const key = road?.name && road.distanceM <= (model.frontage?.maxRoadM ?? 30) ? corridorKey(road.name, model.frontage?.aliases ?? model.corridor?.aliases ?? {}) : null;
+  const sc = (k: string) => (kel != null && kel !== k ? (z.outsideScale ?? 1) : 1);
   let front: ZntHit | null = null;
   let area: ZntHit | null = null;
   for (const a of z.anchors) {
     // di luar kelurahan jangkar jarak "diperbesar" (= radius × outsideScale)
-    const d = haversineMeters(lat, lng, a.lat, a.lng) / (kel != null && kel !== a.kel ? (z.outsideScale ?? 1) : 1);
+    const d = haversineMeters(lat, lng, a.lat, a.lng) / sc(a.kel);
+    const h: ZntHit = { kind: a.kind, id: a.id, zone: a.zone, lo: a.lo, hi: a.hi, year: a.year, margin: a.margin ?? z.margin, d, w: 0 };
     if (a.kind === "frontage") {
+      // jangkar TERDEKAT pada ruas yang sama (jangkar murah di ruas yang sama membatasi jangkar mahal di sebelahnya)
       if (!key || !a.roads?.includes(key)) continue;
-      const w = taper(d, z.frontR);
-      if (w > 0 && (!front || a.lo * w > front.a.lo * front.w)) front = { a, d, w };
-    } else if (!area || d < area.d) area = { a, d, w: taper(d, z.areaR) };
+      if (!front || d < front.d) front = { ...h, w: taper(d, z.frontR) };
+    } else if (!area || d < area.d) area = { ...h, w: taper(d, z.areaR) };
   }
-  if (area && area.w <= 0) area = null;
-  return { front, area };
+  const out: ZntHit[] = area && area.w > 0 ? [area] : [];
+  for (const zz of z.zones ?? []) {
+    const d = ringDist(lat, lng, zz.ring) / sc(zz.kel);
+    const w = taper(d, [0, z.zoneR ?? 80]);
+    if (w > 0) out.push({ kind: "zone", id: zz.ids.join(","), zone: zz.zone, lo: zz.lo, hi: zz.hi, year: zz.year, margin: zz.margin ?? z.margin, d, w });
+  }
+  return { front: front && front.w > 0 ? front : null, area: out };
 }
 
 /** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
@@ -564,24 +586,26 @@ export function estimatePrice(opts: {
   let znt: { front: ZntFloor | null; area: ZntFloor | null } | null = null;
   if (model.znt) {
     const za = zntAnchors(model, lat, lng, opts.frontRoad, opts.kel);
-    const mg = model.znt.margin;
-    const mk = (x: ZntHit, ref: number, kind: "frontage" | "area"): ZntFloor => ({
-      kind, id: x.a.id, zone: x.a.zone, lo: x.a.lo, hi: x.a.hi, year: x.a.year, distanceM: Math.round(x.d), w: x.w,
-      mult: Math.pow(Math.max(1, (x.a.lo * mg) / ref), x.w),
+    const mk = (x: ZntHit, ref: number): ZntFloor => ({
+      kind: x.kind, id: x.id, zone: x.zone, lo: x.lo, hi: x.hi, year: x.year, distanceM: Math.round(x.d), w: x.w,
+      mult: Math.pow(Math.max(1, (x.lo * x.margin) / ref), x.w),
     });
     const scale = (tp: TierPrice, m: number, lo: number | null): TierPrice =>
       m <= 1 ? tp : { ...tp, point: roundSig(tp.point * m, 2), low: roundSig(Math.max(tp.low * m, lo ?? 0), 2), high: roundSig(tp.high * m, 2) };
-    const aF = za.area ? mk(za.area, tiers.lingkungan.point, "area") : null;
-    if (aF && aF.mult > 1) {
-      for (const t of TIER_ORDER) {
-        tiers[t] = scale(tiers[t], aF.mult, aF.w >= 1 && (t === "lingkungan" || t === "utama") ? aF.lo : null);
-        autoTiers[t] = scale(autoTiers[t], aF.mult, aF.w >= 1 && (t === "lingkungan" || t === "utama") ? aF.lo : null);
-      }
+    // batas area: yang paling mengikat di antara jangkar area terdekat & poligon zona
+    // pengali dihitung terpisah untuk tier manual & tier terdeteksi (masing-masing terhadap tier lingkungannya)
+    const pick = (ref: number) => za.area.map((h) => mk(h, ref)).sort((x, y) => y.mult - x.mult)[0] ?? null;
+    const aF = pick(autoTiers.lingkungan.point);
+    const aM = pick(tiers.lingkungan.point);
+    for (const t of TIER_ORDER) {
+      const keepLo = (f: ZntFloor | null) => (f && f.w >= 1 && (t === "lingkungan" || t === "utama") ? f.lo : null);
+      if (aM && aM.mult > 1) tiers[t] = scale(tiers[t], aM.mult, keepLo(aM));
+      if (aF && aF.mult > 1) autoTiers[t] = scale(autoTiers[t], aF.mult, keepLo(aF));
     }
-    const fF = za.front ? mk(za.front, tiers.utama.point, "frontage") : null;
+    const fF = za.front ? mk(za.front, tiers.utama.point) : null;
     if (fF && fF.mult > 1) {
       tiers.utama = scale(tiers.utama, fF.mult, fF.w >= 1 ? fF.lo : null);
-      autoTiers.utama = scale(autoTiers.utama, Math.pow(Math.max(1, (fF.lo * mg) / autoTiers.utama.point), fF.w), fF.w >= 1 ? fF.lo : null);
+      autoTiers.utama = scale(autoTiers.utama, Math.pow(Math.max(1, (fF.lo * za.front!.margin) / autoTiers.utama.point), fF.w), fF.w >= 1 ? fF.lo : null);
     }
     if (aF || fF) znt = { area: aF, front: fF };
   }

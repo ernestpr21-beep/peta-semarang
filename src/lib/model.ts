@@ -134,7 +134,10 @@ export interface PriceModel {
     /** radius dikali ini untuk titik di luar kelurahan jangkar */
     outsideScale?: number;
     rounds: string[];
-    anchors: { id: string; lat: number; lng: number; zone: string | null; lo: number; hi: number | null; year: number; kind: "frontage" | "area"; kel: string; roads?: string[] }[];
+    anchors: { id: string; lat: number; lng: number; zone: string | null; lo: number; hi: number | null; year: number; kind: "frontage" | "area"; kel: string; roads?: string[]; margin?: number }[];
+    /** poligon zona perkiraan (selubung cembung ≥ 3 titik area berzona & berpita sama + buffer) */
+    zones?: { zone: string; lo: number; hi: number | null; year: number; kel: string; ids: string[]; ring: number[][]; margin?: number }[];
+    zoneR?: number;
     note: string;
   };
   /** 2026-10-9: premi muka jalan (tier utama) = kelas jalan + intensitas toko sepanjang jalan + efek ruas bernama (disusutkan) */

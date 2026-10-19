@@ -49,4 +49,12 @@ describe("batas bawah ZNT", () => {
   it("jauh dari titik baca tidak terpengaruh", () => {
     expect(at(-6.990464, 110.422918).point).toBe(at(-6.990464, 110.422918, false).point); // Simpang Lima (belum dikalibrasi)
   });
+  it("Jerakah: poligon zona 1136 menahan seluruh perumahan, Walisongo barat (5–10 jt) tidak ditimpa Walisongo tengah (> 20 jt)", () => {
+    const zz = z.zones!.find((q) => q.zone === "1136")!;
+    expect(zz.ids.length).toBeGreaterThanOrEqual(3);
+    // titik di tengah perumahan, di antara titik baca
+    expect(at(-6.9715, 110.3650).point).toBeGreaterThanOrEqual(zz.lo * (zz.margin ?? z.margin) * 0.97);
+    const jk01 = z.anchors.find((a) => a.id === "JK-01")!;
+    expect(at(jk01.lat, jk01.lng).point).toBe(at(jk01.lat, jk01.lng, false).point);
+  });
 });
