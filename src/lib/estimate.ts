@@ -308,12 +308,14 @@ export function zntAnchors(model: PriceModel, lat: number, lng: number, road: { 
       // jangkar TERDEKAT pada ruas yang sama (jangkar murah di ruas yang sama membatasi jangkar mahal di sebelahnya)
       if (!key || !a.roads?.includes(key)) continue;
       if (!front || d < front.d) front = { ...h, w: taper(d, z.frontR) };
-    } else if (!area || d < area.d) area = { ...h, w: taper(d, z.areaR) };
+    } else if (!area || d < area.d) area = { ...h, w: taper(d, a.r ?? z.areaR) };
   }
   const out: ZntHit[] = area && area.w > 0 ? [area] : [];
   for (const zz of z.zones ?? []) {
     const d = ringDist(lat, lng, zz.ring) / sc(zz.kel);
-    const w = taper(d, [0, z.zoneR ?? 80]);
+    // titik baca zona lain yang lebih dekat menang (poligon perkiraan tidak menimpa zona tetangga yang sudah dibaca)
+    const other = area && !zz.ids.includes(area.id) && area.zone !== zz.zone ? taper(area.d, z.areaR) : 0;
+    const w = taper(d, [0, z.zoneR ?? 80]) * (1 - other);
     if (w > 0) out.push({ kind: "zone", id: zz.ids.join(","), zone: zz.zone, lo: zz.lo, hi: zz.hi, year: zz.year, margin: zz.margin ?? z.margin, d, w });
   }
   return { front: front && front.w > 0 ? front : null, area: out };

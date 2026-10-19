@@ -40,7 +40,7 @@ describe("batas bawah ZNT", () => {
     for (const a of z.anchors) expect(at(a.lat, a.lng).point, a.id).toBeGreaterThanOrEqual(a.lo);
   });
   it("muka jalan > 20 jt (Setiabudi/Teuku Umar/Wahidin) ≥ 20 jt × margin", () => {
-    for (const a of z.anchors.filter((a) => a.kind === "frontage" && a.lo >= 2e7)) expect(at(a.lat, a.lng).point, a.id).toBeGreaterThanOrEqual(a.lo * z.margin * 0.97);
+    for (const a of z.anchors.filter((a) => a.kind === "frontage" && a.lo >= 2e7)) expect(at(a.lat, a.lng).point, a.id).toBeGreaterThanOrEqual(a.lo * (a.margin ?? z.margin) * 0.97);
   });
   it("ZNT tidak pernah menurunkan harga; jalan lingkungan di zona 2–5 jt tidak berubah", () => {
     for (const a of z.anchors) expect(at(a.lat, a.lng).point, a.id).toBeGreaterThanOrEqual(at(a.lat, a.lng, false).point);
@@ -57,4 +57,15 @@ describe("batas bawah ZNT", () => {
     const jk01 = z.anchors.find((a) => a.id === "JK-01")!;
     expect(at(jk01.lat, jk01.lng).point).toBe(at(jk01.lat, jk01.lng, false).point);
   });
+  it("Gayamsari: titik baris kedua GY-06 (> 20 jt) hanya menahan sekitarnya; zona 808 tidak menimpa titik baca 2–5 jt", () => {
+    const g6 = z.anchors.find((a) => a.id === "GY-06")!;
+    expect(g6.r).toEqual([25, 60]);
+    // ~100 m ke timur dari GY-06 (blok dalam)
+    expect(at(g6.lat, g6.lng + 0.0009).point).toBe(at(g6.lat, g6.lng + 0.0009, false).point);
+    for (const id of ["GY-07", "GY-09", "GY-10"]) {
+      const a = z.anchors.find((q) => q.id === id)!;
+      expect(at(a.lat, a.lng).point, id).toBe(at(a.lat, a.lng, false).point);
+    }
+  });
 });
+
