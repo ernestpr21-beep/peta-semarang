@@ -1278,6 +1278,227 @@
   "nTrain": 232,
   "note": "Premi log tier jalan utama = a[kelas jalan OSM] + b·(log(1+toko/usaha 250 m) − ref) + u[ruas bernama]; kelas disusutkan setara 2 iklan, ruas setara 8 iklan. Dilatih dari iklan bermuka jalan (teks/pin koridor, teks \"jalan utama/raya\", pin ≤ 30 m dari jalan utama). Hanya berlaku bila tier jalan utama terdeteksi/dipilih."
  },
+ "znt": {
+  "margin": 1.15,
+  "frontR": [
+   250.0,
+   500.0
+  ],
+  "areaR": [
+   50.0,
+   120.0
+  ],
+  "outsideScale": 0.5,
+  "rounds": [
+   "1-jatingaleh"
+  ],
+  "anchors": [
+   {
+    "id": "JT-01",
+    "lat": -7.030626,
+    "lng": 110.418279,
+    "zone": "1991",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Jatingaleh",
+    "roads": [
+     "setiabudi",
+     "teuku umar"
+    ]
+   },
+   {
+    "id": "JT-02",
+    "lat": -7.024035,
+    "lng": 110.420547,
+    "zone": "1991",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Jatingaleh",
+    "roads": [
+     "teuku umar"
+    ]
+   },
+   {
+    "id": "JT-03",
+    "lat": -7.019199,
+    "lng": 110.425639,
+    "zone": "1248",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Jatingaleh",
+    "roads": [
+     "dr wahidin"
+    ]
+   },
+   {
+    "id": "JT-04",
+    "lat": -7.018368,
+    "lng": 110.427811,
+    "zone": "528",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Jatingaleh",
+    "roads": [
+     "jangli"
+    ]
+   },
+   {
+    "id": "JT-05",
+    "lat": -7.031212,
+    "lng": 110.421308,
+    "zone": "608",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-06",
+    "lat": -7.02447,
+    "lng": 110.42766,
+    "zone": "616",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-07",
+    "lat": -7.0298,
+    "lng": 110.42791,
+    "zone": "582",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-08",
+    "lat": -7.02612,
+    "lng": 110.42266,
+    "zone": "2040",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-09",
+    "lat": -7.02812,
+    "lng": 110.41947,
+    "zone": "1991",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-10",
+    "lat": -7.03099,
+    "lng": 110.424733,
+    "zone": "583",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-11",
+    "lat": -7.023399,
+    "lng": 110.424739,
+    "zone": "1217",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-12",
+    "lat": -7.021299,
+    "lng": 110.425039,
+    "zone": "1217",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-13",
+    "lat": -7.027899,
+    "lng": 110.427739,
+    "zone": "582",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-14",
+    "lat": -7.02382,
+    "lng": 110.42149,
+    "zone": "2041",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "JT-15",
+    "lat": -7.02112,
+    "lng": 110.42727,
+    "zone": "1220",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "K02-02",
+    "lat": -7.027217,
+    "lng": 110.42594,
+    "zone": null,
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Jatingaleh"
+   },
+   {
+    "id": "K02-08A",
+    "lat": -7.02853,
+    "lng": 110.418519,
+    "zone": null,
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Jatingaleh",
+    "roads": [
+     "teuku umar"
+    ]
+   }
+  ],
+  "note": "Batas bawah dari ZNT BPN (Bhumi, nilai pita per zona). Harga pasar = max(model, pita bawah × margin) di sekitar titik baca; ZNT hanya penahan bawah, bukan harga pasar."
+ },
  "featurePricing": {
   "mKec": 10,
   "mKel": 40,

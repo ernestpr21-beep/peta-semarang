@@ -626,6 +626,8 @@ for r in rows:
 _ff = os.path.join(OUT, 'frontage_model.json')
 FRONTAGE = FEATURE_PRICING and os.environ.get('FRONTAGE', '1') == '1' and os.path.exists(_ff)
 FRONT = json.load(open(_ff)) if FRONTAGE else None
+import znt as ZNT
+ZNT_MODEL = ZNT.build() if os.environ.get('ZNT', '1') == '1' else None
 model = {
     'version': f'{AS_OF}-9' if FRONTAGE else f'{AS_OF}-8' if FEATURE_PRICING else f'{AS_OF}-7' if KEL_PRICING else f'{AS_OF}-6', 'minEffComparables': MIN_EFF, 'locLevels': dict(Counter(r['loc_level'] for r in rows)), 'asOf': AS_OF, 'refArea': REF_AREA, 'sizeElasticity': round(beta_size, 4), 'sizeElasticitySE': round(se_size, 4),
     'sizeCurve': {'knots': size_curve, 'refBin': [SIZE_EDGES[SIZE_REF_BIN], SIZE_EDGES[SIZE_REF_BIN + 1]], 'priorSD': SIZE_PRIOR_SD, 'rss': size_rss,
@@ -642,7 +644,7 @@ model = {
                      'note': 'Pengali σ menurut luas bidang, dari residu leave-one-out terstandar: (z75 − z25)/(2·0,674), disusutkan ke 1.'},
     'tierCaps': {'gang': {'ref': 'lingkungan', 'mult': round(GANG_CAP_MULT, 3)}, 'tanpa': {'ref': 'gang', 'mult': 1.0}, 'gangCheck': gang_check,
                  'note': 'Batas atas rentang tier gang ≤ titik estimasi jalan lingkungan × mult (kuartil atas iklan gang); tanpa akses ≤ titik estimasi gang (lokasi & luas sama).'},
-    'autoAccess': auto_access, 'corridor': corridor_model, **({'frontage': FRONT} if FRONTAGE else {}),
+    'autoAccess': auto_access, 'corridor': corridor_model, **({'frontage': FRONT} if FRONTAGE else {}), **({'znt': ZNT_MODEL} if ZNT_MODEL else {}),
     **({'featurePricing': {'mKec': FEFF['mKec'], 'mKel': FEFF['mKel'], 'cityResidSd': FEFF['cityResidSd'], 'alpha': FEFF['alpha'], 'nTrain': FEFF['n'],
                            'groups': FEFF['groups'], 'features': FEFF['features'], 'labelAudit': FEFF.get('labelAudit'), 'linearMonotone': FEFF.get('linearMonotone'), 'robCoef': FEFF.get('robCoef'),
                            **({'local': {'mLoc': 40, 'bwM': 400, 'k': 15, 'note': 'Koreksi lokal dalam kelurahan: median berbobot 1/(1+(d/bwM)²) residu fr ≤ k iklan titik terdekat di kelurahan yang sama, disusutkan nEff/(nEff+mLoc).'}} if FRONTAGE else {}),
