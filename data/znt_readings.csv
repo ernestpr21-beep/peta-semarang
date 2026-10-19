@@ -1,42 +1,59 @@
-id,lat,lon,zone,band_lo,band_hi,year,kind,roads,kelurahan,kecamatan,round,active,margin,note
-JT-01,-7.030626,110.418279,1991,20000000,,2026,frontage,setiabudi;teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-02,-7.024035,110.420547,1991,20000000,,2026,frontage,teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-03,-7.019199,110.425639,1248,20000000,,2026,frontage,dr wahidin,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-04,-7.018368,110.427811,528,10000000,20000000,2026,frontage,jangli,Jatingaleh,Candisari,1-jatingaleh,1,,titik di batas 2 zona (528: 10-20 jt; 527: 2-5 jt); jangkar muka jalan memakai zona jalur jalan (528)
-JT-05,-7.031212,110.421308,608,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,"2 zona (608, 583), keduanya 2-5 jt"
-JT-06,-7.02447,110.42766,616,5000000,10000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-07,-7.0298,110.42791,582,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-08,-7.02612,110.42266,2040,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-09,-7.02812,110.41947,1991,20000000,,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-10,-7.03099,110.424733,583,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-11,-7.023399,110.424739,1217,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-12,-7.021299,110.425039,1217,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-13,-7.027899,110.427739,582,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-14,-7.02382,110.42149,2041,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-JT-15,-7.02112,110.42727,1220,5000000,10000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,titik di batas 2 zona (132: 10-20 jt; 1220: 5-10 jt); jangkar area memakai pita yang lebih rendah
-K02-02,-7.027217,110.425940,,10000000,20000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,
-K02-08A,-7.028530,110.418519,,20000000,,2026,frontage,teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,
-R1,-7.010958,110.421476,797,2000000,5000000,2026,area,,Wonotingal,Candisari,0-cek-awal,0,,
-R2,-6.990545,110.4229,161,20000000,,2026,area,,Pleburan,Semarang Selatan,0-cek-awal,0,,
-R3,-6.986045,110.413,161,20000000,,2026,frontage,,Pekunden,Semarang Tengah,0-cek-awal,0,,
-R4,-7.050245,110.438,25,5000000,10000000,2026,area,,Tembalang,Tembalang,0-cek-awal,0,,
-R5,-7.006245,110.465,298,5000000,10000000,2026,area,,Palebon,Pedurungan,0-cek-awal,0,,
-R6,-7.056245,110.417,26,5000000,10000000,2026,area,,Sumurboto,Banyumanik,0-cek-awal,0,,
-R7,-6.949245,110.435,1390,2000000,5000000,2026,area,,,,0-cek-awal,0,,
-JK-01,-6.985569,110.357592,1559,5000000,10000000,2026,frontage,walisongo,Jerakah,Tugu,2-jerakah,1,,
-JK-02,-6.986817,110.363305,201,20000000,,2026,frontage,siliwangi,Jerakah,Tugu,2-jerakah,1,,
-JK-03,-6.986347,110.359623,201,20000000,,2026,frontage,walisongo,Jerakah,Tugu,2-jerakah,1,,
-JK-04,-6.970610,110.366250,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0; boulevard perumahan (OSM residential) -> jangkar area"
-JK-05,-6.964890,110.363410,1387,200000,500000,2026,area,,Jerakah,Tugu,2-jerakah,1,,
-JK-06,-6.981183,110.363810,1383,5000000,10000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,
-JK-07,-6.974240,110.365790,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-JK-08,-6.972187,110.363150,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-JK-09,-6.968100,110.364085,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-JK-10,-6.977280,110.364708,1922,2000000,5000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,titik di batas 2 zona (1136: 10.000.000 - 20.000.000; 1922: 2.000.000 - 5.000.000); jangkar area memakai pita yang lebih rendah
-JK-11,-6.984040,110.363480,1383,5000000,10000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,
-JK-12,-6.961500,110.364450,1387,200000,500000,2026,area,,Jerakah,Tugu,2-jerakah,1,,
-JK-13,-6.982900,110.358110,1384,1000000,2000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,
-JK-14,-6.970060,110.363070,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-JK-15,-6.968620,110.366940,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-K16-01,-6.975617,110.362460,,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,"kemungkinan zona 1136 (pita sama, di tepi perumahan); iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
-K16-08A,-6.986531,110.361320,,20000000,,2026,frontage,siliwangi,Jerakah,Tugu,2-jerakah,1,,
+id,lat,lon,zone,band_lo,band_hi,year,kind,roads,kelurahan,kecamatan,round,active,margin,radius,note
+JT-01,-7.030626,110.418279,1991,20000000,,2026,frontage,setiabudi;teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-02,-7.024035,110.420547,1991,20000000,,2026,frontage,teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-03,-7.019199,110.425639,1248,20000000,,2026,frontage,dr wahidin,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-04,-7.018368,110.427811,528,10000000,20000000,2026,frontage,jangli,Jatingaleh,Candisari,1-jatingaleh,1,,,titik di batas 2 zona (528: 10-20 jt; 527: 2-5 jt); jangkar muka jalan memakai zona jalur jalan (528)
+JT-05,-7.031212,110.421308,608,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,"2 zona (608, 583), keduanya 2-5 jt"
+JT-06,-7.02447,110.42766,616,5000000,10000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-07,-7.0298,110.42791,582,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-08,-7.02612,110.42266,2040,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-09,-7.02812,110.41947,1991,20000000,,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-10,-7.03099,110.424733,583,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-11,-7.023399,110.424739,1217,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-12,-7.021299,110.425039,1217,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-13,-7.027899,110.427739,582,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-14,-7.02382,110.42149,2041,2000000,5000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+JT-15,-7.02112,110.42727,1220,5000000,10000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,titik di batas 2 zona (132: 10-20 jt; 1220: 5-10 jt); jangkar area memakai pita yang lebih rendah
+K02-02,-7.027217,110.425940,,10000000,20000000,2026,area,,Jatingaleh,Candisari,1-jatingaleh,1,,,
+K02-08A,-7.028530,110.418519,,20000000,,2026,frontage,teuku umar,Jatingaleh,Candisari,1-jatingaleh,1,,,
+R1,-7.010958,110.421476,797,2000000,5000000,2026,area,,Wonotingal,Candisari,0-cek-awal,0,,,
+R2,-6.990545,110.4229,161,20000000,,2026,area,,Pleburan,Semarang Selatan,0-cek-awal,0,,,
+R3,-6.986045,110.413,161,20000000,,2026,frontage,,Pekunden,Semarang Tengah,0-cek-awal,0,,,
+R4,-7.050245,110.438,25,5000000,10000000,2026,area,,Tembalang,Tembalang,0-cek-awal,0,,,
+R5,-7.006245,110.465,298,5000000,10000000,2026,area,,Palebon,Pedurungan,0-cek-awal,0,,,
+R6,-7.056245,110.417,26,5000000,10000000,2026,area,,Sumurboto,Banyumanik,0-cek-awal,0,,,
+R7,-6.949245,110.435,1390,2000000,5000000,2026,area,,,,0-cek-awal,0,,,
+JK-01,-6.985569,110.357592,1559,5000000,10000000,2026,frontage,walisongo,Jerakah,Tugu,2-jerakah,1,,,
+JK-02,-6.986817,110.363305,201,20000000,,2026,frontage,siliwangi,Jerakah,Tugu,2-jerakah,1,,,
+JK-03,-6.986347,110.359623,201,20000000,,2026,frontage,walisongo,Jerakah,Tugu,2-jerakah,1,,,
+JK-04,-6.970610,110.366250,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0; boulevard perumahan (OSM residential) -> jangkar area"
+JK-05,-6.964890,110.363410,1387,200000,500000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,
+JK-06,-6.981183,110.363810,1383,5000000,10000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,
+JK-07,-6.974240,110.365790,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+JK-08,-6.972187,110.363150,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+JK-09,-6.968100,110.364085,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+JK-10,-6.977280,110.364708,1922,2000000,5000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,titik di batas 2 zona (1136: 10.000.000 - 20.000.000; 1922: 2.000.000 - 5.000.000); jangkar area memakai pita yang lebih rendah
+JK-11,-6.984040,110.363480,1383,5000000,10000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,
+JK-12,-6.961500,110.364450,1387,200000,500000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,
+JK-13,-6.982900,110.358110,1384,1000000,2000000,2026,area,,Jerakah,Tugu,2-jerakah,1,,,
+JK-14,-6.970060,110.363070,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+JK-15,-6.968620,110.366940,1136,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+K16-01,-6.975617,110.362460,,10000000,20000000,2026,area,,Jerakah,Tugu,2-jerakah,1,1.0,,"kemungkinan zona 1136 (pita sama, di tepi perumahan); iklan Graha Padma (Krapyak/Tambakharjo, lokasi tingkat kelurahan) 8,5-10,9 jt/m2, median ~9 jt: di atas peta (2-4 jt) tetapi sedikit di bawah pita bawah ZNT -> margin 1,0"
+K16-08A,-6.986531,110.361320,,20000000,,2026,frontage,siliwangi,Jerakah,Tugu,2-jerakah,1,,,
+GY-01,-6.999746,110.445206,113,20000000,,2026,frontage,majapahit;gajah,Gayamsari,Gayamsari,3-gayamsari,1,,,"simpang Majapahit/Gajah Raya; iklan muka jalan Majapahit 23,1 jt (1125 m2, pin titik) mendukung >20"
+GY-02,-6.989773,110.448048,696,20000000,,2026,frontage,gajah;medoho i,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"simpang Gajah Raya/Medoho I; iklan muka Gajah Raya 10,4-14,5 jt (bidang 240-1720 m2, lokasi tingkat kecamatan) di bawah 20 -> margin 1,0"
+GY-03,-6.989986,110.452215,115,5000000,10000000,2026,frontage,medoho i,Gayamsari,Gayamsari,3-gayamsari,1,,,"iklan Medoho 5,4-7,5 jt (beberapa 12) mendukung pita 5-10"
+GY-04,-7.001658,110.444592,2348,10000000,20000000,2026,frontage,lamper tengah,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"1 iklan dekat (6,4 jt, 971 m2, ""dekat Lottemart Majapahit"") di bawah 10 -> margin 1,0"
+GY-05,-6.999790,110.452290,808,5000000,10000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"zona 808: iklan di/dekat zona 2,4 / 4,0 / 4,5 / 6,0 / 6,0 jt (median ~4,5, sedikit di bawah pita bawah 5) -> margin 1,0"
+GY-06,-6.994200,110.447280,696,20000000,,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,25;60,"baris kedua 64 m dari Gajah Raya (zona jalur 696 masuk ke dalam); iklan dalam terdekat 8,25 jt (158 m) & 4,1 jt (454 m); GY-09 (66 m dari Gajah Raya) zona 806 2-5 -> radius sempit 25/60 m, margin 1,0"
+GY-07,-6.999720,110.448760,806,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
+GY-08,-6.993335,110.452205,808,5000000,10000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"zona 808: iklan di/dekat zona 2,4 / 4,0 / 4,5 / 6,0 / 6,0 jt (median ~4,5, sedikit di bawah pita bawah 5) -> margin 1,0"
+GY-09,-6.997137,110.446757,806,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
+GY-10,-6.992710,110.449720,807,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
+GY-11,-6.996970,110.452720,808,5000000,10000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"zona 808: iklan di/dekat zona 2,4 / 4,0 / 4,5 / 6,0 / 6,0 jt (median ~4,5, sedikit di bawah pita bawah 5) -> margin 1,0"
+GY-12,-6.990310,110.450100,808,5000000,10000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"zona 808: iklan di/dekat zona 2,4 / 4,0 / 4,5 / 6,0 / 6,0 jt (median ~4,5, sedikit di bawah pita bawah 5) -> margin 1,0"
+GY-13,-7.002610,110.452230,808,5000000,10000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,,"zona 808: iklan di/dekat zona 2,4 / 4,0 / 4,5 / 6,0 / 6,0 jt (median ~4,5, sedikit di bawah pita bawah 5) -> margin 1,0"
+GY-14,-7.002770,110.447390,662,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
+GY-15,-7.005810,110.449710,662,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
+K04-01,-6.996090,110.450480,,10000000,20000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,25;60,"2 iklan pin titik 188-227 m: 3,75 & 4,0 jt (jauh di bawah 10) -> hanya di sekitar titik (25/60 m), margin 1,0"
+K04-08A,-7.003210,110.450240,,20000000,,2026,frontage,majapahit,Gayamsari,Gayamsari,3-gayamsari,1,,,
