@@ -126,6 +126,17 @@ export interface PriceModel {
     note: string;
   };
   /** premi koridor jalan arteri bernama (2026-10-5): residu iklan muka jalan per ruas, lihat Metodologi */
+  /** batas bawah ZNT BPN per titik baca (kalibrasi per kelurahan) */
+  znt?: {
+    margin: number;
+    frontR: [number, number];
+    areaR: [number, number];
+    /** radius dikali ini untuk titik di luar kelurahan jangkar */
+    outsideScale?: number;
+    rounds: string[];
+    anchors: { id: string; lat: number; lng: number; zone: string | null; lo: number; hi: number | null; year: number; kind: "frontage" | "area"; kel: string; roads?: string[] }[];
+    note: string;
+  };
   /** 2026-10-9: premi muka jalan (tier utama) = kelas jalan + intensitas toko sepanjang jalan + efek ruas bernama (disusutkan) */
   frontage?: {
     maxRoadM: number;

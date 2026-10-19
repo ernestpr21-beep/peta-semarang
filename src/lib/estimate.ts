@@ -55,6 +55,8 @@ export interface PriceEstimateResult {
   campusFactor: number;
   /** premi koridor jalan arteri untuk tier utama (sudah termasuk di tiers.utama & autoTiers.utama); null bila tidak berlaku */
   corridor: CorridorPremium | null;
+  /** batas bawah ZNT BPN yang berlaku di titik ini (null bila tidak ada jangkar dekat) */
+  znt: { front: ZntFloor | null; area: ZntFloor | null } | null;
   campus: { name: string; distanceM: number } | null;
   dateMin: string;
   dateMax: string;
@@ -258,6 +260,41 @@ export function frontagePremium(model: PriceModel, road: { name: string | null; 
   const r = key ? fm.roads[key] : undefined;
   const prem = (fm.cls[cls] ?? 0) + (cls === "arteri" ? fm.shopCoef * ((shop ?? fm.shopRef) - fm.shopRef) : 0) + (r?.u ?? 0);
   return { key: r ? (key as string) : cls, label: r?.label ?? road.name ?? fm.clsLabel[cls] ?? "jalan utama", factor: Math.exp(prem), nEff: r?.n ?? 0, nUsed: r?.n ?? 0 };
+}
+
+export interface ZntFloor {
+  kind: "frontage" | "area";
+  id: string;
+  zone: string | null;
+  lo: number;
+  hi: number | null;
+  year: number;
+  distanceM: number;
+  /** bobot 0–1 (1 = penuh) */
+  w: number;
+  /** pengali yang diterapkan (≥ 1) */
+  mult: number;
+}
+const taper = (d: number, r: [number, number]) => (d <= r[0] ? 1 : d >= r[1] ? 0 : 1 - (d - r[0]) / (r[1] - r[0]));
+/** Jangkar ZNT di titik: jangkar muka jalan (untuk tier utama, jalan yang sama) & jangkar area terdekat */
+type ZntHit = { a: NonNullable<PriceModel["znt"]>["anchors"][number]; d: number; w: number };
+export function zntAnchors(model: PriceModel, lat: number, lng: number, road: { name: string | null; highway: string; distanceM: number } | null | undefined, kel?: string | null): { front: ZntHit | null; area: ZntHit | null } {
+  const z = model.znt;
+  if (!z) return { front: null, area: null };
+  const key = road?.name && road.distanceM <= (model.frontage?.maxRoadM ?? 30) ? corridorKey(road.name, model.frontage?.aliases ?? model.corridor?.aliases ?? {}) : null;
+  let front: ZntHit | null = null;
+  let area: ZntHit | null = null;
+  for (const a of z.anchors) {
+    // di luar kelurahan jangkar jarak "diperbesar" (= radius × outsideScale)
+    const d = haversineMeters(lat, lng, a.lat, a.lng) / (kel != null && kel !== a.kel ? (z.outsideScale ?? 1) : 1);
+    if (a.kind === "frontage") {
+      if (!key || !a.roads?.includes(key)) continue;
+      const w = taper(d, z.frontR);
+      if (w > 0 && (!front || a.lo * w > front.a.lo * front.w)) front = { a, d, w };
+    } else if (!area || d < area.d) area = { a, d, w: taper(d, z.areaR) };
+  }
+  if (area && area.w <= 0) area = null;
+  return { front, area };
 }
 
 /** Pengali kedekatan kampus untuk jarak tertentu (1 bila > pita terjauh / tidak diketahui) */
@@ -523,6 +560,32 @@ export function estimatePrice(opts: {
     autoTiers[t] = { tier: t, point: roundSig(point, 2), low: roundSig(point * Math.exp(-Z50 * sig), 2), high: roundSig(point * Math.exp(Z50 * sig), 2) };
   }
 
+  // batas bawah ZNT BPN (harga pasar ≥ pita bawah ZNT × margin di sekitar titik baca)
+  let znt: { front: ZntFloor | null; area: ZntFloor | null } | null = null;
+  if (model.znt) {
+    const za = zntAnchors(model, lat, lng, opts.frontRoad, opts.kel);
+    const mg = model.znt.margin;
+    const mk = (x: ZntHit, ref: number, kind: "frontage" | "area"): ZntFloor => ({
+      kind, id: x.a.id, zone: x.a.zone, lo: x.a.lo, hi: x.a.hi, year: x.a.year, distanceM: Math.round(x.d), w: x.w,
+      mult: Math.pow(Math.max(1, (x.a.lo * mg) / ref), x.w),
+    });
+    const scale = (tp: TierPrice, m: number, lo: number | null): TierPrice =>
+      m <= 1 ? tp : { ...tp, point: roundSig(tp.point * m, 2), low: roundSig(Math.max(tp.low * m, lo ?? 0), 2), high: roundSig(tp.high * m, 2) };
+    const aF = za.area ? mk(za.area, tiers.lingkungan.point, "area") : null;
+    if (aF && aF.mult > 1) {
+      for (const t of TIER_ORDER) {
+        tiers[t] = scale(tiers[t], aF.mult, aF.w >= 1 && (t === "lingkungan" || t === "utama") ? aF.lo : null);
+        autoTiers[t] = scale(autoTiers[t], aF.mult, aF.w >= 1 && (t === "lingkungan" || t === "utama") ? aF.lo : null);
+      }
+    }
+    const fF = za.front ? mk(za.front, tiers.utama.point, "frontage") : null;
+    if (fF && fF.mult > 1) {
+      tiers.utama = scale(tiers.utama, fF.mult, fF.w >= 1 ? fF.lo : null);
+      autoTiers.utama = scale(autoTiers.utama, Math.pow(Math.max(1, (fF.lo * mg) / autoTiers.utama.point), fF.w), fF.w >= 1 ? fF.lo : null);
+    }
+    if (aF || fF) znt = { area: aF, front: fF };
+  }
+
   const nExact = used.filter((u) => u.c.exact).length;
   const nearestM = all[0]?.d ?? Infinity;
   const dists = used.map((u) => u.distanceM).sort((a, b) => a - b);
@@ -586,6 +649,7 @@ export function estimatePrice(opts: {
     cbdFactor: cbd.factor,
     campusFactor: campusF,
     corridor,
+    znt,
     campus: opts.campus ?? null,
     dateMin: dates[0] ?? "",
     dateMax: dates[dates.length - 1] ?? "",
