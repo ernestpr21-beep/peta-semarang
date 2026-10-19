@@ -1024,10 +1024,15 @@ function ZntSection() {
         dibaca satu titik demi satu titik, jadi kalibrasi dilakukan per kelurahan. Saat ini: {z.anchors.length} titik baca di Kel. {kels} ({nf} di muka jalan utama).
       </p>
       <p>
-        <b>Titik muka jalan</b> menahan harga tier "pinggir jalan utama" pada ruas yang sama: penuh sampai {z.frontR[0]} m dari titik baca, melemah sampai {z.frontR[1]} m.{" "}
-        <b>Titik jalan lingkungan/gang</b> menahan harga dasar (semua tier) hanya di sekitar titik itu (penuh {z.areaR[0]} m, hilang di {z.areaR[1]} m; hanya titik terdekat), sehingga
-        bidang dalam di zona murah tidak ikut naik. Di luar kelurahan yang dibaca radius dikali {z.outsideScale ?? 1}. ZNT tidak pernah menurunkan harga. Bila satu titik jatuh di
-        batas dua zona, titik muka jalan memakai zona jalur jalan dan titik lingkungan memakai pita yang lebih rendah.
+        <b>Titik muka jalan</b> menahan harga tier "pinggir jalan utama" pada ruas yang sama, memakai titik baca <i>terdekat</i> di ruas itu (jadi ruas murah di sebelah
+        ruas mahal tidak ikut naik): penuh sampai {z.frontR[0]} m dari titik baca, melemah sampai {z.frontR[1]} m. <b>Titik jalan lingkungan/gang</b> menahan harga dasar
+        (semua tier) hanya di sekitar titik itu (penuh {z.areaR[0]} m, hilang di {z.areaR[1]} m; hanya titik terdekat), sehingga bidang dalam di zona murah tidak ikut naik.
+        Bila ≥ 3 titik lingkungan jatuh di zona & pita yang sama, batas berlaku di seluruh <b>poligon zona perkiraan</b> (selubung titik-titik itu + 40 m, melemah sampai{" "}
+        {z.zoneR ?? 80} m di luarnya){z.zones?.length ? ` — saat ini ${z.zones.map((q) => `zona ${q.zone} (${q.ids.length} titik)`).join(", ")}` : ""}. Di luar kelurahan
+        yang dibaca radius dikali {z.outsideScale ?? 1}. Margin dapat diturunkan per titik bila iklan di zona itu menunjukkan harga pasar dekat pita bawah (mis. perumahan zona
+        1136 Jerakah: iklan ~9 jt/m², margin 1,0). ZNT tidak pernah menurunkan harga — titik dengan ZNT jauh di bawah peta (mis. tambak utara Jerakah 0,2–0,5 jt) dicatat
+        sebagai kandidat koreksi, bukan diturunkan otomatis. Bila satu titik jatuh di batas dua zona, titik muka jalan memakai zona jalur jalan dan titik lingkungan memakai
+        pita yang lebih rendah.
       </p>
       <p className="text-xs text-fg-muted">{z.note}</p>
     </>
