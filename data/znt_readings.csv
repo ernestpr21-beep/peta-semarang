@@ -88,3 +88,18 @@ SB-12,-7.050580,110.421450,1127,10000000,20000000,2026,area,,Sumurboto,Banyumani
 SB-13,-7.054670,110.423790,26,5000000,10000000,2026,area,,Sumurboto,Banyumanik,5-sumurboto,1,,,"iklan 7,9-8,5 jt di atas pita bawah"
 SB-14,-7.058440,110.418710,26,5000000,10000000,2026,area,,Sumurboto,Banyumanik,5-sumurboto,1,1.0,,"iklan 5,4 / 6,0 jt dekat pita bawah -> margin 1,0"
 SB-15,-7.059520,110.416800,30,5000000,10000000,2026,area,,Sumurboto,Banyumanik,5-sumurboto,1,,,"iklan 8,0 jt (134 m) mendukung; zona 30 bersama PD-07/PD-15"
+KR-01,-7.028913,110.409703,220,5000000,10000000,2026,frontage,karangrejo,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,,"iklan 3,5 / 1,5 / 5,5 jt (237-275 m) di bawah 5 -> margin 1,0; jalan = karangrejo (simpang Pawiyatan Luhur)"
+KR-02,-7.019883,110.412653,610,10000000,20000000,2026,frontage,semeru;rajabasa@40,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,125;250,"iklan 5,8 / 3,7 jt (~280 m) jauh di bawah 10 -> margin 1,0, radius sedang"
+KR-03,-7.023730,110.411709,611,5000000,10000000,2026,frontage,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"iklan campur 3,7 / 10,0 / 13,8 jt"
+KR-04,-7.021610,110.411673,611,5000000,10000000,2026,frontage,,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,,"iklan 3,7 jt (202 m) di bawah 5 -> margin 1,0"
+KR-05,-7.025782,110.418842,1991,20000000,,2026,frontage,teuku umar;telaga bodas@40,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"sama zona 1991 (>20) dengan JT-02 di ruas Teuku Umar; iklan 12,2 / 8,9 jt tetapi margin & radius bawaan agar tidak menurunkan lantai JT-02/K02-08A (jangkar terdekat menang)"
+KR-06,-7.021424,110.417016,328,10000000,20000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,,"iklan 5,8 / 6,5 jt (248-280 m) di bawah 10 -> margin 1,0"
+KR-07,-7.029650,110.413800,2419,2000000,5000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,tidak ada iklan titik <=300 m
+KR-08,-7.026970,110.412120,1395,5000000,10000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"iklan 17,5 / 10,0 / 13,8 jt mendukung"
+KR-09,-7.023270,110.414510,328,10000000,20000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,,"iklan 6,5 jt (123 m), 3,7 (162 m) di bawah 10 -> margin 1,0"
+KR-10,-7.028430,110.416010,1395,5000000,10000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"iklan 9,4 / 8,9 jt mendukung"
+KR-11,-7.020850,110.414790,328,10000000,20000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,25;60,"iklan 5,8 jt (89 m) jelas di bawah 10 -> margin 1,0, radius sempit (tidak ikut poligon zona)"
+KR-12,-7.024470,110.415860,328,10000000,20000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,1.0,15;20,"iklan 6,6 jt (25 m), 6,5 (108 m) jelas di bawah 10 -> margin 1,0, radius sangat sempit (tidak ikut poligon zona)"
+KR-13,-7.030100,110.415760,626,10000000,20000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,tidak ada iklan titik <=300 m
+KR-14,-7.024485,110.410915,611,5000000,10000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"iklan 10,0 jt (228 m) mendukung"
+KR-15,-7.024740,110.411940,611,5000000,10000000,2026,area,,Karangrejo,Gajahmungkur,6-karangrejo,1,,,"iklan 10,0 / 13,8 jt mendukung"
