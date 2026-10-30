@@ -5,7 +5,7 @@ namanya termasuk roads (ruas yang dibaca; harus ≤ 25 m dari titik baca), penuh
 Jangkar 'area' (jalan lingkungan/gang): batas bawah harga dasar (semua tier dikali sama) — hanya jangkar area TERDEKAT, penuh sampai r0, nol di r1.
 Di luar kelurahan jangkar radius dikali outsideScale (zona ZNT bisa melintas batas, tapi belum dibaca). Batas = pita bawah × margin (harga pasar umumnya ≥ ZNT; kolom margin per titik bila bukti iklan menunjukkan pasar dekat pita bawah).
 Jangkar muka jalan: hanya jangkar TERDEKAT pada ruas yang sama (mis. Walisongo barat 5–10 jt tidak ditimpa Walisongo tengah >20 jt).
-Kolom radius 'r0;r1' (opsional): radius jangkar area sendiri, mis. titik baris kedua di zona jalur jalan.
+Kolom radius 'r0;r1' (opsional): radius jangkar sendiri (area: mis. titik baris kedua di zona jalur jalan; muka jalan: ruas yang iklannya jauh di bawah ZNT).
 Zona: ≥ 3 titik area dengan zona & pita sama → selubung cembung + 40 m, berlaku penuh di dalam, melemah sampai 80 m di luar."""
 import csv, glob, json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)

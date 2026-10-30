@@ -57,3 +57,19 @@ GY-14,-7.002770,110.447390,662,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-
 GY-15,-7.005810,110.449710,662,2000000,5000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,,,
 K04-01,-6.996090,110.450480,,10000000,20000000,2026,area,,Gayamsari,Gayamsari,3-gayamsari,1,1.0,25;60,"2 iklan pin titik 188-227 m: 3,75 & 4,0 jt (jauh di bawah 10) -> hanya di sekitar titik (25/60 m), margin 1,0"
 K04-08A,-7.003210,110.450240,,20000000,,2026,frontage,majapahit,Gayamsari,Gayamsari,3-gayamsari,1,,,
+PD-01,-7.062220,110.420755,27,20000000,,2026,frontage,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,60;150,"iklan pin titik dekat: 8,3 jt (45 m), 6,0 jt (98 m) jauh di bawah >20 -> margin 1,0, radius sempit 60/150 m sepanjang ruas"
+PD-02,-7.054064,110.430576,2455,500000,1000000,2026,frontage,,Pedalangan,Banyumanik,4-pedalangan,0,,,"0,5-1 jt di muka Tirto Agung: kemungkinan zona khusus/non-hunian; tidak dipakai (active=0)"
+PD-03,-7.054267,110.432120,484,5000000,10000000,2026,frontage,,Pedalangan,Banyumanik,4-pedalangan,1,,,"simpang Prof. Soedarto/Jatimulyo (detektor: Jatimulyo); peta 8,4 sudah di atas pita"
+PD-04,-7.065718,110.438012,421,10000000,20000000,2026,frontage,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,60;150,"6 iklan pin titik <=226 m: 3,3-5,3 jt (jauh di bawah 10) -> margin 1,0, radius sempit"
+PD-05,-7.071620,110.429199,424,10000000,20000000,2026,frontage,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,125;250,"iklan dekat 2,8 / 6,5 / 6,5 jt; 1 iklan Kanfer 15 jt (lokasi kecamatan) -> margin 1,0, radius sedang"
+PD-06,-7.069395,110.422795,424,10000000,20000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,,"iklan 4,5 & 8,5 jt (216-244 m) di bawah 10 -> margin 1,0"
+PD-07,-7.056700,110.424490,30,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,,,
+PD-08,-7.059500,110.434470,28,10000000,20000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,,,"iklan 12,9 jt (152 m) mendukung pita 10-20"
+PD-09,-7.065810,110.432950,2443,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,,"iklan 4,3-4,5 jt (4x) & 6,3 jt -> sedikit di bawah pita, margin 1,0"
+PD-10,-7.066340,110.426600,561,2000000,5000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,,,
+PD-11,-7.061140,110.425080,483,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,,,
+PD-12,-7.057760,110.430300,590,10000000,20000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,25;60,"iklan 6,2 jt (76 m), 5,5 / 7,5 jt; 13 jt & 18-22 jt (outlier) -> campur, radius sempit, margin 1,0"
+PD-13,-7.068480,110.430800,599,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,,"iklan 3,5 / 6,2 / 6,5 jt -> margin 1,0"
+PD-14,-7.070260,110.434320,598,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,,"iklan 4,5 jt (2x) -> margin 1,0"
+PD-15,-7.058720,110.421510,30,5000000,10000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,,,
+K01-06,-7.062420,110.429400,,10000000,20000000,2026,area,,Pedalangan,Banyumanik,4-pedalangan,1,1.0,,"iklan 5,5 / 6,0 / 15 jt (+15,4 outlier) -> campur, margin 1,0"
