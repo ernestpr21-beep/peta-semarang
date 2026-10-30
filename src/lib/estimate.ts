@@ -605,9 +605,11 @@ export function estimatePrice(opts: {
       if (aF && aF.mult > 1) autoTiers[t] = scale(autoTiers[t], aF.mult, keepLo(aF));
     }
     const fF = za.front ? mk(za.front, tiers.utama.point) : null;
-    if (fF && fF.mult > 1) {
-      tiers.utama = scale(tiers.utama, fF.mult, fF.w >= 1 ? fF.lo : null);
-      autoTiers.utama = scale(autoTiers.utama, Math.pow(Math.max(1, (fF.lo * za.front!.margin) / autoTiers.utama.point), fF.w), fF.w >= 1 ? fF.lo : null);
+    // pengali muka jalan juga dihitung terpisah untuk tier manual & tier terdeteksi
+    if (fF) {
+      if (fF.mult > 1) tiers.utama = scale(tiers.utama, fF.mult, fF.w >= 1 ? fF.lo : null);
+      const mA = Math.pow(Math.max(1, (fF.lo * za.front!.margin) / autoTiers.utama.point), fF.w);
+      if (mA > 1) autoTiers.utama = scale(autoTiers.utama, mA, fF.w >= 1 ? fF.lo : null);
     }
     if (aF || fF) znt = { area: aF, front: fF };
   }
