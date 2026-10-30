@@ -67,5 +67,13 @@ describe("batas bawah ZNT", () => {
       expect(at(a.lat, a.lng).point, id).toBe(at(a.lat, a.lng, false).point);
     }
   });
+  it("ruas simpang (roads 'nama@r'): KR-05 >20 di Teuku Umar tidak melimpah ke Telaga Bodas > 40 m", () => {
+    const a = z.anchors.find((x) => x.id === "KR-05")!;
+    expect(a.roadR?.["telaga bodas"]).toEqual([20, 40]);
+    expect(at(a.lat, a.lng).point).toBeGreaterThanOrEqual(2e7);
+    const p = at(-7.025612, 110.417349); // Telaga Bodas, 165 m dari simpang
+    expect(p.point).toBeLessThan(1e7);
+    expect(at(-7.025612, 110.417349, false).point).toBe(p.point);
+  });
 });
 

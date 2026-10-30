@@ -307,7 +307,7 @@ export function zntAnchors(model: PriceModel, lat: number, lng: number, road: { 
     if (a.kind === "frontage") {
       // jangkar TERDEKAT pada ruas yang sama (jangkar murah di ruas yang sama membatasi jangkar mahal di sebelahnya)
       if (!key || !a.roads?.includes(key)) continue;
-      if (!front || d < front.d) front = { ...h, w: taper(d, a.r ?? z.frontR) };
+      if (!front || d < front.d) front = { ...h, w: taper(d, a.roadR?.[key] ?? a.r ?? z.frontR) };
     } else if (!area || d < area.d) area = { ...h, w: taper(d, a.r ?? z.areaR) };
   }
   const out: ZntHit[] = area && area.w > 0 ? [area] : [];

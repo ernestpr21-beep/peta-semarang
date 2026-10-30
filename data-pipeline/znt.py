@@ -5,7 +5,7 @@ namanya termasuk roads (ruas yang dibaca; harus ≤ 25 m dari titik baca), penuh
 Jangkar 'area' (jalan lingkungan/gang): batas bawah harga dasar (semua tier dikali sama) — hanya jangkar area TERDEKAT, penuh sampai r0, nol di r1.
 Di luar kelurahan jangkar radius dikali outsideScale (zona ZNT bisa melintas batas, tapi belum dibaca). Batas = pita bawah × margin (harga pasar umumnya ≥ ZNT; kolom margin per titik bila bukti iklan menunjukkan pasar dekat pita bawah).
 Jangkar muka jalan: hanya jangkar TERDEKAT pada ruas yang sama (mis. Walisongo barat 5–10 jt tidak ditimpa Walisongo tengah >20 jt).
-Kolom radius 'r0;r1' (opsional): radius jangkar sendiri (area: mis. titik baris kedua di zona jalur jalan; muka jalan: ruas yang iklannya jauh di bawah ZNT).
+Kolom roads 'nama@r1': ruas simpang dengan radius sendiri (mis. jalan lain yang hanya bersinggungan di titik baca). Kolom radius 'r0;r1' (opsional): radius jangkar sendiri (area: mis. titik baris kedua di zona jalur jalan; muka jalan: ruas yang iklannya jauh di bawah ZNT).
 Zona: ≥ 3 titik area dengan zona & pita sama → selubung cembung + 40 m, berlaku penuh di dalam, melemah sampai 80 m di luar."""
 import csv, glob, json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
@@ -42,7 +42,11 @@ def build():
              **({'r': [float(x) for x in r['radius'].split(';')]} if r.get('radius') else {})}
         if r['kind'] == 'frontage':
             # ruas yang dibaca (kolom roads, kunci koridor) — bila kosong: ruas utama bernama ≤ ROAD_M m dari titik baca
-            a['roads'] = sorted(x.strip() for x in r['roads'].split(';') if x.strip()) if r.get('roads') else roads_near(a['lat'], a['lng'], ROAD_M)
+            # 'nama@r1' = ruas simpang: hanya berlaku sampai r1 m pada ruas itu (penuh sampai r1/2)
+            rr = [x.strip() for x in r['roads'].split(';') if x.strip()] if r.get('roads') else []
+            a['roads'] = sorted(x.split('@')[0].strip() for x in rr) if rr else roads_near(a['lat'], a['lng'], ROAD_M)
+            rR = {x.split('@')[0].strip(): [float(x.split('@')[1]) / 2, float(x.split('@')[1])] for x in rr if '@' in x}
+            if rR: a['roadR'] = rR
             near = roads_near(a['lat'], a['lng'], ROAD_M)
             assert all(k in near for k in a['roads']), (r['id'], a['roads'], near)
         # jangkar area dengan radius sendiri (titik baris kedua di zona jalur) tidak ikut membentuk poligon zona
