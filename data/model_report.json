@@ -1530,7 +1530,8 @@
    "2-jerakah",
    "3-gayamsari",
    "4-pedalangan",
-   "5-sumurboto"
+   "5-sumurboto",
+   "6-karangrejo"
   ],
   "anchors": [
    {
@@ -2582,6 +2583,220 @@
     "year": 2026,
     "kind": "area",
     "kel": "Sumurboto"
+   },
+   {
+    "id": "KR-01",
+    "lat": -7.028913,
+    "lng": 110.409703,
+    "zone": "220",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Karangrejo",
+    "margin": 1.0,
+    "roads": [
+     "karangrejo"
+    ]
+   },
+   {
+    "id": "KR-02",
+    "lat": -7.019883,
+    "lng": 110.412653,
+    "zone": "610",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Karangrejo",
+    "margin": 1.0,
+    "r": [
+     125.0,
+     250.0
+    ],
+    "roads": [
+     "rajabasa",
+     "semeru"
+    ],
+    "roadR": {
+     "rajabasa": [
+      20.0,
+      40.0
+     ]
+    }
+   },
+   {
+    "id": "KR-03",
+    "lat": -7.02373,
+    "lng": 110.411709,
+    "zone": "611",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Karangrejo",
+    "roads": [
+     "rajabasa",
+     "telaga bodas"
+    ]
+   },
+   {
+    "id": "KR-04",
+    "lat": -7.02161,
+    "lng": 110.411673,
+    "zone": "611",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Karangrejo",
+    "margin": 1.0,
+    "roads": [
+     "rajabasa"
+    ]
+   },
+   {
+    "id": "KR-05",
+    "lat": -7.025782,
+    "lng": 110.418842,
+    "zone": "1991",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Karangrejo",
+    "roads": [
+     "telaga bodas",
+     "teuku umar"
+    ],
+    "roadR": {
+     "telaga bodas": [
+      20.0,
+      40.0
+     ]
+    }
+   },
+   {
+    "id": "KR-06",
+    "lat": -7.021424,
+    "lng": 110.417016,
+    "zone": "328",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo",
+    "margin": 1.0
+   },
+   {
+    "id": "KR-07",
+    "lat": -7.02965,
+    "lng": 110.4138,
+    "zone": "2419",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
+   },
+   {
+    "id": "KR-08",
+    "lat": -7.02697,
+    "lng": 110.41212,
+    "zone": "1395",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
+   },
+   {
+    "id": "KR-09",
+    "lat": -7.02327,
+    "lng": 110.41451,
+    "zone": "328",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo",
+    "margin": 1.0
+   },
+   {
+    "id": "KR-10",
+    "lat": -7.02843,
+    "lng": 110.41601,
+    "zone": "1395",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
+   },
+   {
+    "id": "KR-11",
+    "lat": -7.02085,
+    "lng": 110.41479,
+    "zone": "328",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo",
+    "margin": 1.0,
+    "r": [
+     25.0,
+     60.0
+    ]
+   },
+   {
+    "id": "KR-12",
+    "lat": -7.02447,
+    "lng": 110.41586,
+    "zone": "328",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo",
+    "margin": 1.0,
+    "r": [
+     15.0,
+     20.0
+    ]
+   },
+   {
+    "id": "KR-13",
+    "lat": -7.0301,
+    "lng": 110.41576,
+    "zone": "626",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
+   },
+   {
+    "id": "KR-14",
+    "lat": -7.024485,
+    "lng": 110.410915,
+    "zone": "611",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
+   },
+   {
+    "id": "KR-15",
+    "lat": -7.02474,
+    "lng": 110.41194,
+    "zone": "611",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Karangrejo"
    }
   ],
   "note": "Batas bawah dari ZNT BPN (Bhumi, nilai pita per zona). Harga pasar = max(model, pita bawah × margin) di sekitar titik baca; ZNT hanya penahan bawah, bukan harga pasar."
