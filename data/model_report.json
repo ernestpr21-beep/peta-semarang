@@ -1454,7 +1454,8 @@
   "rounds": [
    "1-jatingaleh",
    "2-jerakah",
-   "3-gayamsari"
+   "3-gayamsari",
+   "4-pedalangan"
   ],
   "anchors": [
    {
@@ -2086,6 +2087,209 @@
     "roads": [
      "majapahit"
     ]
+   },
+   {
+    "id": "PD-01",
+    "lat": -7.06222,
+    "lng": 110.420755,
+    "zone": "27",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Pedalangan",
+    "margin": 1.0,
+    "r": [
+     60.0,
+     150.0
+    ],
+    "roads": [
+     "durian"
+    ]
+   },
+   {
+    "id": "PD-03",
+    "lat": -7.054267,
+    "lng": 110.43212,
+    "zone": "484",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Pedalangan",
+    "roads": [
+     "jatimulyo",
+     "profesor soedarto"
+    ]
+   },
+   {
+    "id": "PD-04",
+    "lat": -7.065718,
+    "lng": 110.438012,
+    "zone": "421",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Pedalangan",
+    "margin": 1.0,
+    "r": [
+     60.0,
+     150.0
+    ],
+    "roads": [
+     "mulawarman"
+    ]
+   },
+   {
+    "id": "PD-05",
+    "lat": -7.07162,
+    "lng": 110.429199,
+    "zone": "424",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Pedalangan",
+    "margin": 1.0,
+    "r": [
+     125.0,
+     250.0
+    ],
+    "roads": [
+     "kanfer"
+    ]
+   },
+   {
+    "id": "PD-06",
+    "lat": -7.069395,
+    "lng": 110.422795,
+    "zone": "424",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0
+   },
+   {
+    "id": "PD-07",
+    "lat": -7.0567,
+    "lng": 110.42449,
+    "zone": "30",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan"
+   },
+   {
+    "id": "PD-08",
+    "lat": -7.0595,
+    "lng": 110.43447,
+    "zone": "28",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan"
+   },
+   {
+    "id": "PD-09",
+    "lat": -7.06581,
+    "lng": 110.43295,
+    "zone": "2443",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0
+   },
+   {
+    "id": "PD-10",
+    "lat": -7.06634,
+    "lng": 110.4266,
+    "zone": "561",
+    "lo": 2000000,
+    "hi": 5000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan"
+   },
+   {
+    "id": "PD-11",
+    "lat": -7.06114,
+    "lng": 110.42508,
+    "zone": "483",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan"
+   },
+   {
+    "id": "PD-12",
+    "lat": -7.05776,
+    "lng": 110.4303,
+    "zone": "590",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0,
+    "r": [
+     25.0,
+     60.0
+    ]
+   },
+   {
+    "id": "PD-13",
+    "lat": -7.06848,
+    "lng": 110.4308,
+    "zone": "599",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0
+   },
+   {
+    "id": "PD-14",
+    "lat": -7.07026,
+    "lng": 110.43432,
+    "zone": "598",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0
+   },
+   {
+    "id": "PD-15",
+    "lat": -7.05872,
+    "lng": 110.42151,
+    "zone": "30",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan"
+   },
+   {
+    "id": "K01-06",
+    "lat": -7.06242,
+    "lng": 110.4294,
+    "zone": null,
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Pedalangan",
+    "margin": 1.0
    }
   ],
   "note": "Batas bawah dari ZNT BPN (Bhumi, nilai pita per zona). Harga pasar = max(model, pita bawah × margin) di sekitar titik baca; ZNT hanya penahan bawah, bukan harga pasar."
