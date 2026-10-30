@@ -1440,6 +1440,80 @@
      ]
     ],
     "margin": 1.0
+   },
+   {
+    "zone": "30",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kel": "Pedalangan",
+    "ids": [
+     "PD-07",
+     "PD-15",
+     "SB-15"
+    ],
+    "ring": [
+     [
+      110.416861,
+      -7.059877
+     ],
+     [
+      110.416719,
+      -7.059873
+     ],
+     [
+      110.41659,
+      -7.059814
+     ],
+     [
+      110.416493,
+      -7.059711
+     ],
+     [
+      110.416443,
+      -7.059578
+     ],
+     [
+      110.416448,
+      -7.059436
+     ],
+     [
+      110.416507,
+      -7.059308
+     ],
+     [
+      110.416675,
+      -7.05918
+     ],
+     [
+      110.424365,
+      -7.05636
+     ],
+     [
+      110.424638,
+      -7.05637
+     ],
+     [
+      110.424826,
+      -7.056567
+     ],
+     [
+      110.424844,
+      -7.056773
+     ],
+     [
+      110.424693,
+      -7.056999
+     ],
+     [
+      110.421645,
+      -7.059056
+     ],
+     [
+      110.416861,
+      -7.059877
+     ]
+    ]
    }
   ],
   "frontR": [
@@ -1455,7 +1529,8 @@
    "1-jatingaleh",
    "2-jerakah",
    "3-gayamsari",
-   "4-pedalangan"
+   "4-pedalangan",
+   "5-sumurboto"
   ],
   "anchors": [
    {
@@ -2290,6 +2365,223 @@
     "kind": "area",
     "kel": "Pedalangan",
     "margin": 1.0
+   },
+   {
+    "id": "SB-01",
+    "lat": -7.048567,
+    "lng": 110.419976,
+    "zone": "181",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     60.0,
+     150.0
+    ],
+    "roads": [
+     "profesor soedarto sh",
+     "setiabudi"
+    ]
+   },
+   {
+    "id": "SB-02",
+    "lat": -7.047533,
+    "lng": 110.427641,
+    "zone": "1190",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "roads": [
+     "bukit sari"
+    ]
+   },
+   {
+    "id": "SB-03",
+    "lat": -7.061607,
+    "lng": 110.413529,
+    "zone": "180",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     125.0,
+     250.0
+    ],
+    "roads": [
+     "setiabudi"
+    ]
+   },
+   {
+    "id": "SB-04",
+    "lat": -7.052468,
+    "lng": 110.430971,
+    "zone": "1189",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Sumurboto",
+    "roads": [
+     "bukit",
+     "bukit sari"
+    ]
+   },
+   {
+    "id": "SB-05",
+    "lat": -7.06062,
+    "lng": 110.414894,
+    "zone": "27",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "frontage",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     60.0,
+     150.0
+    ],
+    "roads": [
+     "durian"
+    ]
+   },
+   {
+    "id": "SB-06",
+    "lat": -7.05215,
+    "lng": 110.42612,
+    "zone": "1180",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto"
+   },
+   {
+    "id": "SB-07",
+    "lat": -7.052315,
+    "lng": 110.417878,
+    "zone": "181",
+    "lo": 20000000,
+    "hi": null,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     25.0,
+     60.0
+    ]
+   },
+   {
+    "id": "SB-08",
+    "lat": -7.04887,
+    "lng": 110.42397,
+    "zone": "1190",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0
+   },
+   {
+    "id": "SB-09",
+    "lat": -7.05566,
+    "lng": 110.42029,
+    "zone": "1128",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0
+   },
+   {
+    "id": "SB-10",
+    "lat": -7.04593,
+    "lng": 110.42301,
+    "zone": "1190",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     25.0,
+     60.0
+    ]
+   },
+   {
+    "id": "SB-11",
+    "lat": -7.05055,
+    "lng": 110.42861,
+    "zone": "1190",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0
+   },
+   {
+    "id": "SB-12",
+    "lat": -7.05058,
+    "lng": 110.42145,
+    "zone": "1127",
+    "lo": 10000000,
+    "hi": 20000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0,
+    "r": [
+     25.0,
+     40.0
+    ]
+   },
+   {
+    "id": "SB-13",
+    "lat": -7.05467,
+    "lng": 110.42379,
+    "zone": "26",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto"
+   },
+   {
+    "id": "SB-14",
+    "lat": -7.05844,
+    "lng": 110.41871,
+    "zone": "26",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto",
+    "margin": 1.0
+   },
+   {
+    "id": "SB-15",
+    "lat": -7.05952,
+    "lng": 110.4168,
+    "zone": "30",
+    "lo": 5000000,
+    "hi": 10000000,
+    "year": 2026,
+    "kind": "area",
+    "kel": "Sumurboto"
    }
   ],
   "note": "Batas bawah dari ZNT BPN (Bhumi, nilai pita per zona). Harga pasar = max(model, pita bawah × margin) di sekitar titik baca; ZNT hanya penahan bawah, bukan harga pasar."
