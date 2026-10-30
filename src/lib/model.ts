@@ -134,7 +134,7 @@ export interface PriceModel {
     /** radius dikali ini untuk titik di luar kelurahan jangkar */
     outsideScale?: number;
     rounds: string[];
-    anchors: { id: string; lat: number; lng: number; zone: string | null; lo: number; hi: number | null; year: number; kind: "frontage" | "area"; kel: string; roads?: string[]; margin?: number; /** radius jangkar area sendiri [penuh, nol] m */ r?: [number, number] }[];
+    anchors: { id: string; lat: number; lng: number; zone: string | null; lo: number; hi: number | null; year: number; kind: "frontage" | "area"; kel: string; roads?: string[]; margin?: number; /** radius jangkar sendiri [penuh, nol] m (area: jarak titik; muka jalan: jarak sepanjang ruas) */ r?: [number, number] }[];
     /** poligon zona perkiraan (selubung cembung ≥ 3 titik area berzona & berpita sama + buffer) */
     zones?: { zone: string; lo: number; hi: number | null; year: number; kel: string; ids: string[]; ring: number[][]; margin?: number }[];
     zoneR?: number;
